@@ -32,6 +32,6 @@ public class Account {
     @Column(name = "username", nullable = false, unique = true, length = 100)
     private String username;
 
-    @Column(name = "password_hash", nullable = false, length = 100)
+    @Column(name = "password", nullable = false, length = 100)
     private String password;
 }

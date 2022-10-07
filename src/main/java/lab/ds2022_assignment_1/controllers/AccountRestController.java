@@ -1,5 +1,7 @@
 package lab.ds2022_assignment_1.controllers;
 
+import lab.ds2022_assignment_1.config.JwtTokenProvider;
+import lab.ds2022_assignment_1.controllers.handlers.requests.AuthenticationRequest;
 import lab.ds2022_assignment_1.controllers.handlers.requests.CRUDAccountRequest;
 import lab.ds2022_assignment_1.dtos.AccountDTO;
 import lab.ds2022_assignment_1.model.exceptions.DuplicateUsernameException;
@@ -7,17 +9,49 @@ import lab.ds2022_assignment_1.model.exceptions.EntityNotFoundException;
 import lab.ds2022_assignment_1.services.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import static lab.ds2022_assignment_1.controllers.Constants.*;
 import static org.springframework.http.ResponseEntity.ok;
 
-@Controller
-public class AccountController {
+@RestController
+public class AccountRestController {
 
     @Autowired
+    AuthenticationManager authenticationManager;
+    @Autowired
+    JwtTokenProvider tokenProvider;
+    @Autowired
     private AccountService service;
+
+    @PostMapping(LOGIN_PATH)
+    public ResponseEntity<JwtAuthenticationResponse> authenticateUser(@RequestBody AuthenticationRequest request) throws AuthenticationException {
+        final Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.getUsername(),
+                        request.getPassword()
+                )
+        );
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        final String jwt = tokenProvider.generateToken(authentication);
+
+        return ok(new JwtAuthenticationResponse(jwt));
+    }
+
+    @PostMapping(REGISTER_PATH)
+    public ResponseEntity<AccountDTO> registerUser(@RequestBody CRUDAccountRequest request) throws DuplicateUsernameException {
+        return ok(service.createAccount(request));
+    }
+
+    @GetMapping(CURRENTLY_LOGGED_IN_USER_PATH)
+    public ResponseEntity<AccountDTO> getLoggedInUser() throws EntityNotFoundException {
+        return ok(service.getCurrentUserAccount());
+    }
 
     @PostMapping(ACCOUNTS_PATH)
     public ResponseEntity<AccountDTO> createAccount(@RequestBody CRUDAccountRequest request) throws DuplicateUsernameException {
@@ -43,7 +77,6 @@ public class AccountController {
     @PostMapping(DELETE_ACCOUNT_PATH)
     public ResponseEntity deleteAccount(@PathVariable(ACCOUNT_ID) String id) throws EntityNotFoundException {
         service.deleteAccount(id);
-
         return ResponseEntity.ok().build();
     }
 }
