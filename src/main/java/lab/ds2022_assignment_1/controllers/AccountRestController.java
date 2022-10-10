@@ -1,8 +1,8 @@
 package lab.ds2022_assignment_1.controllers;
 
 import lab.ds2022_assignment_1.config.JwtTokenProvider;
+import lab.ds2022_assignment_1.controllers.handlers.requests.AccountDetailsRequest;
 import lab.ds2022_assignment_1.controllers.handlers.requests.AuthenticationRequest;
-import lab.ds2022_assignment_1.controllers.handlers.requests.CRUDAccountRequest;
 import lab.ds2022_assignment_1.dtos.AccountDTO;
 import lab.ds2022_assignment_1.model.exceptions.DuplicateUsernameException;
 import lab.ds2022_assignment_1.model.exceptions.EntityNotFoundException;
@@ -15,6 +15,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 import static lab.ds2022_assignment_1.controllers.Constants.*;
 import static org.springframework.http.ResponseEntity.ok;
@@ -30,7 +32,7 @@ public class AccountRestController {
     private AccountService service;
 
     @PostMapping(LOGIN_PATH)
-    public ResponseEntity<JwtAuthenticationResponse> authenticateUser(@RequestBody AuthenticationRequest request) throws AuthenticationException {
+    public ResponseEntity<JwtAuthenticationResponse> authenticateUser(@Valid @RequestBody AuthenticationRequest request) throws AuthenticationException {
         final Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getUsername(),
@@ -44,7 +46,7 @@ public class AccountRestController {
     }
 
     @PostMapping(REGISTER_PATH)
-    public ResponseEntity<AccountDTO> registerUser(@RequestBody CRUDAccountRequest request) throws DuplicateUsernameException {
+    public ResponseEntity<AccountDTO> registerUser(@Valid @RequestBody AccountDetailsRequest request) throws DuplicateUsernameException {
         return ok(service.createAccount(request));
     }
 
@@ -54,13 +56,13 @@ public class AccountRestController {
     }
 
     @PostMapping(ACCOUNTS_PATH)
-    public ResponseEntity<AccountDTO> createAccount(@RequestBody CRUDAccountRequest request) throws DuplicateUsernameException {
+    public ResponseEntity<AccountDTO> createAccount(@Valid @RequestBody AccountDetailsRequest request) throws DuplicateUsernameException {
         return ok(service.createAccount(request));
     }
 
     @PutMapping(ACCOUNT_ID_PATH)
     public ResponseEntity<AccountDTO> updateAccount(@PathVariable(ACCOUNT_ID) String id,
-                                                    @RequestBody CRUDAccountRequest request) throws DuplicateUsernameException, EntityNotFoundException {
+                                                    @Valid @RequestBody AccountDetailsRequest request) throws DuplicateUsernameException, EntityNotFoundException {
         return ok(service.updateAccount(id, request));
     }
 

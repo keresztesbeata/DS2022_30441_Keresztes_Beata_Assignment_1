@@ -1,7 +1,7 @@
 package lab.ds2022_assignment_1.services;
 
 import lab.ds2022_assignment_1.config.UserDetailsImpl;
-import lab.ds2022_assignment_1.controllers.handlers.requests.CRUDAccountRequest;
+import lab.ds2022_assignment_1.controllers.handlers.requests.AccountDetailsRequest;
 import lab.ds2022_assignment_1.dtos.AccountDTO;
 import lab.ds2022_assignment_1.dtos.mappers.AccountMapper;
 import lab.ds2022_assignment_1.model.entities.Account;
@@ -22,7 +22,7 @@ public class AccountService {
     @Autowired
     private AccountRepository repository;
     @Autowired
-    PasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
     private final AccountMapper mapper = new AccountMapper();
     private static final String DUPLICATE_USERNAME_ERR_MSG = "Duplicate username! The name %s is already taken.";
     private static final String NOT_EXISTENT_ACCOUNT_ERR_MSG = "This account doesn't exist!";
@@ -31,11 +31,11 @@ public class AccountService {
     /**
      * Create a new account.
      *
-     * @param request a {@link CRUDAccountRequest}
+     * @param request a {@link AccountDetailsRequest}
      * @return a {@link AccountDTO}
      * @throws DuplicateUsernameException if the username is already taken
      */
-    public AccountDTO createAccount(final CRUDAccountRequest request) throws DuplicateUsernameException {
+    public AccountDTO createAccount(final AccountDetailsRequest request) throws DuplicateUsernameException {
         Account account = mapper.mapRequestToEntity(request);
         if (repository.findByUsername(account.getUsername()).isPresent()) {
             throw new DuplicateUsernameException(String.format(DUPLICATE_USERNAME_ERR_MSG, account.getUsername()));
@@ -92,12 +92,12 @@ public class AccountService {
      * Update the details of the account.
      *
      * @param id      the id of the account
-     * @param request an {@link CRUDAccountRequest}
+     * @param request an {@link AccountDetailsRequest}
      * @return an {@link AccountDTO}
      * @throws DuplicateUsernameException if the username is already taken
      * @throws EntityNotFoundException    if no account was found with the given
      */
-    public AccountDTO updateAccount(String id, final CRUDAccountRequest request) throws DuplicateUsernameException, EntityNotFoundException {
+    public AccountDTO updateAccount(String id, final AccountDetailsRequest request) throws DuplicateUsernameException, EntityNotFoundException {
         Account newAccount = mapper.mapRequestToEntity(request);
         final Account oldAccount = repository.findById(UUID.fromString(id))
                 .orElseThrow(() -> new EntityNotFoundException(NOT_EXISTENT_ACCOUNT_ERR_MSG));
@@ -123,7 +123,7 @@ public class AccountService {
      * @throws EntityNotFoundException if no user is logged in
      */
     public AccountDTO getCurrentUserAccount() throws EntityNotFoundException {
-        Object currentUserAccount = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        final Object currentUserAccount = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (currentUserAccount instanceof UserDetailsImpl) {
             return mapper.mapEntityToDto(((UserDetailsImpl) currentUserAccount).getAccount());
         } else {

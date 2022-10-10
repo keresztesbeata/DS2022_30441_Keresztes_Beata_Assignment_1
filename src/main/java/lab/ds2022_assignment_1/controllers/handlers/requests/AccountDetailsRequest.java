@@ -9,7 +9,7 @@ import javax.validation.constraints.NotBlank;
 @Getter
 @Setter
 @ToString
-public class CRUDAccountRequest {
+public class AccountDetailsRequest {
     @NotBlank
     private String username;
     @NotBlank
