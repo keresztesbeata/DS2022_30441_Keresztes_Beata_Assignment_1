@@ -1,13 +1,14 @@
-package lab.ds2022_assignment_1.services;
+package lab.ds2022_assignment_1.services.impl;
 
 import lab.ds2022_assignment_1.config.UserDetailsImpl;
 import lab.ds2022_assignment_1.controllers.handlers.requests.AccountDetailsRequest;
 import lab.ds2022_assignment_1.dtos.AccountDTO;
 import lab.ds2022_assignment_1.dtos.mappers.AccountMapper;
 import lab.ds2022_assignment_1.model.entities.Account;
-import lab.ds2022_assignment_1.model.exceptions.DuplicateUsernameException;
+import lab.ds2022_assignment_1.model.exceptions.DuplicateDataException;
 import lab.ds2022_assignment_1.model.exceptions.EntityNotFoundException;
 import lab.ds2022_assignment_1.repositories.AccountRepository;
+import lab.ds2022_assignment_1.services.api.AccountService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,7 +19,7 @@ import java.util.UUID;
 
 @Service
 @Slf4j
-public class AccountService {
+public class AccountServiceImpl implements AccountService {
     @Autowired
     private AccountRepository repository;
     @Autowired
@@ -29,32 +30,27 @@ public class AccountService {
     private static final String NO_LOGGED_IN_USER_ERROR_MESSAGE = "No logged in user!";
 
     /**
-     * Create a new account.
-     *
-     * @param request a {@link AccountDetailsRequest}
-     * @return a {@link AccountDTO}
-     * @throws DuplicateUsernameException if the username is already taken
+     * {@inheritDoc}
      */
-    public AccountDTO createAccount(final AccountDetailsRequest request) throws DuplicateUsernameException {
+    @Override
+    public AccountDTO createAccount(final AccountDetailsRequest request) throws DuplicateDataException {
         Account account = mapper.mapRequestToEntity(request);
         if (repository.findByUsername(account.getUsername()).isPresent()) {
-            throw new DuplicateUsernameException(String.format(DUPLICATE_USERNAME_ERR_MSG, account.getUsername()));
+            throw new DuplicateDataException(String.format(DUPLICATE_USERNAME_ERR_MSG, account.getUsername()));
         }
         final String encodedPassword = passwordEncoder.encode(account.getPassword());
         account.setPassword(encodedPassword);
         final Account savedAccount = repository.save(account);
-        log.info("Account for user {} was created successfully!", account.getUsername());
+        log.debug("Account with id {} for user with username {} was created successfully!", account.getId(), account.getUsername());
 
         return mapper.mapEntityToDto(savedAccount);
     }
 
     /**
-     * Find account by unique username.
-     *
-     * @param username the username by which the account is searched
-     * @return an {@link AccountDTO}
-     * @throws EntityNotFoundException if no account exists with the given username
+     * /**
+     * {@inheritDoc}
      */
+    @Override
     public AccountDTO findAccountByUsername(final String username) throws EntityNotFoundException {
         return mapper.mapEntityToDto(
                 repository.findByUsername(username)
@@ -63,12 +59,9 @@ public class AccountService {
     }
 
     /**
-     * Find account by unique id.
-     *
-     * @param id the id by which the account is searched
-     * @return an {@link AccountDTO}
-     * @throws EntityNotFoundException if no account with the given id exists
+     * {@inheritDoc}
      */
+    @Override
     public AccountDTO findAccountById(final String id) throws EntityNotFoundException {
         return mapper.mapEntityToDto(
                 repository.findById(UUID.fromString(id))
@@ -77,27 +70,22 @@ public class AccountService {
     }
 
     /**
-     * Delete an existing account.
-     *
-     * @param id the id of the account
-     * @throws EntityNotFoundException if no such account exists
+     * {@inheritDoc}
      */
+    @Override
     public void deleteAccount(final String id) throws EntityNotFoundException {
         final Account account = repository.findById(UUID.fromString(id))
                 .orElseThrow(() -> new EntityNotFoundException(NOT_EXISTENT_ACCOUNT_ERR_MSG));
+
         repository.delete(account);
+        log.debug("Account with id {} was successfully deleted!", id);
     }
 
     /**
-     * Update the details of the account.
-     *
-     * @param id      the id of the account
-     * @param request an {@link AccountDetailsRequest}
-     * @return an {@link AccountDTO}
-     * @throws DuplicateUsernameException if the username is already taken
-     * @throws EntityNotFoundException    if no account was found with the given
+     * {@inheritDoc}
      */
-    public AccountDTO updateAccount(String id, final AccountDetailsRequest request) throws DuplicateUsernameException, EntityNotFoundException {
+    @Override
+    public AccountDTO updateAccount(final String id, final AccountDetailsRequest request) throws DuplicateDataException, EntityNotFoundException {
         Account newAccount = mapper.mapRequestToEntity(request);
         final Account oldAccount = repository.findById(UUID.fromString(id))
                 .orElseThrow(() -> new EntityNotFoundException(NOT_EXISTENT_ACCOUNT_ERR_MSG));
@@ -105,23 +93,21 @@ public class AccountService {
 
         if (!newAccount.getUsername().equals(oldAccount.getUsername()) &&
                 repository.findByUsername(newAccount.getUsername()).isPresent()) {
-            throw new DuplicateUsernameException(String.format(DUPLICATE_USERNAME_ERR_MSG, newAccount.getUsername()));
+            throw new DuplicateDataException(String.format(DUPLICATE_USERNAME_ERR_MSG, newAccount.getUsername()));
         }
 
         final String encodedPassword = passwordEncoder.encode(newAccount.getPassword());
         newAccount.setPassword(encodedPassword);
         final Account savedAccount = repository.save(newAccount);
-        log.info("Account for user {} was created successfully!", newAccount.getUsername());
+        log.info("Account with id {} was successfully updated!", id);
 
         return mapper.mapEntityToDto(savedAccount);
     }
 
     /**
-     * Get the account of the currently logged-in user.
-     *
-     * @return {@link AccountDTO}
-     * @throws EntityNotFoundException if no user is logged in
+     * {@inheritDoc}
      */
+    @Override
     public AccountDTO getCurrentUserAccount() throws EntityNotFoundException {
         final Object currentUserAccount = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (currentUserAccount instanceof UserDetailsImpl) {

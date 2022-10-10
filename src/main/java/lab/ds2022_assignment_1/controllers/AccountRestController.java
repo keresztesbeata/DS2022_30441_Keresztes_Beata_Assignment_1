@@ -4,9 +4,9 @@ import lab.ds2022_assignment_1.config.JwtTokenProvider;
 import lab.ds2022_assignment_1.controllers.handlers.requests.AccountDetailsRequest;
 import lab.ds2022_assignment_1.controllers.handlers.requests.AuthenticationRequest;
 import lab.ds2022_assignment_1.dtos.AccountDTO;
-import lab.ds2022_assignment_1.model.exceptions.DuplicateUsernameException;
+import lab.ds2022_assignment_1.model.exceptions.DuplicateDataException;
 import lab.ds2022_assignment_1.model.exceptions.EntityNotFoundException;
-import lab.ds2022_assignment_1.services.AccountService;
+import lab.ds2022_assignment_1.services.api.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -46,7 +46,7 @@ public class AccountRestController {
     }
 
     @PostMapping(REGISTER_PATH)
-    public ResponseEntity<AccountDTO> registerUser(@Valid @RequestBody AccountDetailsRequest request) throws DuplicateUsernameException {
+    public ResponseEntity<AccountDTO> registerUser(@Valid @RequestBody AccountDetailsRequest request) throws DuplicateDataException {
         return ok(service.createAccount(request));
     }
 
@@ -56,13 +56,13 @@ public class AccountRestController {
     }
 
     @PostMapping(ACCOUNTS_PATH)
-    public ResponseEntity<AccountDTO> createAccount(@Valid @RequestBody AccountDetailsRequest request) throws DuplicateUsernameException {
+    public ResponseEntity<AccountDTO> createAccount(@Valid @RequestBody AccountDetailsRequest request) throws DuplicateDataException {
         return ok(service.createAccount(request));
     }
 
     @PutMapping(ACCOUNT_ID_PATH)
     public ResponseEntity<AccountDTO> updateAccount(@PathVariable(ACCOUNT_ID) String id,
-                                                    @Valid @RequestBody AccountDetailsRequest request) throws DuplicateUsernameException, EntityNotFoundException {
+                                                    @Valid @RequestBody AccountDetailsRequest request) throws DuplicateDataException, EntityNotFoundException {
         return ok(service.updateAccount(id, request));
     }
 
@@ -72,7 +72,7 @@ public class AccountRestController {
     }
 
     @GetMapping(ACCOUNTS_PATH)
-    public ResponseEntity<AccountDTO> findAccountByUsername(@RequestParam("username") String username) throws EntityNotFoundException {
+    public ResponseEntity<AccountDTO> findAccountByUsername(@RequestParam String username) throws EntityNotFoundException {
         return ok(service.findAccountByUsername(username));
     }
 

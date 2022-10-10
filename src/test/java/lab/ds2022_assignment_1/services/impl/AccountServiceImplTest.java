@@ -1,9 +1,9 @@
-package lab.ds2022_assignment_1.services;
+package lab.ds2022_assignment_1.services.impl;
 
 import lab.ds2022_assignment_1.controllers.handlers.requests.AccountDetailsRequest;
 import lab.ds2022_assignment_1.model.entities.Account;
 import lab.ds2022_assignment_1.model.entities.UserRole;
-import lab.ds2022_assignment_1.model.exceptions.DuplicateUsernameException;
+import lab.ds2022_assignment_1.model.exceptions.DuplicateDataException;
 import lab.ds2022_assignment_1.model.exceptions.EntityNotFoundException;
 import lab.ds2022_assignment_1.repositories.AccountRepository;
 import org.junit.jupiter.api.Assertions;
@@ -28,16 +28,14 @@ import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 @RunWith(MockitoJUnitRunner.class)
-class AccountServiceTest {
+class AccountServiceImplTest {
 
     @InjectMocks
-    private AccountService service;
+    private AccountServiceImpl service;
     @Mock
     private AccountRepository repository;
-
     @Mock
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-
     private Account account;
     private AccountDetailsRequest request;
 
@@ -68,7 +66,7 @@ class AccountServiceTest {
 
         Mockito.when(repository.findByUsername(USERNAME_1))
                 .thenReturn(Optional.ofNullable(account));
-        Assertions.assertThrows(DuplicateUsernameException.class, () -> service.createAccount(request));
+        Assertions.assertThrows(DuplicateDataException.class, () -> service.createAccount(request));
     }
 
     @Test
@@ -122,6 +120,6 @@ class AccountServiceTest {
                 .thenReturn(Optional.ofNullable(account));
         request.setUsername(USERNAME_2);
 
-        Assertions.assertThrows(DuplicateUsernameException.class, () -> service.createAccount(request));
+        Assertions.assertThrows(DuplicateDataException.class, () -> service.updateAccount(ID_1, request));
     }
 }

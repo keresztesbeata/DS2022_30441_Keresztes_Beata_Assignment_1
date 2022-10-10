@@ -6,6 +6,8 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -19,7 +21,7 @@ public class Account {
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
     @Column(name = "id", updatable = false, nullable = false, columnDefinition = "VARCHAR(36)")
-    @Type(type="uuid-char")
+    @Type(type = "uuid-char")
     private UUID id;
 
     @Column(name = "name", nullable = false, length = 100)
@@ -34,4 +36,11 @@ public class Account {
 
     @Column(name = "password", nullable = false, length = 100)
     private String password;
+
+    @OneToMany(mappedBy = "account", orphanRemoval = true, cascade = CascadeType.ALL)
+    private Set<Device> devices = new HashSet<>();
+
+    public void addDevice(Device device) {
+        devices.add(device);
+    }
 }

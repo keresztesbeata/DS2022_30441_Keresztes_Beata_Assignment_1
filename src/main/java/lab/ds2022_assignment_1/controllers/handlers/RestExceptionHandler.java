@@ -1,6 +1,6 @@
 package lab.ds2022_assignment_1.controllers.handlers;
 
-import lab.ds2022_assignment_1.model.exceptions.DuplicateUsernameException;
+import lab.ds2022_assignment_1.model.exceptions.DuplicateDataException;
 import lab.ds2022_assignment_1.model.exceptions.EntityNotFoundException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -28,8 +28,8 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         );
     }
 
-    @ExceptionHandler(value = {DuplicateUsernameException.class})
-    public ResponseEntity<Object> handleDuplicateUsernameException(DuplicateUsernameException e, WebRequest request) {
+    @ExceptionHandler(value = {DuplicateDataException.class})
+    public ResponseEntity<Object> handleDuplicateUsernameException(DuplicateDataException e, WebRequest request) {
         return handleExceptionInternal(
                 e,
                 e.getMessage(),
