@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import javax.transaction.Transactional;
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Repository
 public interface DeviceRepository extends JpaRepository<Device, UUID> {
@@ -20,10 +21,23 @@ public interface DeviceRepository extends JpaRepository<Device, UUID> {
     Optional<Device> findByAccountIdAndId(String accountId, String id);
 
     @Transactional
-    @Query(value = "SELECT e.hour, e.energy FROM energy_consumption e LEFT JOIN device d on d.id = e.device_id WHERE d.id = ?1 and date(e.hour) = ?2", nativeQuery = true)
-    List<HourlyEnergyConsumption> findHourlyEnergyConsumptionByAccountIdAndByDeviceIdAndDate(String deviceId, Date date);
+    @Query(value = "SELECT * FROM energy_consumption e INNER JOIN device d on d.id = e.device_id WHERE d.id = ?1 and date(e.hour) = ?2", nativeQuery = true)
+    Optional<Device> findByIdAndDate(String id, Date date);
+
+    default Map<Timestamp, Float> findHourlyEnergyConsumptionByIdAndDate(String id, Date date) {
+        return findByIdAndDate(id, date)
+                .map(Device::getHourlyEnergyConsumption)
+                .orElse(new HashMap<>());
+    }
 
     @Transactional
-    @Query(value = "SELECT e.hour, e.energy FROM energy_consumption e LEFT JOIN device d on d.id = e.device_id WHERE d.account_id = ?1 and date(e.hour) = ?2", nativeQuery = true)
-    List<List<HourlyEnergyConsumption>> findHourlyEnergyConsumptionByAccountIdAndDate(String accountId, Date date);
+    @Query(value = "SELECT * FROM energy_consumption e INNER JOIN device d on d.id = e.device_id WHERE d.account_id = ?1 and date(e.hour) = ?2", nativeQuery = true)
+    List<Device> findByAccountIdAndDate(String accountId, Date date);
+
+    default List<Map<Timestamp, Float>> findHourlyEnergyConsumptionByAccountIdAndDate(String accountId, Date date) {
+        return findByAccountIdAndDate(accountId, date)
+                .stream()
+                .map(Device::getHourlyEnergyConsumption)
+                .collect(Collectors.toList());
+    }
 }

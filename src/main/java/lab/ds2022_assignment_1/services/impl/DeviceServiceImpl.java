@@ -10,7 +10,6 @@ import lab.ds2022_assignment_1.model.exceptions.DuplicateDataException;
 import lab.ds2022_assignment_1.model.exceptions.EntityNotFoundException;
 import lab.ds2022_assignment_1.repositories.AccountRepository;
 import lab.ds2022_assignment_1.repositories.DeviceRepository;
-import lab.ds2022_assignment_1.repositories.HourlyEnergyConsumption;
 import lab.ds2022_assignment_1.services.api.DeviceService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +20,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -137,9 +135,7 @@ public class DeviceServiceImpl implements DeviceService {
         deviceRepository.findByAccountIdAndId(accountId, deviceId)
                 .orElseThrow(() -> new EntityNotFoundException(NOT_EXISTENT_DEVICE_ERR_MSG));
 
-        return deviceRepository.findHourlyEnergyConsumptionByAccountIdAndByDeviceIdAndDate(deviceId, date)
-                .stream()
-                .collect(Collectors.toMap(HourlyEnergyConsumption::getHour, HourlyEnergyConsumption::getEnergy));
+        return deviceRepository.findHourlyEnergyConsumptionByIdAndDate(deviceId, date);
     }
 
     /**
@@ -147,10 +143,6 @@ public class DeviceServiceImpl implements DeviceService {
      */
     @Override
     public List<Map<Timestamp, Float>> findHourlyEnergyConsumption(final String accountId, final Date date) {
-        return deviceRepository.findHourlyEnergyConsumptionByAccountIdAndDate(accountId, date)
-                .stream()
-                .map(elem -> elem.stream()
-                        .collect(Collectors.toMap(HourlyEnergyConsumption::getHour, HourlyEnergyConsumption::getEnergy)))
-                .collect(Collectors.toList());
+        return deviceRepository.findHourlyEnergyConsumptionByAccountIdAndDate(accountId, date);
     }
 }
