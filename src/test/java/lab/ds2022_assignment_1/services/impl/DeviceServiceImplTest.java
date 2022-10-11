@@ -1,6 +1,7 @@
 package lab.ds2022_assignment_1.services.impl;
 
 import lab.ds2022_assignment_1.controllers.handlers.requests.DeviceDetailsRequest;
+import lab.ds2022_assignment_1.controllers.handlers.requests.LinkDeviceRequest;
 import lab.ds2022_assignment_1.model.entities.Account;
 import lab.ds2022_assignment_1.model.entities.Device;
 import lab.ds2022_assignment_1.model.entities.UserRole;
@@ -73,23 +74,31 @@ class DeviceServiceImplTest {
     @Test
     @SneakyThrows
     void addDevice() {
-        Assertions.assertThrows(EntityNotFoundException.class, () -> service.addDevice(ID_1, request));
+        Mockito.when(deviceRepository.save(any(Device.class)))
+                .thenReturn(device);
+
+        // add a device
+        Assertions.assertEquals(DEVICE_ID_1, service.addDevice(request).getId());
 
         Mockito.when(accountRepository.findById(UUID.fromString(ID_1)))
                 .thenReturn(Optional.of(account));
         Mockito.when(accountRepository.save(any(Account.class)))
                 .thenReturn(account);
-        Mockito.when(deviceRepository.save(any(Device.class)))
-                .thenReturn(device);
 
-        Assertions.assertEquals(DEVICE_ID_1, service.addDevice(ID_1, request).getId());
-        verify(accountRepository, times(2)).findById(UUID.fromString(ID_1));
-        verify(deviceRepository).findByAccountAndAddress(account, ADDRESS_1);
+        LinkDeviceRequest request1 = new LinkDeviceRequest();
+        request1.setDeviceId(DEVICE_ID_1);
+
+        // map the device to an existing account
+        Assertions.assertDoesNotThrow(() -> service.linkDeviceToUser(ID_1, request1));
 
         Mockito.when(deviceRepository.findByAccountAndAddress(account, ADDRESS_1))
                 .thenReturn(List.of(device));
 
-        Assertions.assertThrows(DuplicateDataException.class, () -> service.addDevice(ID_1, request));
+        // map the device to an account which already has a device with the same address
+        Assertions.assertThrows(DuplicateDataException.class, () -> service.linkDeviceToUser(ID_1, request1));
+
+        verify(deviceRepository, times(2)).findByAccountAndAddress(account, ADDRESS_1);
+        verify(accountRepository, times(3)).findById(UUID.fromString(ID_1));
     }
 
     @Test
@@ -132,21 +141,21 @@ class DeviceServiceImplTest {
         Mockito.when(deviceRepository.findById(UUID.fromString(DEVICE_ID_1)))
                 .thenReturn(Optional.of(device));
 
-        Assertions.assertDoesNotThrow(() -> service.removeDevice(DEVICE_ID_1));
+        Assertions.assertDoesNotThrow(() -> service.deleteDevice(DEVICE_ID_1));
         verify(deviceRepository).delete(any(Device.class));
 
-        Assertions.assertThrows(EntityNotFoundException.class, () -> service.removeDevice(DEVICE_ID_2));
+        Assertions.assertThrows(EntityNotFoundException.class, () -> service.deleteDevice(DEVICE_ID_2));
     }
 
     @Test
     @SneakyThrows
     void updateDevice() {
-        Assertions.assertThrows(EntityNotFoundException.class, () -> service.addDevice(ID_1, request));
+        Mockito.when(deviceRepository.save(any(Device.class)))
+                .thenReturn(device);
+        Assertions.assertEquals(DEVICE_ID_1, service.addDevice(request).getId());
 
         Mockito.when(deviceRepository.findById(UUID.fromString(DEVICE_ID_1)))
                 .thenReturn(Optional.of(device));
-        Mockito.when(deviceRepository.save(any(Device.class)))
-                .thenReturn(device);
 
         Assertions.assertEquals(ADDRESS_1, service.updateDevice(DEVICE_ID_1, request).getAddress());
         verify(accountRepository).findById(UUID.fromString(ID_1));

@@ -13,15 +13,10 @@ public class DeviceMapper {
     }
 
     public DeviceDTO mapEntityToDto(Device device) {
-        final AccountMapper accountMapper = new AccountMapper();
-
         return DeviceDTO.builder()
                 .id(device.getId().toString())
-                .account(accountMapper.mapEntityToDto(device.getAccount()))
                 .address(device.getAddress())
                 .description(device.getDescription())
-                .maxHourlyEnergyConsumption(device.getMaxHourlyEnergyConsumption())
-                .hourlyEnergyConsumption(device.getHourlyEnergyConsumption())
                 .build();
     }
 }

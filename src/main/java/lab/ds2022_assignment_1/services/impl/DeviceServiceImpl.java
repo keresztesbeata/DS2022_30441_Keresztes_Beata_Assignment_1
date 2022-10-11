@@ -1,6 +1,7 @@
 package lab.ds2022_assignment_1.services.impl;
 
 import lab.ds2022_assignment_1.controllers.handlers.requests.DeviceDetailsRequest;
+import lab.ds2022_assignment_1.controllers.handlers.requests.LinkDeviceRequest;
 import lab.ds2022_assignment_1.dtos.DeviceDTO;
 import lab.ds2022_assignment_1.dtos.mappers.DeviceMapper;
 import lab.ds2022_assignment_1.model.entities.Account;
@@ -9,13 +10,18 @@ import lab.ds2022_assignment_1.model.exceptions.DuplicateDataException;
 import lab.ds2022_assignment_1.model.exceptions.EntityNotFoundException;
 import lab.ds2022_assignment_1.repositories.AccountRepository;
 import lab.ds2022_assignment_1.repositories.DeviceRepository;
+import lab.ds2022_assignment_1.repositories.HourlyEnergyConsumption;
 import lab.ds2022_assignment_1.services.api.DeviceService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -34,24 +40,35 @@ public class DeviceServiceImpl implements DeviceService {
      * {@inheritDoc}
      */
     @Override
-    public DeviceDTO addDevice(final String accountId, final DeviceDetailsRequest request) throws EntityNotFoundException, DuplicateDataException {
+    public DeviceDTO addDevice(final DeviceDetailsRequest request) {
+        final Device savedDevice = deviceRepository.save(deviceMapper.mapRequestToEntity(request));
+        log.debug("Device with id {} was successfully added!", savedDevice.getId());
+
+        return deviceMapper.mapEntityToDto(savedDevice);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void linkDeviceToUser(final String accountId, final LinkDeviceRequest request) throws EntityNotFoundException, DuplicateDataException {
         Account account =
                 accountRepository.findById(UUID.fromString(accountId))
                         .orElseThrow(() -> new EntityNotFoundException(NOT_EXISTENT_ACCOUNT_ERR_MSG));
+        Device device = deviceRepository.findById(UUID.fromString(request.getDeviceId()))
+                .orElseThrow(() -> new EntityNotFoundException(NOT_EXISTENT_DEVICE_ERR_MSG));
 
-        if (!deviceRepository.findByAccountAndAddress(account, request.getAddress()).isEmpty()) {
-            throw new DuplicateDataException(String.format(DUPLICATE_ADDRESS_ERR_MSG, account.getUsername(), request.getAddress()));
+        if (!deviceRepository.findByAccountAndAddress(account, device.getAddress()).isEmpty()) {
+            throw new DuplicateDataException(String.format(DUPLICATE_ADDRESS_ERR_MSG, account.getUsername(), device.getAddress()));
         }
 
-        Device device = deviceMapper.mapRequestToEntity(request);
         device.setAccount(account);
         final Device savedDevice = deviceRepository.save(device);
 
         account.addDevice(savedDevice);
         accountRepository.save(account);
-        log.debug("Device with id {} was successfully linked to the account with id {}!", device.getId(), accountId);
 
-        return deviceMapper.mapEntityToDto(savedDevice);
+        log.debug("Device with id {} was successfully linked to the account with id {}!", device.getId(), accountId);
     }
 
     /**
@@ -82,7 +99,7 @@ public class DeviceServiceImpl implements DeviceService {
      * {@inheritDoc}
      */
     @Override
-    public void removeDevice(final String deviceId) throws EntityNotFoundException {
+    public void deleteDevice(final String deviceId) throws EntityNotFoundException {
         final Device device = deviceRepository.findById(UUID.fromString(deviceId))
                 .orElseThrow(() -> new EntityNotFoundException(NOT_EXISTENT_DEVICE_ERR_MSG));
 
@@ -110,5 +127,30 @@ public class DeviceServiceImpl implements DeviceService {
         log.debug("Device with id {} was successfully updated!", deviceId);
 
         return deviceMapper.mapEntityToDto(savedDevice);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Map<Timestamp, Float> findHourlyDeviceEnergyConsumption(final String accountId, final String deviceId, final Date date) throws EntityNotFoundException {
+        deviceRepository.findByAccountIdAndId(accountId, deviceId)
+                .orElseThrow(() -> new EntityNotFoundException(NOT_EXISTENT_DEVICE_ERR_MSG));
+
+        return deviceRepository.findHourlyEnergyConsumptionByAccountIdAndByDeviceIdAndDate(deviceId, date)
+                .stream()
+                .collect(Collectors.toMap(HourlyEnergyConsumption::getHour, HourlyEnergyConsumption::getEnergy));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<Map<Timestamp, Float>> findHourlyEnergyConsumption(final String accountId, final Date date) {
+        return deviceRepository.findHourlyEnergyConsumptionByAccountIdAndDate(accountId, date)
+                .stream()
+                .map(elem -> elem.stream()
+                        .collect(Collectors.toMap(HourlyEnergyConsumption::getHour, HourlyEnergyConsumption::getEnergy)))
+                .collect(Collectors.toList());
     }
 }

@@ -56,6 +56,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(LOGIN_PATH).permitAll()
                 .antMatchers(REGISTER_PATH).permitAll()
                 .antMatchers(API + "/**").hasAuthority("ADMIN")
+                .antMatchers(CLIENT + "/**").hasAuthority("CLIENT")
                 .anyRequest().authenticated()
                 .and()
                 .logout()

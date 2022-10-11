@@ -32,7 +32,7 @@ public class AccountRestController {
     private AccountService service;
 
     @PostMapping(LOGIN_PATH)
-    public ResponseEntity<JwtAuthenticationResponse> authenticateUser(@Valid @RequestBody AuthenticationRequest request) throws AuthenticationException {
+    public ResponseEntity<JwtAuthenticationResponse> authenticateUser(@RequestBody AuthenticationRequest request) throws AuthenticationException {
         final Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getUsername(),
@@ -46,7 +46,7 @@ public class AccountRestController {
     }
 
     @PostMapping(REGISTER_PATH)
-    public ResponseEntity<AccountDTO> registerUser(@Valid @RequestBody AccountDetailsRequest request) throws DuplicateDataException {
+    public ResponseEntity<AccountDTO> registerUser(@RequestBody AccountDetailsRequest request) throws DuplicateDataException {
         return ok(service.createAccount(request));
     }
 
@@ -67,16 +67,16 @@ public class AccountRestController {
     }
 
     @GetMapping(ACCOUNT_ID_PATH)
-    public ResponseEntity<AccountDTO> findAccountById(@PathVariable(ACCOUNT_ID) String id) throws EntityNotFoundException {
+    public ResponseEntity<AccountDTO> getAccountById(@PathVariable(ACCOUNT_ID) String id) throws EntityNotFoundException {
         return ok(service.findAccountById(id));
     }
 
     @GetMapping(ACCOUNTS_PATH)
-    public ResponseEntity<AccountDTO> findAccountByUsername(@RequestParam String username) throws EntityNotFoundException {
+    public ResponseEntity<AccountDTO> getAccountByUsername(@RequestParam String username) throws EntityNotFoundException {
         return ok(service.findAccountByUsername(username));
     }
 
-    @PostMapping(DELETE_ACCOUNT_PATH)
+    @DeleteMapping(ACCOUNT_ID_PATH)
     public ResponseEntity deleteAccount(@PathVariable(ACCOUNT_ID) String id) throws EntityNotFoundException {
         service.deleteAccount(id);
         return ResponseEntity.ok().build();

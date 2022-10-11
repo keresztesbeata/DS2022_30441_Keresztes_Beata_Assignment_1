@@ -32,7 +32,7 @@ public class Device {
     private String address;
 
     @ManyToOne
-    @JoinColumn(name = "account_id", nullable = false)
+    @JoinColumn(name = "account_id")
     private Account account;
 
     @Column(name = "maxHourlyEnergyConsumption", columnDefinition = "float default 0", precision = 8, scale = 2)
