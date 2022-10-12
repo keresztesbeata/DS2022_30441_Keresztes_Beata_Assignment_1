@@ -3,13 +3,12 @@ package lab.ds2022_assignment_1.services.api;
 import lab.ds2022_assignment_1.controllers.handlers.requests.DeviceDetailsRequest;
 import lab.ds2022_assignment_1.controllers.handlers.requests.LinkDeviceRequest;
 import lab.ds2022_assignment_1.dtos.DeviceDTO;
+import lab.ds2022_assignment_1.model.entities.HourlyEnergyConsumption;
 import lab.ds2022_assignment_1.model.exceptions.DuplicateDataException;
 import lab.ds2022_assignment_1.model.exceptions.EntityNotFoundException;
 
-import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 public interface DeviceService {
 
@@ -71,17 +70,17 @@ public interface DeviceService {
      * @param accountId the id of the user's account
      * @param deviceId  the id of the device
      * @param date      the date for which the energy consumption is listed
-     * @return a map containing key-value pairs of timestamp-consumedEnergy
+     * @return a list of {@link HourlyEnergyConsumption} for the given device
      * @throws EntityNotFoundException if no device exists with the given id
      */
-    Map<Timestamp, Float> findHourlyDeviceEnergyConsumption(final String accountId, final String deviceId, final Date date) throws EntityNotFoundException;
+    List<HourlyEnergyConsumption> findHourlyDeviceEnergyConsumption(final String accountId, final String deviceId, final Date date) throws EntityNotFoundException;
 
     /**
      * Find the hourly energy consumption of all devices of a given user for a given day.
      *
      * @param accountId the id of the user's account
      * @param date      the date for which the energy consumption is listed
-     * @return a list of maps containing the hourly energy consumption of all the devices
+     * @return a list of {@link HourlyEnergyConsumption} for every device associated to the given user account
      */
-    List<Map<Timestamp, Float>> findHourlyEnergyConsumption(final String accountId, final Date date);
+    List<List<HourlyEnergyConsumption>> findHourlyEnergyConsumption(final String accountId, final Date date);
 }
