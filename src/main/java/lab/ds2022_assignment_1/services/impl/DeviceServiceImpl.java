@@ -6,7 +6,6 @@ import lab.ds2022_assignment_1.dtos.DeviceDTO;
 import lab.ds2022_assignment_1.dtos.mappers.DeviceMapper;
 import lab.ds2022_assignment_1.model.entities.Account;
 import lab.ds2022_assignment_1.model.entities.Device;
-import lab.ds2022_assignment_1.model.entities.HourlyEnergyConsumption;
 import lab.ds2022_assignment_1.model.exceptions.DuplicateDataException;
 import lab.ds2022_assignment_1.model.exceptions.EntityNotFoundException;
 import lab.ds2022_assignment_1.repositories.AccountRepository;
@@ -16,8 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.List;
+import java.util.UUID;
 
 @Service
 @Slf4j
@@ -123,29 +122,5 @@ public class DeviceServiceImpl implements DeviceService {
         log.debug("Device with id {} was successfully updated!", deviceId);
 
         return deviceMapper.mapEntityToDto(savedDevice);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<HourlyEnergyConsumption> findHourlyDeviceEnergyConsumption(final String accountId, final String deviceId, final Date date) throws EntityNotFoundException {
-        deviceRepository.findByAccountIdAndId(accountId, deviceId)
-                .orElseThrow(() -> new EntityNotFoundException(NOT_EXISTENT_DEVICE_ERR_MSG));
-        Optional<Device> device1 = deviceRepository.findEnergyConsumptionsByDeviceIdAndDate(deviceId, date);
-        return deviceRepository.findEnergyConsumptionsByDeviceIdAndDate(deviceId, date)
-                .map(device -> device.getHourlyEnergyConsumptions().stream().toList())
-                .orElse(new ArrayList<>());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<List<HourlyEnergyConsumption>> findHourlyEnergyConsumption(final String accountId, final Date date) {
-        return deviceRepository.findEnergyConsumptionsByAccountIdAndDate(accountId, date)
-                .stream()
-                .map(device -> new ArrayList<>(device.getHourlyEnergyConsumptions()))
-                .collect(Collectors.toList());
     }
 }

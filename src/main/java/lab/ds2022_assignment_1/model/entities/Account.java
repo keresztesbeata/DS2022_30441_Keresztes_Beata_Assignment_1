@@ -14,8 +14,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Getter
-@Setter
+@Data
 public class Account {
     @Id
     @GeneratedValue(generator = "uuid2")

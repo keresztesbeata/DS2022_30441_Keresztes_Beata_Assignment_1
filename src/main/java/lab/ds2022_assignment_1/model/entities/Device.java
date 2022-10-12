@@ -1,11 +1,15 @@
 
 package lab.ds2022_assignment_1.model.entities;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -13,8 +17,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Getter
-@Setter
+@Data
 public class Device {
     @Id
     @GeneratedValue(generator = "uuid2")
@@ -34,17 +37,24 @@ public class Device {
     private Account account;
 
     @Column(name = "max_hourly_energy_consumption", columnDefinition = "float default 0", precision = 8, scale = 2)
-    private float maxHourlyEnergyConsumption;
+    private float maxEnergyConsumption;
 
-    @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(name = "energy_consumption",
-            joinColumns = {@JoinColumn(name = "device_id")})
-    private Set<HourlyEnergyConsumption> hourlyEnergyConsumptions;
+    @OneToMany(mappedBy = "device", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "device_id")
+    private Set<EnergyConsumption> energyConsumptions = new HashSet<>();
 
-    public void calculateMaxEnergyConsumption() {
-        maxHourlyEnergyConsumption = hourlyEnergyConsumptions.stream()
-                .map(HourlyEnergyConsumption::getEnergy)
-                .max(Float::compareTo)
-                .orElse(0f);
+//    public void calculateMaxEnergyConsumption() {
+//        maxEnergyConsumption = energyConsumptions.stream()
+//                .map(EnergyConsumption::getEnergy)
+//                .max(Float::compareTo)
+//                .orElse(0f);
+//    }
+
+    public void addEnergyConsumption(EnergyConsumption energyConsumption) {
+        energyConsumptions.add(energyConsumption);
+
+        if(energyConsumption.getEnergy() > maxEnergyConsumption) {
+            maxEnergyConsumption = energyConsumption.getEnergy();
+        }
     }
 }

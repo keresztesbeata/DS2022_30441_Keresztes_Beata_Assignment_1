@@ -1,14 +1,10 @@
 package lab.ds2022_assignment_1.controllers.handlers.requests;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 
-@Getter
-@Setter
-@ToString
+@Data
 public class DeviceDetailsRequest {
     @NotBlank
     private String address;

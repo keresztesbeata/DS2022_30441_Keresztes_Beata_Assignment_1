@@ -3,11 +3,9 @@ package lab.ds2022_assignment_1.services.api;
 import lab.ds2022_assignment_1.controllers.handlers.requests.DeviceDetailsRequest;
 import lab.ds2022_assignment_1.controllers.handlers.requests.LinkDeviceRequest;
 import lab.ds2022_assignment_1.dtos.DeviceDTO;
-import lab.ds2022_assignment_1.model.entities.HourlyEnergyConsumption;
 import lab.ds2022_assignment_1.model.exceptions.DuplicateDataException;
 import lab.ds2022_assignment_1.model.exceptions.EntityNotFoundException;
 
-import java.util.Date;
 import java.util.List;
 
 public interface DeviceService {
@@ -63,24 +61,4 @@ public interface DeviceService {
      * @throws DuplicateDataException  if the user already has a device registered with the same address
      */
     DeviceDTO updateDevice(final String deviceId, final DeviceDetailsRequest request) throws EntityNotFoundException, DuplicateDataException;
-
-    /**
-     * Find the hourly energy consumption of a given device for a given day.
-     *
-     * @param accountId the id of the user's account
-     * @param deviceId  the id of the device
-     * @param date      the date for which the energy consumption is listed
-     * @return a list of {@link HourlyEnergyConsumption} for the given device
-     * @throws EntityNotFoundException if no device exists with the given id
-     */
-    List<HourlyEnergyConsumption> findHourlyDeviceEnergyConsumption(final String accountId, final String deviceId, final Date date) throws EntityNotFoundException;
-
-    /**
-     * Find the hourly energy consumption of all devices of a given user for a given day.
-     *
-     * @param accountId the id of the user's account
-     * @param date      the date for which the energy consumption is listed
-     * @return a list of {@link HourlyEnergyConsumption} for every device associated to the given user account
-     */
-    List<List<HourlyEnergyConsumption>> findHourlyEnergyConsumption(final String accountId, final Date date);
 }

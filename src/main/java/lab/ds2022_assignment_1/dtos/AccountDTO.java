@@ -2,10 +2,8 @@ package lab.ds2022_assignment_1.dtos;
 
 import lombok.*;
 
-@Getter
-@Setter
+@Data
 @Builder
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 public class AccountDTO {
