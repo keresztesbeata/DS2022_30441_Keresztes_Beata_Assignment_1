@@ -1,6 +1,6 @@
 package lab.ds2022_assignment_1.services.impl;
 
-import lab.ds2022_assignment_1.controllers.handlers.requests.DeviceDetailsRequest;
+import lab.ds2022_assignment_1.controllers.handlers.requests.DeviceData;
 import lab.ds2022_assignment_1.controllers.handlers.requests.LinkDeviceRequest;
 import lab.ds2022_assignment_1.model.entities.Account;
 import lab.ds2022_assignment_1.model.entities.Device;
@@ -24,12 +24,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.*;
 
+import static lab.ds2022_assignment_1.services.Constants.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static lab.ds2022_assignment_1.services.Constants.*;
-import static lab.ds2022_assignment_1.services.Constants.PASSWORD_1;
 
 @ExtendWith(MockitoExtension.class)
 @RunWith(MockitoJUnitRunner.class)
@@ -43,7 +42,7 @@ class DeviceServiceImplTest {
     private DeviceServiceImpl service;
     private Device device;
     private Account account;
-    private DeviceDetailsRequest request;
+    private DeviceData request;
 
     @BeforeEach
     void setUp() {
@@ -66,7 +65,7 @@ class DeviceServiceImplTest {
         devices.add(device);
         account.setDevices(devices);
 
-        request = new DeviceDetailsRequest();
+        request = new DeviceData();
         request.setAddress(ADDRESS_1);
         request.setDescription(DESCRIPTION);
     }
@@ -85,17 +84,18 @@ class DeviceServiceImplTest {
         Mockito.when(accountRepository.save(any(Account.class)))
                 .thenReturn(account);
 
-        LinkDeviceRequest request1 = new LinkDeviceRequest();
-        request1.setDeviceId(DEVICE_ID_1);
+        LinkDeviceRequest linkDeviceRequest = new LinkDeviceRequest();
+        linkDeviceRequest.setDeviceId(DEVICE_ID_1);
+        linkDeviceRequest.setAccountId(ID_1);
 
         // map the device to an existing account
-        Assertions.assertDoesNotThrow(() -> service.linkDeviceToUser(ID_1, request1));
+        Assertions.assertDoesNotThrow(() -> service.linkDeviceToUser(linkDeviceRequest));
 
         Mockito.when(deviceRepository.findByAccountAndAddress(account, ADDRESS_1))
                 .thenReturn(List.of(device));
 
         // map the device to an account which already has a device with the same address
-        Assertions.assertThrows(DuplicateDataException.class, () -> service.linkDeviceToUser(ID_1, request1));
+        Assertions.assertThrows(DuplicateDataException.class, () -> service.linkDeviceToUser(linkDeviceRequest));
 
         verify(deviceRepository, times(2)).findByAccountAndAddress(account, ADDRESS_1);
         verify(accountRepository, times(3)).findById(UUID.fromString(ID_1));

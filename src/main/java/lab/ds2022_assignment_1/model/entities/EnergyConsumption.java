@@ -24,7 +24,7 @@ public class EnergyConsumption {
     @Column(name = "energy")
     private Float energy;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "device_id", nullable = false)
     private Device device;
 }

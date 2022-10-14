@@ -1,6 +1,6 @@
 package lab.ds2022_assignment_1.controllers;
 
-import lab.ds2022_assignment_1.controllers.handlers.requests.DeviceDetailsRequest;
+import lab.ds2022_assignment_1.controllers.handlers.requests.DeviceData;
 import lab.ds2022_assignment_1.controllers.handlers.requests.LinkDeviceRequest;
 import lab.ds2022_assignment_1.dtos.DeviceDTO;
 import lab.ds2022_assignment_1.model.exceptions.DuplicateDataException;
@@ -13,6 +13,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 import static lab.ds2022_assignment_1.controllers.Constants.*;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
 public class DeviceRestController {
@@ -20,8 +21,8 @@ public class DeviceRestController {
     @Autowired
     private DeviceService deviceService;
 
-    @PostMapping(DEVICES_PATH)
-    public DeviceDTO addDevice(@Valid @RequestBody DeviceDetailsRequest request) {
+    @PostMapping(value = DEVICES_PATH, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    public DeviceDTO addDevice(@Valid @RequestBody DeviceData request) {
         return deviceService.addDevice(request);
     }
 
@@ -30,9 +31,9 @@ public class DeviceRestController {
         return deviceService.findDevicesByAccountId(accountId);
     }
 
-    @PutMapping(DEVICE_ID_PATH)
+    @PutMapping(value = DEVICE_ID_PATH, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public DeviceDTO updateDevice(@PathVariable(DEVICE_ID) String deviceId,
-                                  @RequestBody DeviceDetailsRequest request) throws DuplicateDataException, EntityNotFoundException {
+                                  @RequestBody DeviceData request) throws DuplicateDataException, EntityNotFoundException {
         return deviceService.updateDevice(deviceId, request);
     }
 
@@ -46,8 +47,8 @@ public class DeviceRestController {
         deviceService.deleteDevice(deviceId);
     }
 
-    @PostMapping(LINK_DEVICE_PATH)
-    public void linkDevice(@PathVariable(ACCOUNT_ID) String accountId, @RequestBody LinkDeviceRequest request) throws DuplicateDataException, EntityNotFoundException {
-        deviceService.linkDeviceToUser(accountId, request);
+    @PostMapping(value = LINK_DEVICE_PATH, consumes = APPLICATION_JSON_VALUE)
+    public void linkDevice(@RequestBody LinkDeviceRequest request) throws DuplicateDataException, EntityNotFoundException {
+        deviceService.linkDeviceToUser(request);
     }
 }

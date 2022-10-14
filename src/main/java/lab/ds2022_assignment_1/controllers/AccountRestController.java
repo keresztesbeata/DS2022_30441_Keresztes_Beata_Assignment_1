@@ -1,7 +1,7 @@
 package lab.ds2022_assignment_1.controllers;
 
 import lab.ds2022_assignment_1.config.JwtTokenProvider;
-import lab.ds2022_assignment_1.controllers.handlers.requests.AccountDetailsRequest;
+import lab.ds2022_assignment_1.controllers.handlers.requests.AccountData;
 import lab.ds2022_assignment_1.controllers.handlers.requests.AuthenticationRequest;
 import lab.ds2022_assignment_1.dtos.AccountDTO;
 import lab.ds2022_assignment_1.model.exceptions.DuplicateDataException;
@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 import static lab.ds2022_assignment_1.controllers.Constants.*;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
@@ -45,9 +46,9 @@ public class AccountRestController {
         return ok(new JwtAuthenticationResponse(jwt));
     }
 
-    @PostMapping(REGISTER_PATH)
-    public ResponseEntity<AccountDTO> registerUser(@RequestBody AccountDetailsRequest request) throws DuplicateDataException {
-        return ok(service.createAccount(request));
+    @PostMapping(value = REGISTER_PATH, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<AccountDTO> registerUser(@RequestBody AccountData data) throws DuplicateDataException {
+        return ok(service.createAccount(data));
     }
 
     @GetMapping(CURRENTLY_LOGGED_IN_USER_PATH)
@@ -55,15 +56,15 @@ public class AccountRestController {
         return ok(service.getCurrentUserAccount());
     }
 
-    @PostMapping(ACCOUNTS_PATH)
-    public ResponseEntity<AccountDTO> createAccount(@Valid @RequestBody AccountDetailsRequest request) throws DuplicateDataException {
-        return ok(service.createAccount(request));
+    @PostMapping(value = ACCOUNTS_PATH, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<AccountDTO> createAccount(@Valid @RequestBody AccountData data) throws DuplicateDataException {
+        return ok(service.createAccount(data));
     }
 
-    @PutMapping(ACCOUNT_ID_PATH)
+    @PutMapping(value = ACCOUNT_ID_PATH, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<AccountDTO> updateAccount(@PathVariable(ACCOUNT_ID) String id,
-                                                    @Valid @RequestBody AccountDetailsRequest request) throws DuplicateDataException, EntityNotFoundException {
-        return ok(service.updateAccount(id, request));
+                                                    @Valid @RequestBody AccountData data) throws DuplicateDataException, EntityNotFoundException {
+        return ok(service.updateAccount(id, data));
     }
 
     @GetMapping(ACCOUNT_ID_PATH)

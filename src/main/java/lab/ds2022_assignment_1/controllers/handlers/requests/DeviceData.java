@@ -5,7 +5,7 @@ import lombok.Data;
 import javax.validation.constraints.NotBlank;
 
 @Data
-public class DeviceDetailsRequest {
+public class DeviceData {
     @NotBlank
     private String address;
     private String description;

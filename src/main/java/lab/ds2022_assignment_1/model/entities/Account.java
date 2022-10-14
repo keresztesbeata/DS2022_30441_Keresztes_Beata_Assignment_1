@@ -2,6 +2,8 @@ package lab.ds2022_assignment_1.model.entities;
 
 
 import lombok.*;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
@@ -36,10 +38,6 @@ public class Account {
     @Column(name = "password", nullable = false, length = 100)
     private String password;
 
-    @OneToMany(mappedBy = "account", fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "account", fetch = FetchType.LAZY)
     private Set<Device> devices = new HashSet<>();
-
-    public void addDevice(Device device) {
-        devices.add(device);
-    }
 }

@@ -1,6 +1,6 @@
 package lab.ds2022_assignment_1.services.impl;
 
-import lab.ds2022_assignment_1.controllers.handlers.requests.DeviceDetailsRequest;
+import lab.ds2022_assignment_1.controllers.handlers.requests.DeviceData;
 import lab.ds2022_assignment_1.controllers.handlers.requests.LinkDeviceRequest;
 import lab.ds2022_assignment_1.dtos.DeviceDTO;
 import lab.ds2022_assignment_1.dtos.mappers.DeviceMapper;
@@ -8,6 +8,7 @@ import lab.ds2022_assignment_1.model.entities.Account;
 import lab.ds2022_assignment_1.model.entities.Device;
 import lab.ds2022_assignment_1.model.exceptions.DuplicateDataException;
 import lab.ds2022_assignment_1.model.exceptions.EntityNotFoundException;
+import lab.ds2022_assignment_1.model.exceptions.InvalidAccessException;
 import lab.ds2022_assignment_1.repositories.AccountRepository;
 import lab.ds2022_assignment_1.repositories.DeviceRepository;
 import lab.ds2022_assignment_1.services.api.DeviceService;
@@ -30,25 +31,26 @@ public class DeviceServiceImpl implements DeviceService {
     private static final String NOT_EXISTENT_ACCOUNT_ERR_MSG = "This account doesn't exist!";
     private static final String NOT_EXISTENT_DEVICE_ERR_MSG = "This device doesn't exist!";
     private static final String DUPLICATE_ADDRESS_ERR_MSG = "Duplicate address! The user %s already has a smart device linked to the address %s.";
+    private static final String CANNOT_ACCESS_DEVICE_ERR_MSG = "You cannot access this device, it belongs to a different user!";
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public DeviceDTO addDevice(final DeviceDetailsRequest request) {
-        final Device savedDevice = deviceRepository.save(deviceMapper.mapRequestToEntity(request));
+    public DeviceDTO addDevice(final DeviceData request) {
+        final Device savedDevice = deviceRepository.save(deviceMapper.mapToEntity(request));
         log.debug("Device with id {} was successfully added!", savedDevice.getId());
 
-        return deviceMapper.mapEntityToDto(savedDevice);
+        return deviceMapper.mapToDto(savedDevice);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void linkDeviceToUser(final String accountId, final LinkDeviceRequest request) throws EntityNotFoundException, DuplicateDataException {
+    public void linkDeviceToUser(final LinkDeviceRequest request) throws EntityNotFoundException, DuplicateDataException {
         Account account =
-                accountRepository.findById(UUID.fromString(accountId))
+                accountRepository.findById(UUID.fromString(request.getAccountId()))
                         .orElseThrow(() -> new EntityNotFoundException(NOT_EXISTENT_ACCOUNT_ERR_MSG));
         Device device = deviceRepository.findById(UUID.fromString(request.getDeviceId()))
                 .orElseThrow(() -> new EntityNotFoundException(NOT_EXISTENT_DEVICE_ERR_MSG));
@@ -58,21 +60,30 @@ public class DeviceServiceImpl implements DeviceService {
         }
 
         device.setAccount(account);
-        final Device savedDevice = deviceRepository.save(device);
+        deviceRepository.save(device);
 
-        account.addDevice(savedDevice);
-        accountRepository.save(account);
+        log.debug("Device with id {} was successfully linked to the account with id {}!", device.getId(), account.getId());
+    }
 
-        log.debug("Device with id {} was successfully linked to the account with id {}!", device.getId(), accountId);
+    @Override
+    public DeviceDTO findDeviceById(String deviceId) throws EntityNotFoundException {
+        return deviceMapper.mapToDto(deviceRepository.findById(UUID.fromString(deviceId))
+                .orElseThrow(() -> new EntityNotFoundException(NOT_EXISTENT_DEVICE_ERR_MSG)));
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public DeviceDTO findDeviceById(final String id) throws EntityNotFoundException {
-        return deviceMapper.mapEntityToDto(deviceRepository.findById(UUID.fromString(id))
-                .orElseThrow(() -> new EntityNotFoundException(NOT_EXISTENT_DEVICE_ERR_MSG)));
+    public DeviceDTO findDeviceByIdAndAccountId(final String deviceId, final String accountId) throws EntityNotFoundException, InvalidAccessException {
+        final Device device = deviceRepository.findById(UUID.fromString(deviceId))
+                .orElseThrow(() -> new EntityNotFoundException(NOT_EXISTENT_DEVICE_ERR_MSG));
+
+        if (!device.getAccount().getId().toString().equals(accountId)) {
+            throw new InvalidAccessException(CANNOT_ACCESS_DEVICE_ERR_MSG);
+        }
+
+        return deviceMapper.mapToDto(device);
     }
 
     /**
@@ -86,7 +97,7 @@ public class DeviceServiceImpl implements DeviceService {
 
         return deviceRepository.findByAccount(account)
                 .stream()
-                .map(deviceMapper::mapEntityToDto)
+                .map(deviceMapper::mapToDto)
                 .toList();
     }
 
@@ -106,11 +117,11 @@ public class DeviceServiceImpl implements DeviceService {
      * {@inheritDoc}
      */
     @Override
-    public DeviceDTO updateDevice(final String deviceId, final DeviceDetailsRequest request) throws EntityNotFoundException, DuplicateDataException {
+    public DeviceDTO updateDevice(final String deviceId, final DeviceData request) throws EntityNotFoundException, DuplicateDataException {
         final Device oldDevice =
                 deviceRepository.findById(UUID.fromString(deviceId))
                         .orElseThrow(() -> new EntityNotFoundException(NOT_EXISTENT_DEVICE_ERR_MSG));
-        Device newDevice = deviceMapper.mapRequestToEntity(request);
+        Device newDevice = deviceMapper.mapToEntity(request);
 
         if (!newDevice.getAddress().equals(oldDevice.getAddress()) &&
                 !deviceRepository.findByAccountAndAddress(oldDevice.getAccount(), newDevice.getAddress()).isEmpty()) {
@@ -121,6 +132,6 @@ public class DeviceServiceImpl implements DeviceService {
         final Device savedDevice = deviceRepository.save(newDevice);
         log.debug("Device with id {} was successfully updated!", deviceId);
 
-        return deviceMapper.mapEntityToDto(savedDevice);
+        return deviceMapper.mapToDto(savedDevice);
     }
 }

@@ -2,6 +2,7 @@ package lab.ds2022_assignment_1.controllers.handlers;
 
 import lab.ds2022_assignment_1.model.exceptions.DuplicateDataException;
 import lab.ds2022_assignment_1.model.exceptions.EntityNotFoundException;
+import lab.ds2022_assignment_1.model.exceptions.InvalidAccessException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -79,8 +80,20 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
                 e,
                 e.getMessage(),
                 new HttpHeaders(),
+                HttpStatus.NOT_FOUND,
+                request
+        );
+    }
+
+    @ExceptionHandler(value = {InvalidAccessException.class})
+    public ResponseEntity<Object> handleInvalidAccessException(InvalidAccessException e, WebRequest request) {
+        return handleExceptionInternal(
+                e,
+                e.getMessage(),
+                new HttpHeaders(),
                 HttpStatus.FORBIDDEN,
                 request
         );
     }
+
 }

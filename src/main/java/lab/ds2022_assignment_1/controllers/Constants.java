@@ -17,11 +17,12 @@ public class Constants {
     public static final String DEVICES_PATH = API + DEVICES_BASE_PATH;
     public static final String DEVICE_ID = "id";
     public static final String DEVICE_ID_PATH = DEVICES_PATH + "/{" + DEVICE_ID + "}";
-    public static final String LINK_DEVICE_PATH = ACCOUNT_ID_PATH + "/link_device";
+    public static final String LINK_DEVICE_PATH = API + "/link_device";
 
     public static final String CLIENT = "/client";
     public static final String CLIENT_ACCOUNT_PATH = CLIENT + "/account";
     public static final String CLIENT_DEVICES_PATH = CLIENT + "/devices";
+    public static final String CLIENT_DEVICE_ID_PATH = CLIENT_DEVICES_PATH + "/{" + DEVICE_ID + "}";
     public static final String ENERGY_CONSUMPTION_PATH = CLIENT + "/energy_consumption";
     public static final String DEVICE_ENERGY_CONSUMPTION_PATH = ENERGY_CONSUMPTION_PATH + "/{" + DEVICE_ID + "}";
 }

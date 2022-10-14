@@ -1,10 +1,11 @@
 package lab.ds2022_assignment_1.services.api;
 
-import lab.ds2022_assignment_1.controllers.handlers.requests.DeviceDetailsRequest;
+import lab.ds2022_assignment_1.controllers.handlers.requests.DeviceData;
 import lab.ds2022_assignment_1.controllers.handlers.requests.LinkDeviceRequest;
 import lab.ds2022_assignment_1.dtos.DeviceDTO;
 import lab.ds2022_assignment_1.model.exceptions.DuplicateDataException;
 import lab.ds2022_assignment_1.model.exceptions.EntityNotFoundException;
+import lab.ds2022_assignment_1.model.exceptions.InvalidAccessException;
 
 import java.util.List;
 
@@ -13,28 +14,38 @@ public interface DeviceService {
     /**
      * Create a device and link it to a user account.
      *
-     * @param request the {@link DeviceDetailsRequest}
+     * @param request the {@link DeviceData}
      * @return the device that was added
      */
-    DeviceDTO addDevice(final DeviceDetailsRequest request);
+    DeviceDTO addDevice(final DeviceData request);
 
     /**
      * Create a user-device mapping.
      *
-     * @param accountId the account id of the owner of the device
-     * @param request   {@link LinkDeviceRequest}
+     * @param request {@link LinkDeviceRequest} which contains both the accountId and the associated device id
      * @throws EntityNotFoundException if no user account or no device exists with the given id
      */
-    void linkDeviceToUser(final String accountId, final LinkDeviceRequest request) throws EntityNotFoundException, DuplicateDataException;
+    void linkDeviceToUser(final LinkDeviceRequest request) throws EntityNotFoundException, DuplicateDataException;
 
     /**
      * Find a device by its unique id.
      *
-     * @param id the device id
+     * @param deviceId the device deviceId
      * @return {@link DeviceDTO}
      * @throws EntityNotFoundException if no device can be found by the given id
      */
-    DeviceDTO findDeviceById(final String id) throws EntityNotFoundException;
+    DeviceDTO findDeviceById(final String deviceId) throws EntityNotFoundException;
+
+    /**
+     * Find a device by its unique id.
+     *
+     * @param deviceId  the device deviceId
+     * @param accountId the deviceId of the user account
+     * @return {@link DeviceDTO}
+     * @throws EntityNotFoundException if no device can be found by the given id
+     * @throws InvalidAccessException  if the device belongs to a different user
+     */
+    DeviceDTO findDeviceByIdAndAccountId(final String deviceId, final String accountId) throws EntityNotFoundException, InvalidAccessException;
 
     /**
      * Find a list of devices belonging to the given user.
@@ -60,5 +71,5 @@ public interface DeviceService {
      * @throws EntityNotFoundException if no device exists with the given id
      * @throws DuplicateDataException  if the user already has a device registered with the same address
      */
-    DeviceDTO updateDevice(final String deviceId, final DeviceDetailsRequest request) throws EntityNotFoundException, DuplicateDataException;
+    DeviceDTO updateDevice(final String deviceId, final DeviceData request) throws EntityNotFoundException, DuplicateDataException;
 }

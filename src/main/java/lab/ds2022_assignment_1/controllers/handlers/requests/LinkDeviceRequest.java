@@ -8,4 +8,6 @@ import javax.validation.constraints.NotBlank;
 public class LinkDeviceRequest {
     @NotBlank
     private String deviceId;
+    @NotBlank
+    private String accountId;
 }

@@ -1,6 +1,6 @@
 package lab.ds2022_assignment_1.services.impl;
 
-import lab.ds2022_assignment_1.controllers.handlers.requests.AccountDetailsRequest;
+import lab.ds2022_assignment_1.controllers.handlers.requests.AccountData;
 import lab.ds2022_assignment_1.model.entities.Account;
 import lab.ds2022_assignment_1.model.entities.UserRole;
 import lab.ds2022_assignment_1.model.exceptions.DuplicateDataException;
@@ -37,7 +37,7 @@ class AccountServiceImplTest {
     @Mock
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private Account account;
-    private AccountDetailsRequest request;
+    private AccountData accountData;
 
     @BeforeEach
     void setUp() {
@@ -49,11 +49,11 @@ class AccountServiceImplTest {
                 .role(UserRole.ADMIN)
                 .build();
 
-        request = new AccountDetailsRequest();
-        request.setName(NAME_1);
-        request.setUsername(USERNAME_1);
-        request.setPassword(PASSWORD_1);
-        request.setRole(UserRole.CLIENT.name());
+        accountData = new AccountData();
+        accountData.setName(NAME_1);
+        accountData.setUsername(USERNAME_1);
+        accountData.setPassword(PASSWORD_1);
+        accountData.setRole(UserRole.CLIENT.name());
     }
 
     @Test
@@ -61,12 +61,12 @@ class AccountServiceImplTest {
         Mockito.when(repository.save(any(Account.class)))
                 .thenReturn(account);
 
-        Assertions.assertDoesNotThrow(() -> service.createAccount(request));
+        Assertions.assertDoesNotThrow(() -> service.createAccount(accountData));
         verify(repository).save(any(Account.class));
 
         Mockito.when(repository.findByUsername(USERNAME_1))
                 .thenReturn(Optional.ofNullable(account));
-        Assertions.assertThrows(DuplicateDataException.class, () -> service.createAccount(request));
+        Assertions.assertThrows(DuplicateDataException.class, () -> service.createAccount(accountData));
     }
 
     @Test
@@ -106,20 +106,20 @@ class AccountServiceImplTest {
 
     @Test
     void updateAccount() {
-        Assertions.assertThrows(EntityNotFoundException.class, () -> service.updateAccount(ID_1, request));
+        Assertions.assertThrows(EntityNotFoundException.class, () -> service.updateAccount(ID_1, accountData));
 
         Mockito.when(repository.findById(UUID.fromString(ID_1)))
                 .thenReturn(Optional.ofNullable(account));
         Mockito.when(repository.save(any(Account.class)))
                 .thenReturn(account);
 
-        Assertions.assertDoesNotThrow(() -> service.updateAccount(ID_1, request));
+        Assertions.assertDoesNotThrow(() -> service.updateAccount(ID_1, accountData));
         verify(repository).save(any(Account.class));
 
         Mockito.when(repository.findByUsername(USERNAME_2))
                 .thenReturn(Optional.ofNullable(account));
-        request.setUsername(USERNAME_2);
+        accountData.setUsername(USERNAME_2);
 
-        Assertions.assertThrows(DuplicateDataException.class, () -> service.updateAccount(ID_1, request));
+        Assertions.assertThrows(DuplicateDataException.class, () -> service.updateAccount(ID_1, accountData));
     }
 }

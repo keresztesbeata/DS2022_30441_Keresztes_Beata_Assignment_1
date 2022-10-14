@@ -1,22 +1,22 @@
 package lab.ds2022_assignment_1.dtos.mappers;
 
-import lab.ds2022_assignment_1.controllers.handlers.requests.EnergyConsumptionDetailsRequest;
+import lab.ds2022_assignment_1.controllers.handlers.requests.EnergyConsumptionData;
 import lab.ds2022_assignment_1.dtos.EnergyConsumptionDTO;
 import lab.ds2022_assignment_1.model.entities.EnergyConsumption;
 
-public class EnergyConsumptionMapper {
-    public EnergyConsumption mapRequestToEntity(EnergyConsumptionDetailsRequest request) {
+public class EnergyConsumptionMapper implements Mapper<EnergyConsumption, EnergyConsumptionData, EnergyConsumptionDTO> {
+    public EnergyConsumption mapToEntity(EnergyConsumptionData data) {
         return EnergyConsumption.builder()
-                .energy(request.getEnergy())
-                .timestamp(request.getTimestamp())
+                .energy(data.getEnergy())
+                .timestamp(data.getTimestamp())
                 .build();
     }
 
-    public EnergyConsumptionDTO mapEntityToDto(EnergyConsumption energyConsumption) {
+    public EnergyConsumptionDTO mapToDto(EnergyConsumption entity) {
         return EnergyConsumptionDTO.builder()
-                .deviceId(energyConsumption.getDevice().getId().toString())
-                .timestamp(energyConsumption.getTimestamp())
-                .energy(energyConsumption.getEnergy())
+                .deviceId(entity.getDevice().getId().toString())
+                .timestamp(entity.getTimestamp())
+                .energy(entity.getEnergy())
                 .build();
     }
 }

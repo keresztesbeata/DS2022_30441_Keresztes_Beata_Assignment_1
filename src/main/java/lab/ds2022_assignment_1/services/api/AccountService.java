@@ -1,6 +1,6 @@
 package lab.ds2022_assignment_1.services.api;
 
-import lab.ds2022_assignment_1.controllers.handlers.requests.AccountDetailsRequest;
+import lab.ds2022_assignment_1.controllers.handlers.requests.AccountData;
 import lab.ds2022_assignment_1.dtos.AccountDTO;
 import lab.ds2022_assignment_1.model.exceptions.DuplicateDataException;
 import lab.ds2022_assignment_1.model.exceptions.EntityNotFoundException;
@@ -10,11 +10,11 @@ public interface AccountService {
     /**
      * Create a new account.
      *
-     * @param request a {@link AccountDetailsRequest}
+     * @param request a {@link AccountData}
      * @return a {@link AccountDTO}
      * @throws DuplicateDataException if the username is already taken
      */
-    AccountDTO createAccount(final AccountDetailsRequest request) throws DuplicateDataException;
+    AccountDTO createAccount(final AccountData request) throws DuplicateDataException;
 
     /**
      * Find account by unique username.
@@ -46,12 +46,12 @@ public interface AccountService {
      * Update the details of the account.
      *
      * @param id      the id of the account
-     * @param request an {@link AccountDetailsRequest}
+     * @param request an {@link AccountData}
      * @return an {@link AccountDTO}
      * @throws DuplicateDataException  if the username is already taken
      * @throws EntityNotFoundException if no account was found with the given
      */
-    AccountDTO updateAccount(final String id, final AccountDetailsRequest request) throws DuplicateDataException, EntityNotFoundException;
+    AccountDTO updateAccount(final String id, final AccountData request) throws DuplicateDataException, EntityNotFoundException;
 
     /**
      * Get the account of the currently logged-in user.

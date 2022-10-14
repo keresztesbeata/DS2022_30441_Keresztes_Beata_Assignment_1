@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
@@ -39,16 +41,8 @@ public class Device {
     @Column(name = "max_hourly_energy_consumption", columnDefinition = "float default 0", precision = 8, scale = 2)
     private float maxEnergyConsumption;
 
-    @OneToMany(mappedBy = "device", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "device_id")
+    @OneToMany(mappedBy = "device", fetch = FetchType.LAZY,  cascade = CascadeType.REMOVE)
     private Set<EnergyConsumption> energyConsumptions = new HashSet<>();
-
-//    public void calculateMaxEnergyConsumption() {
-//        maxEnergyConsumption = energyConsumptions.stream()
-//                .map(EnergyConsumption::getEnergy)
-//                .max(Float::compareTo)
-//                .orElse(0f);
-//    }
 
     public void addEnergyConsumption(EnergyConsumption energyConsumption) {
         energyConsumptions.add(energyConsumption);

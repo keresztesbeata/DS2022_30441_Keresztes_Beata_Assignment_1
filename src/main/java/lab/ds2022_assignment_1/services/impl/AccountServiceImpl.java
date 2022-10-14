@@ -1,7 +1,7 @@
 package lab.ds2022_assignment_1.services.impl;
 
 import lab.ds2022_assignment_1.config.UserDetailsImpl;
-import lab.ds2022_assignment_1.controllers.handlers.requests.AccountDetailsRequest;
+import lab.ds2022_assignment_1.controllers.handlers.requests.AccountData;
 import lab.ds2022_assignment_1.dtos.AccountDTO;
 import lab.ds2022_assignment_1.dtos.mappers.AccountMapper;
 import lab.ds2022_assignment_1.model.entities.Account;
@@ -33,8 +33,8 @@ public class AccountServiceImpl implements AccountService {
      * {@inheritDoc}
      */
     @Override
-    public AccountDTO createAccount(final AccountDetailsRequest request) throws DuplicateDataException {
-        Account account = mapper.mapRequestToEntity(request);
+    public AccountDTO createAccount(final AccountData request) throws DuplicateDataException {
+        Account account = mapper.mapToEntity(request);
         if (repository.findByUsername(account.getUsername()).isPresent()) {
             throw new DuplicateDataException(String.format(DUPLICATE_USERNAME_ERR_MSG, account.getUsername()));
         }
@@ -43,7 +43,7 @@ public class AccountServiceImpl implements AccountService {
         final Account savedAccount = repository.save(account);
         log.debug("Account with id {} for user with username {} was created successfully!", account.getId(), account.getUsername());
 
-        return mapper.mapEntityToDto(savedAccount);
+        return mapper.mapToDto(savedAccount);
     }
 
     /**
@@ -52,7 +52,7 @@ public class AccountServiceImpl implements AccountService {
      */
     @Override
     public AccountDTO findAccountByUsername(final String username) throws EntityNotFoundException {
-        return mapper.mapEntityToDto(
+        return mapper.mapToDto(
                 repository.findByUsername(username)
                         .orElseThrow(() -> new EntityNotFoundException(NOT_EXISTENT_ACCOUNT_ERR_MSG))
         );
@@ -63,7 +63,7 @@ public class AccountServiceImpl implements AccountService {
      */
     @Override
     public AccountDTO findAccountById(final String id) throws EntityNotFoundException {
-        return mapper.mapEntityToDto(
+        return mapper.mapToDto(
                 repository.findById(UUID.fromString(id))
                         .orElseThrow(() -> new EntityNotFoundException(NOT_EXISTENT_ACCOUNT_ERR_MSG))
         );
@@ -85,8 +85,8 @@ public class AccountServiceImpl implements AccountService {
      * {@inheritDoc}
      */
     @Override
-    public AccountDTO updateAccount(final String id, final AccountDetailsRequest request) throws DuplicateDataException, EntityNotFoundException {
-        Account newAccount = mapper.mapRequestToEntity(request);
+    public AccountDTO updateAccount(final String id, final AccountData request) throws DuplicateDataException, EntityNotFoundException {
+        Account newAccount = mapper.mapToEntity(request);
         final Account oldAccount = repository.findById(UUID.fromString(id))
                 .orElseThrow(() -> new EntityNotFoundException(NOT_EXISTENT_ACCOUNT_ERR_MSG));
         newAccount.setId(oldAccount.getId());
@@ -101,7 +101,7 @@ public class AccountServiceImpl implements AccountService {
         final Account savedAccount = repository.save(newAccount);
         log.info("Account with id {} was successfully updated!", id);
 
-        return mapper.mapEntityToDto(savedAccount);
+        return mapper.mapToDto(savedAccount);
     }
 
     /**
@@ -111,7 +111,7 @@ public class AccountServiceImpl implements AccountService {
     public AccountDTO getCurrentUserAccount() throws EntityNotFoundException {
         final Object currentUserAccount = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (currentUserAccount instanceof UserDetailsImpl) {
-            return mapper.mapEntityToDto(((UserDetailsImpl) currentUserAccount).getAccount());
+            return mapper.mapToDto(((UserDetailsImpl) currentUserAccount).getAccount());
         } else {
             throw new EntityNotFoundException(NO_LOGGED_IN_USER_ERROR_MESSAGE);
         }

@@ -1,12 +1,17 @@
 package lab.ds2022_assignment_1.controllers.handlers.requests;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Data
-public class EnergyConsumptionDetailsRequest {
+public class EnergyConsumptionData {
+    @NotBlank
     private String deviceId;
     private float energy;
+    @NotNull
     private LocalDateTime timestamp;
 }

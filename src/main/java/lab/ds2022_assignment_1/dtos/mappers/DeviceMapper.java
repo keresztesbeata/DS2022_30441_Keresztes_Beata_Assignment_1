@@ -1,22 +1,22 @@
 package lab.ds2022_assignment_1.dtos.mappers;
 
-import lab.ds2022_assignment_1.controllers.handlers.requests.DeviceDetailsRequest;
+import lab.ds2022_assignment_1.controllers.handlers.requests.DeviceData;
 import lab.ds2022_assignment_1.dtos.DeviceDTO;
 import lab.ds2022_assignment_1.model.entities.Device;
 
-public class DeviceMapper {
-    public Device mapRequestToEntity(DeviceDetailsRequest request) {
+public class DeviceMapper implements Mapper<Device, DeviceData, DeviceDTO> {
+    public Device mapToEntity(DeviceData data) {
         return Device.builder()
-                .address(request.getAddress())
-                .description(request.getDescription())
+                .address(data.getAddress())
+                .description(data.getDescription())
                 .build();
     }
 
-    public DeviceDTO mapEntityToDto(Device device) {
+    public DeviceDTO mapToDto(Device entity) {
         return DeviceDTO.builder()
-                .id(device.getId().toString())
-                .address(device.getAddress())
-                .description(device.getDescription())
+                .id(entity.getId().toString())
+                .address(entity.getAddress())
+                .description(entity.getDescription())
                 .build();
     }
 }

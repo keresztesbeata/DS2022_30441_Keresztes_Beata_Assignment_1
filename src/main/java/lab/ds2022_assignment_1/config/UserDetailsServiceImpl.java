@@ -13,24 +13,23 @@ import java.util.UUID;
 
 @Component
 public class UserDetailsServiceImpl implements UserDetailsService {
-    private static final String USERNAME_NOT_FOUND_ERROR_MESSAGE = "Username is not found!";
-    private static final String ID_NOT_FOUND_ERROR_MESSAGE = "Id is not found!";
+    private static final String USERNAME_NOT_FOUND_ERR_MSG = "Username is not found!";
+    private static final String ID_NOT_FOUND_ERR_MSG = "Id is not found!";
 
     @Autowired
-    AccountRepository accountRepository;
+    private AccountRepository accountRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Account account = accountRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException(USERNAME_NOT_FOUND_ERROR_MESSAGE));
+        final Account account = accountRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(USERNAME_NOT_FOUND_ERR_MSG));
         return new UserDetailsImpl(account);
     }
 
-    // This method is used by JWTAuthenticationFilter
     @Transactional
     public UserDetails loadUserById(UUID id) {
-        Account account = accountRepository.findById(id).orElseThrow(
-                () -> new UsernameNotFoundException(ID_NOT_FOUND_ERROR_MESSAGE));
+        final Account account = accountRepository.findById(id)
+                .orElseThrow(() -> new UsernameNotFoundException(ID_NOT_FOUND_ERR_MSG));
         return new UserDetailsImpl(account);
     }
 }
