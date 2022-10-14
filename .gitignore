@@ -36,3 +36,28 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# dependencies
+frontend/node_modules
+frontend/.idea
+
+# testing
+frontend/coverage
+
+# production
+frontend/build
+
+frontend/public
+frontend/README.md
+frontend/.gitignore
+
+# misc
+frontend/.DS_Store
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
