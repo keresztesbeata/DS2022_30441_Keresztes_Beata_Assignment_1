@@ -3,6 +3,7 @@ package lab.ds2022_assignment_1.controllers;
 import lab.ds2022_assignment_1.config.JwtTokenProvider;
 import lab.ds2022_assignment_1.controllers.handlers.requests.AccountData;
 import lab.ds2022_assignment_1.controllers.handlers.requests.AuthenticationRequest;
+import lab.ds2022_assignment_1.controllers.handlers.requests.ValidUUID;
 import lab.ds2022_assignment_1.dtos.AccountDTO;
 import lab.ds2022_assignment_1.model.exceptions.DuplicateDataException;
 import lab.ds2022_assignment_1.model.exceptions.EntityNotFoundException;
@@ -14,15 +15,18 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 
 import static lab.ds2022_assignment_1.controllers.Constants.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
+@Validated
 public class AccountRestController {
 
     @Autowired
@@ -33,7 +37,7 @@ public class AccountRestController {
     private AccountService service;
 
     @PostMapping(LOGIN_PATH)
-    public ResponseEntity<JwtAuthenticationResponse> authenticateUser(@RequestBody AuthenticationRequest request) throws AuthenticationException {
+    public ResponseEntity<JwtAuthenticationResponse> authenticateUser(@RequestBody @Valid AuthenticationRequest request) throws AuthenticationException {
         final Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getUsername(),
@@ -47,7 +51,7 @@ public class AccountRestController {
     }
 
     @PostMapping(value = REGISTER_PATH, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<AccountDTO> registerUser(@RequestBody AccountData data) throws DuplicateDataException {
+    public ResponseEntity<AccountDTO> registerUser(@RequestBody @Valid AccountData data) throws DuplicateDataException {
         return ok(service.createAccount(data));
     }
 
@@ -57,28 +61,28 @@ public class AccountRestController {
     }
 
     @PostMapping(value = ACCOUNTS_PATH, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<AccountDTO> createAccount(@Valid @RequestBody AccountData data) throws DuplicateDataException {
+    public ResponseEntity<AccountDTO> createAccount(@RequestBody @Valid AccountData data) throws DuplicateDataException {
         return ok(service.createAccount(data));
     }
 
     @PutMapping(value = ACCOUNT_ID_PATH, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<AccountDTO> updateAccount(@PathVariable(ACCOUNT_ID) String id,
-                                                    @Valid @RequestBody AccountData data) throws DuplicateDataException, EntityNotFoundException {
+    public ResponseEntity<AccountDTO> updateAccount(@PathVariable(ACCOUNT_ID) @ValidUUID String id,
+                                                    @RequestBody @Valid AccountData data) throws DuplicateDataException, EntityNotFoundException {
         return ok(service.updateAccount(id, data));
     }
 
     @GetMapping(ACCOUNT_ID_PATH)
-    public ResponseEntity<AccountDTO> getAccountById(@PathVariable(ACCOUNT_ID) String id) throws EntityNotFoundException {
+    public ResponseEntity<AccountDTO> getAccountById(@PathVariable(ACCOUNT_ID) @ValidUUID String id) throws EntityNotFoundException {
         return ok(service.findAccountById(id));
     }
 
     @GetMapping(ACCOUNTS_PATH)
-    public ResponseEntity<AccountDTO> getAccountByUsername(@RequestParam String username) throws EntityNotFoundException {
+    public ResponseEntity<AccountDTO> getAccountByUsername(@RequestParam @NotBlank String username) throws EntityNotFoundException {
         return ok(service.findAccountByUsername(username));
     }
 
     @DeleteMapping(ACCOUNT_ID_PATH)
-    public ResponseEntity deleteAccount(@PathVariable(ACCOUNT_ID) String id) throws EntityNotFoundException {
+    public ResponseEntity deleteAccount(@PathVariable(ACCOUNT_ID) @ValidUUID String id) throws EntityNotFoundException {
         service.deleteAccount(id);
         return ResponseEntity.ok().build();
     }
