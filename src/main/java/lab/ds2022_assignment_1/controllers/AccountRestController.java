@@ -9,6 +9,7 @@ import lab.ds2022_assignment_1.model.exceptions.DuplicateDataException;
 import lab.ds2022_assignment_1.model.exceptions.EntityNotFoundException;
 import lab.ds2022_assignment_1.services.api.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -62,7 +63,7 @@ public class AccountRestController {
 
     @PostMapping(value = ACCOUNTS_PATH, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<AccountDTO> createAccount(@RequestBody @Valid AccountData data) throws DuplicateDataException {
-        return ok(service.createAccount(data));
+        return new ResponseEntity<>(service.createAccount(data), HttpStatus.CREATED);
     }
 
     @PutMapping(value = ACCOUNT_ID_PATH, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)

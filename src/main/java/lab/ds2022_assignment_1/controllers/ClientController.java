@@ -12,6 +12,7 @@ import lab.ds2022_assignment_1.services.api.DeviceService;
 import lab.ds2022_assignment_1.services.api.EnergyConsumptionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -69,6 +70,6 @@ public class ClientController {
 
     @PostMapping(value = ENERGY_CONSUMPTION_PATH, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<EnergyConsumptionDTO> registerEnergyConsumption(@RequestBody @Valid EnergyConsumptionData data) throws EntityNotFoundException {
-        return ResponseEntity.ok(energyConsumptionService.registerEnergyConsumption(data));
+        return new ResponseEntity<>(energyConsumptionService.registerEnergyConsumption(data), HttpStatus.CREATED);
     }
 }
