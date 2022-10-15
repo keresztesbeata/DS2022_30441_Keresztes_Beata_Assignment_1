@@ -1,7 +1,7 @@
 import axios from "axios";
 import {redirect, SERVER_BASE_URL} from "../common/Utils";
 import React from "react";
-import ErrorPage from "../common/ErrorPage";
+import {ErrorPage} from "../common/ErrorPage";
 
 const HOME_PAGE = "/";
 const LOGIN_PAGE = "/login";
@@ -18,7 +18,6 @@ export const ADMIN_ROLE = "ADMIN";
 
 /**
  * Verify if the user is logged in.
- * @param authority
  * @returns {boolean}
  */
 export function isLoggedIn() {
@@ -89,7 +88,7 @@ export function Logout() {
                 'Authorization': 'Bearer ' + localStorage.getItem(TOKEN)
             }
         })
-            .then((response) => {
+            .then(() => {
                 localStorage.removeItem(TOKEN);
                 localStorage.removeItem(AUTHORITIES);
                 redirect(LOGIN_PAGE);
@@ -105,8 +104,17 @@ export function Logout() {
  * @returns {JSX.Element}
  * @constructor
  */
-export function ProtectedComponent(component, authority) {
-    return (isAuthorized(authority) ? // if authorized return the component
-        <component/> : // if not authorized return an error page
-        <ErrorPage errorMessage={"Unauthorized access!"}/>)
+export function ProtectedComponent({component, authority}) {
+    return !isLoggedIn() ?
+        // redirect to the login page if the user is not logged in
+        <ErrorPage message={"Unauthorized access! You cannot view this page, because you are not logged in!"}/>
+        :
+        (isAuthorized(authority) ?
+                // if authorized return the component
+                component
+                : // if not authorized return an error page
+                <ErrorPage
+                    message={"Unauthorized access! You cannot view this page, because you do not have sufficient" +
+                        " access rights."}/>
+        )
 }

@@ -72,7 +72,6 @@ export class RegisterPage extends Component {
                     <form onSubmit={this.handleSubmit} className="card-body">
                         <h3 className="card-title">Register</h3>
                         {this.state.notification.show ? <Notification notification={this.state.notification}/> : <div/>}
-                        <></>
                         <FormGroup className="mb-3" controlId="1">
                             <FormLabel>Name</FormLabel>
                             <FormControl type="text" placeholder="Enter name" name="name" required

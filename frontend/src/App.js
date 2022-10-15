@@ -15,8 +15,8 @@ export default function App() {
             <BrowserRouter>
                 <Routes>
                     <Route path="/" element={<HomePage/>}/>
-                    <Route path="/admin" element={<ProtectedComponent component={AdminHomePage} authority={ADMIN_ROLE}/>}/>
-                    <Route path="/client" element={<ProtectedComponent component={ClientHomePage} authority={CLIENT_ROLE}/>}/>
+                    <Route path="/admin" element={<ProtectedComponent component={<AdminHomePage/>} authority={ADMIN_ROLE} />}/>
+                    <Route path="/client" element={<ProtectedComponent component={<ClientHomePage/>} authority={CLIENT_ROLE}/>}/>
                     <Route path="/login" element={isLoggedIn() ? <HomePage/> : <LoginPage/>}/>
                     <Route path="/register" element={<RegisterPage/>}/>
                 </Routes>

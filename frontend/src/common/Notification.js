@@ -28,11 +28,14 @@ export class Notification extends Component {
     render() {
         return (
             <Alert dismissible={true} onClose={this.hide} className={this.state.type} show={this.state.show}>
-                <p><strong>{this.state.message}</strong></p>
+                    <p className="alert-heading">{this.state.message}</p>
+                <hr/>
+                <>
                 {
                     this.state.fields.map((e) =>
                         <p>{e.field} - {e.message}</p>)
                 }
+                </>
             </Alert>
         );
     }
