@@ -7,6 +7,7 @@ import lab.ds2022_assignment_1.dtos.DeviceDTO;
 import lab.ds2022_assignment_1.dtos.EnergyConsumptionDTO;
 import lab.ds2022_assignment_1.model.exceptions.EntityNotFoundException;
 import lab.ds2022_assignment_1.model.exceptions.InvalidAccessException;
+import lab.ds2022_assignment_1.model.exceptions.NoLoggedInUserException;
 import lab.ds2022_assignment_1.services.api.AccountService;
 import lab.ds2022_assignment_1.services.api.DeviceService;
 import lab.ds2022_assignment_1.services.api.EnergyConsumptionService;
@@ -35,26 +36,26 @@ public class ClientController {
     private EnergyConsumptionService energyConsumptionService;
 
     @GetMapping(CLIENT_ACCOUNT_PATH)
-    public ResponseEntity<AccountDTO> getClientAccount() throws EntityNotFoundException {
+    public ResponseEntity<AccountDTO> getClientAccount() throws NoLoggedInUserException {
         return ResponseEntity.ok(accountService.getCurrentUserAccount());
     }
 
     @GetMapping(CLIENT_DEVICES_PATH)
-    public ResponseEntity<List<DeviceDTO>> getClientDevices() throws EntityNotFoundException {
+    public ResponseEntity<List<DeviceDTO>> getClientDevices() throws EntityNotFoundException, NoLoggedInUserException {
         final AccountDTO accountDTO = accountService.getCurrentUserAccount();
 
         return ResponseEntity.ok(deviceService.findDevicesByAccountId(accountDTO.getId()));
     }
 
     @GetMapping(CLIENT_DEVICE_ID_PATH)
-    public ResponseEntity<DeviceDTO> getClientDeviceById(@PathVariable(DEVICE_ID) @ValidUUID String deviceId) throws EntityNotFoundException, InvalidAccessException {
+    public ResponseEntity<DeviceDTO> getClientDeviceById(@PathVariable(DEVICE_ID) @ValidUUID String deviceId) throws InvalidAccessException, NoLoggedInUserException, EntityNotFoundException {
         final AccountDTO accountDTO = accountService.getCurrentUserAccount();
 
         return ResponseEntity.ok(deviceService.findDeviceByIdAndAccountId(deviceId, accountDTO.getId()));
     }
 
     @GetMapping(ENERGY_CONSUMPTION_PATH)
-    public ResponseEntity<List<EnergyConsumptionDTO>> getClientEnergyConsumption(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") @Valid LocalDate date) throws EntityNotFoundException {
+    public ResponseEntity<List<EnergyConsumptionDTO>> getClientEnergyConsumption(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") @Valid LocalDate date) throws EntityNotFoundException, NoLoggedInUserException {
         final AccountDTO accountDTO = accountService.getCurrentUserAccount();
 
         return ResponseEntity.ok(energyConsumptionService.findHourlyEnergyConsumption(accountDTO.getId(), date));
@@ -62,7 +63,7 @@ public class ClientController {
 
     @GetMapping(DEVICE_ENERGY_CONSUMPTION_PATH)
     public ResponseEntity<List<EnergyConsumptionDTO>> getClientDeviceEnergyConsumption(@PathVariable(DEVICE_ID) @ValidUUID String deviceId,
-                                                                                       @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") @Valid LocalDate date) throws EntityNotFoundException, InvalidAccessException {
+                                                                                       @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") @Valid LocalDate date) throws EntityNotFoundException, InvalidAccessException, NoLoggedInUserException {
         final AccountDTO accountDTO = accountService.getCurrentUserAccount();
 
         return ResponseEntity.ok(energyConsumptionService.findHourlyDeviceEnergyConsumption(accountDTO.getId(), deviceId, date));

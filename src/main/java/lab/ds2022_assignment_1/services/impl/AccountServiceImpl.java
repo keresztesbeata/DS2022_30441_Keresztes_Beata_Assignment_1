@@ -7,6 +7,7 @@ import lab.ds2022_assignment_1.dtos.mappers.AccountMapper;
 import lab.ds2022_assignment_1.model.entities.Account;
 import lab.ds2022_assignment_1.model.exceptions.DuplicateDataException;
 import lab.ds2022_assignment_1.model.exceptions.EntityNotFoundException;
+import lab.ds2022_assignment_1.model.exceptions.NoLoggedInUserException;
 import lab.ds2022_assignment_1.repositories.AccountRepository;
 import lab.ds2022_assignment_1.services.api.AccountService;
 import lombok.extern.slf4j.Slf4j;
@@ -108,12 +109,12 @@ public class AccountServiceImpl implements AccountService {
      * {@inheritDoc}
      */
     @Override
-    public AccountDTO getCurrentUserAccount() throws EntityNotFoundException {
+    public AccountDTO getCurrentUserAccount() throws NoLoggedInUserException {
         final Object currentUserAccount = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (currentUserAccount instanceof UserDetailsImpl) {
             return mapper.mapToDto(((UserDetailsImpl) currentUserAccount).getAccount());
         } else {
-            throw new EntityNotFoundException(NO_LOGGED_IN_USER_ERROR_MESSAGE);
+            throw new NoLoggedInUserException(NO_LOGGED_IN_USER_ERROR_MESSAGE);
         }
     }
 }

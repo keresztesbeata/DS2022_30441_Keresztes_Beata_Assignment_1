@@ -1,8 +1,6 @@
 package lab.ds2022_assignment_1.controllers.handlers;
 
-import lab.ds2022_assignment_1.model.exceptions.DuplicateDataException;
-import lab.ds2022_assignment_1.model.exceptions.EntityNotFoundException;
-import lab.ds2022_assignment_1.model.exceptions.InvalidAccessException;
+import lab.ds2022_assignment_1.model.exceptions.*;
 import org.hibernate.validator.internal.engine.path.PathImpl;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -22,8 +20,7 @@ import javax.validation.ConstraintViolationException;
 import java.io.IOException;
 import java.util.Objects;
 
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
+import static org.springframework.http.HttpStatus.*;
 
 @ControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
@@ -86,7 +83,6 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         );
     }
 
-
     @ExceptionHandler(value = {AuthenticationException.class})
     public ResponseEntity<Object> handleAuthenticationException(AuthenticationException e, WebRequest request) {
         return handleExceptionInternal(
@@ -94,6 +90,17 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
                 e.getMessage(),
                 new HttpHeaders(),
                 HttpStatus.UNAUTHORIZED,
+                request
+        );
+    }
+
+    @ExceptionHandler(value = {NoLoggedInUserException.class})
+    public ResponseEntity<Object> handleNoLoggedInUserException(NoLoggedInUserException e, WebRequest request) {
+        return handleExceptionInternal(
+                e,
+                e.getMessage(),
+                new HttpHeaders(),
+                FORBIDDEN,
                 request
         );
     }

@@ -4,6 +4,7 @@ import lab.ds2022_assignment_1.controllers.handlers.requests.AccountData;
 import lab.ds2022_assignment_1.dtos.AccountDTO;
 import lab.ds2022_assignment_1.model.exceptions.DuplicateDataException;
 import lab.ds2022_assignment_1.model.exceptions.EntityNotFoundException;
+import lab.ds2022_assignment_1.model.exceptions.NoLoggedInUserException;
 
 public interface AccountService {
 
@@ -57,7 +58,7 @@ public interface AccountService {
      * Get the account of the currently logged-in user.
      *
      * @return {@link AccountDTO}
-     * @throws EntityNotFoundException if no user is logged in
+     * @throws NoLoggedInUserException if no user was logged in
      */
-    AccountDTO getCurrentUserAccount() throws EntityNotFoundException;
+    AccountDTO getCurrentUserAccount() throws NoLoggedInUserException;
 }

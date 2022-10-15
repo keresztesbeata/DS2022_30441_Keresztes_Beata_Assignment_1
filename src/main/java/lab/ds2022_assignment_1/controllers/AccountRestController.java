@@ -7,6 +7,7 @@ import lab.ds2022_assignment_1.controllers.handlers.requests.ValidUUID;
 import lab.ds2022_assignment_1.dtos.AccountDTO;
 import lab.ds2022_assignment_1.model.exceptions.DuplicateDataException;
 import lab.ds2022_assignment_1.model.exceptions.EntityNotFoundException;
+import lab.ds2022_assignment_1.model.exceptions.NoLoggedInUserException;
 import lab.ds2022_assignment_1.services.api.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,12 +16,14 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import java.util.stream.Collectors;
 
 import static lab.ds2022_assignment_1.controllers.Constants.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -48,7 +51,10 @@ public class AccountRestController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         final String jwt = tokenProvider.generateToken(authentication);
 
-        return ok(new JwtAuthenticationResponse(jwt));
+        return ok(new JwtAuthenticationResponse(jwt,
+                authentication.getAuthorities().stream()
+                        .map(GrantedAuthority::getAuthority)
+                        .collect(Collectors.toList())));
     }
 
     @PostMapping(value = REGISTER_PATH, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
@@ -57,7 +63,7 @@ public class AccountRestController {
     }
 
     @GetMapping(CURRENTLY_LOGGED_IN_USER_PATH)
-    public ResponseEntity<AccountDTO> getLoggedInUser() throws EntityNotFoundException {
+    public ResponseEntity<AccountDTO> getLoggedInUser() throws NoLoggedInUserException {
         return ok(service.getCurrentUserAccount());
     }
 

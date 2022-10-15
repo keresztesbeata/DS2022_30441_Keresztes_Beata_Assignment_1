@@ -1,8 +1,10 @@
 package lab.ds2022_assignment_1.config;
 
+import lab.ds2022_assignment_1.model.entities.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -13,6 +15,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.ForwardLogoutSuccessHandler;
+import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -53,17 +57,19 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 // Set permissions on endpoints
                 .authorizeRequests()
-                .antMatchers(LOGIN_PATH).permitAll()
-                .antMatchers(REGISTER_PATH).permitAll()
-                .antMatchers(API + "/**").hasAuthority("ADMIN")
-                .antMatchers(CLIENT + "/**").hasAuthority("CLIENT")
+                .antMatchers(LOGIN_PATH).anonymous()
+                .antMatchers(REGISTER_PATH).anonymous()
+                .antMatchers(LOGOUT_PATH).authenticated()
+                .antMatchers(API + "/**").hasAuthority(UserRole.ADMIN.name())
+                .antMatchers(CLIENT + "/**").hasAuthority(UserRole.CLIENT.name())
                 .anyRequest().authenticated()
                 .and()
                 .logout()
-                .logoutUrl("/logout")
-                .logoutSuccessUrl("/")
+                .logoutUrl(LOGOUT_PATH)
+                .deleteCookies("JSESSIONID")
+                .clearAuthentication(true)
                 .invalidateHttpSession(true)
-                .deleteCookies("JSESSIONID");
+                .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler(HttpStatus.OK));;
 
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
     }
