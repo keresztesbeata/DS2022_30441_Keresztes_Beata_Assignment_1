@@ -13,7 +13,9 @@ public class Constants {
     public static final String ACCOUNTS_BASE_PATH = "/accounts";
     public static final String ACCOUNTS_PATH = API + ACCOUNTS_BASE_PATH;
     public static final String ACCOUNT_ID = "id";
+    public static final String ACCOUNT_USERNAME = "username";
     public static final String ACCOUNT_ID_PATH = ACCOUNTS_PATH + "/{" + ACCOUNT_ID + "}";
+    public static final String ACCOUNT_USERNAME_PATH = ACCOUNTS_PATH + "/username" + "/{" + ACCOUNT_USERNAME + "}";
     public static final String DEVICES_BASE_PATH = "/devices";
     public static final String DEVICES_PATH = API + DEVICES_BASE_PATH;
     public static final String DEVICE_ID = "id";

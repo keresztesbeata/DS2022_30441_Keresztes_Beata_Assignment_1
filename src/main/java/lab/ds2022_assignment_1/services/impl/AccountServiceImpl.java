@@ -5,6 +5,7 @@ import lab.ds2022_assignment_1.controllers.handlers.requests.AccountData;
 import lab.ds2022_assignment_1.dtos.AccountDTO;
 import lab.ds2022_assignment_1.dtos.mappers.AccountMapper;
 import lab.ds2022_assignment_1.model.entities.Account;
+import lab.ds2022_assignment_1.model.entities.UserRole;
 import lab.ds2022_assignment_1.model.exceptions.DuplicateDataException;
 import lab.ds2022_assignment_1.model.exceptions.EntityNotFoundException;
 import lab.ds2022_assignment_1.model.exceptions.NoLoggedInUserException;
@@ -16,7 +17,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -116,5 +119,16 @@ public class AccountServiceImpl implements AccountService {
         } else {
             throw new NoLoggedInUserException(NO_LOGGED_IN_USER_ERROR_MESSAGE);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<AccountDTO> findAccountsByNameAndRole(final String name, final UserRole role) {
+        return repository.findByNameContainingIgnoreCaseAndRole(name.toLowerCase(), role)
+                .stream()
+                .map(mapper::mapToDto)
+                .collect(Collectors.toList());
     }
 }

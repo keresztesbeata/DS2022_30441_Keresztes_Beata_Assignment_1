@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {Alert} from 'react-bootstrap'
+import {Button, Modal} from 'react-bootstrap'
 
 export const INFO = "alert-info";
 export const SUCCESS = "alert-success";
@@ -27,16 +27,33 @@ export class Notification extends Component {
 
     render() {
         return (
-            <Alert dismissible={true} onClose={this.hide} className={this.state.type} show={this.state.show}>
-                    <p className="alert-heading">{this.state.message}</p>
-                <hr/>
-                <>
+            <Modal show={this.state.show}
+                   onHide={this.hide}
+                   size="lg"
+                   aria-labelledby="contained-modal-title-vcenter"
+                   centered>
+                <Modal.Header closeButton>
+                    <Modal.Title>{this.state.message}</Modal.Title>
+                </Modal.Header>
                 {
-                    this.state.fields.map((e) =>
-                        <p>{e.field} - {e.message}</p>)
+                    (this.state.fields.length > 0) ?
+                        <Modal.Body>
+                            <>
+                                {
+                                    this.state.fields.map((e) =>
+                                        <p>{e.field} - {e.message}</p>)
+                                }
+                            </>
+                        </Modal.Body>
+                        :
+                        <div/>
                 }
-                </>
-            </Alert>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={this.hide}>
+                        Close
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         );
     }
 }

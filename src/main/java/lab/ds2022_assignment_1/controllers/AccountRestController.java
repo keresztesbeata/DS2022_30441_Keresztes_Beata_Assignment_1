@@ -5,6 +5,7 @@ import lab.ds2022_assignment_1.controllers.handlers.requests.AccountData;
 import lab.ds2022_assignment_1.controllers.handlers.requests.AuthenticationRequest;
 import lab.ds2022_assignment_1.controllers.handlers.requests.ValidUUID;
 import lab.ds2022_assignment_1.dtos.AccountDTO;
+import lab.ds2022_assignment_1.model.entities.UserRole;
 import lab.ds2022_assignment_1.model.exceptions.DuplicateDataException;
 import lab.ds2022_assignment_1.model.exceptions.EntityNotFoundException;
 import lab.ds2022_assignment_1.model.exceptions.NoLoggedInUserException;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static lab.ds2022_assignment_1.controllers.Constants.*;
@@ -83,9 +85,14 @@ public class AccountRestController {
         return ok(service.findAccountById(id));
     }
 
-    @GetMapping(ACCOUNTS_PATH)
-    public ResponseEntity<AccountDTO> getAccountByUsername(@RequestParam @NotBlank String username) throws EntityNotFoundException {
+    @GetMapping(ACCOUNT_USERNAME_PATH)
+    public ResponseEntity<AccountDTO> getAccountByUsername(@PathVariable(ACCOUNT_USERNAME) @NotBlank String username) throws EntityNotFoundException {
         return ok(service.findAccountByUsername(username));
+    }
+
+    @GetMapping(ACCOUNTS_PATH)
+    public ResponseEntity<List<AccountDTO>> getClientAccountsByName(@RequestParam String name) {
+        return ok(service.findAccountsByNameAndRole(name, UserRole.CLIENT));
     }
 
     @DeleteMapping(ACCOUNT_ID_PATH)

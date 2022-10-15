@@ -2,9 +2,12 @@ package lab.ds2022_assignment_1.services.api;
 
 import lab.ds2022_assignment_1.controllers.handlers.requests.AccountData;
 import lab.ds2022_assignment_1.dtos.AccountDTO;
+import lab.ds2022_assignment_1.model.entities.UserRole;
 import lab.ds2022_assignment_1.model.exceptions.DuplicateDataException;
 import lab.ds2022_assignment_1.model.exceptions.EntityNotFoundException;
 import lab.ds2022_assignment_1.model.exceptions.NoLoggedInUserException;
+
+import java.util.List;
 
 public interface AccountService {
 
@@ -25,6 +28,14 @@ public interface AccountService {
      * @throws EntityNotFoundException if no account exists with the given username
      */
     AccountDTO findAccountByUsername(final String username) throws EntityNotFoundException;
+
+    /**
+     * Find accounts by a name and a role.
+     *
+     * @param name the name of the users to be searched
+     * @return a list of {@link AccountDTO}
+     */
+    List<AccountDTO> findAccountsByNameAndRole(final String name, final UserRole role);
 
     /**
      * Find account by unique id.

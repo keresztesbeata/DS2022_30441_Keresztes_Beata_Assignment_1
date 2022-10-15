@@ -1,18 +1,27 @@
-import {Notification} from "./Notification";
 import React from "react";
-import {ERROR} from "./Utils";
+import {Modal} from "react-bootstrap";
 
 export function ErrorPage({message, fields}) {
     return (
         <div className="background-container bg-image d-flex justify-content-center align-items-center">
-            <div className="card col-sm-3 border-dark text-left">
-                <Notification notification={{
-                    show: true,
-                    type: ERROR,
-                    message: message,
-                    fields: fields
-                }}/>
-            </div>
+            <Modal.Dialog>
+                <Modal.Header>
+                    <Modal.Title>{message}</Modal.Title>
+                </Modal.Header>
+                {
+                    (fields) ?
+                        <Modal.Body>
+                            <>
+                                {
+                                    fields.map((e) =>
+                                        <p>{e.field} - {e.message}</p>)
+                                }
+                            </>
+                        </Modal.Body>
+                        :
+                        <div/>
+                }
+            </Modal.Dialog>
         </div>
     );
 }
