@@ -1,12 +1,12 @@
 import React, {Component} from 'react'
 import {Button, Modal} from 'react-bootstrap'
 
-export const INFO = "alert-info";
-export const SUCCESS = "alert-success";
-export const WARNING = "alert-warning";
-export const ERROR = "alert-danger";
+export const INFO = {name: "Information!", style: "info-modal"};
+export const SUCCESS = {name: "Success!", style: "success-modal"};
+export const WARNING = {name: "Warning!", style: "warning-modal"};
+export const ERROR = {name: "Error!", style: "error-modal"};
 
-export class Notification extends Component {
+export class ModalNotification extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -32,22 +32,23 @@ export class Notification extends Component {
                    size="lg"
                    aria-labelledby="contained-modal-title-vcenter"
                    centered>
-                <Modal.Header closeButton>
-                    <Modal.Title>{this.state.message}</Modal.Title>
+                <Modal.Header closeButton className={this.state.type.style}>
+                    <Modal.Title>{this.state.type.name}</Modal.Title>
                 </Modal.Header>
-                {
-                    (this.state.fields.length > 0) ?
-                        <Modal.Body>
+                <Modal.Body>
+                    <p><strong>{this.state.message}</strong></p>
+                    {
+                        (this.state.fields.length > 0) ?
                             <>
                                 {
                                     this.state.fields.map((e) =>
                                         <p>{e.field} - {e.message}</p>)
                                 }
                             </>
-                        </Modal.Body>
-                        :
-                        <div/>
-                }
+                            :
+                            <div/>
+                    }
+                </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={this.hide}>
                         Close

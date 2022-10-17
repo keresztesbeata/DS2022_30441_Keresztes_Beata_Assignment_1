@@ -95,20 +95,18 @@
 }
 
 .side-nav {
-    float: left;
-    width: 15%;
-    height: 100vh;
     background-color: #282c34;
     color: white;
+    height: 100vh;
 }
 
 .side-nav a {
     color: white;
+    padding-left: 10%;
 }
 
 .side-nav a:hover {
-    color: white;
-    font-size: 18px;
+    color: #22af9c;
 }
 
 .side-nav a:active {
@@ -118,11 +116,27 @@
 
 .side-nav p {
     font-size: 20px;
+    padding-left: 10%;
     padding-top: 20%;
     padding-bottom: 20%;
 }
 
-.content {
-    flex: 85%;
-    display: table;
+.table-content {
+    margin: 2%;
+}
+
+.error-modal{
+    background-color: #c75c5c;
+}
+
+.success-modal{
+    background-color: #5beec6;
+}
+
+.info-modal{
+    background-color: #5f89e7;
+}
+
+.warning-modal {
+    background-color: #e1a638;
 }

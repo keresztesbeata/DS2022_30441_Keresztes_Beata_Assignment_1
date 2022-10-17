@@ -5,7 +5,6 @@ import lab.ds2022_assignment_1.controllers.handlers.requests.AccountData;
 import lab.ds2022_assignment_1.controllers.handlers.requests.AuthenticationRequest;
 import lab.ds2022_assignment_1.controllers.handlers.requests.ValidUUID;
 import lab.ds2022_assignment_1.dtos.AccountDTO;
-import lab.ds2022_assignment_1.model.entities.UserRole;
 import lab.ds2022_assignment_1.model.exceptions.DuplicateDataException;
 import lab.ds2022_assignment_1.model.exceptions.EntityNotFoundException;
 import lab.ds2022_assignment_1.model.exceptions.NoLoggedInUserException;
@@ -33,6 +32,7 @@ import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
 @Validated
+@CrossOrigin(origins = "http://localhost:4200", allowedHeaders = "Requestor-Type")
 public class AccountRestController {
 
     @Autowired
@@ -76,8 +76,8 @@ public class AccountRestController {
 
     @PutMapping(value = ACCOUNT_ID_PATH, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<AccountDTO> updateAccount(@PathVariable(ACCOUNT_ID) @ValidUUID String id,
-                                                    @RequestBody @Valid AccountData data) throws DuplicateDataException, EntityNotFoundException {
-        return ok(service.updateAccount(id, data));
+                                                    @RequestBody @Valid AccountDTO dto) throws DuplicateDataException, EntityNotFoundException {
+        return ok(service.updateAccount(id, dto));
     }
 
     @GetMapping(ACCOUNT_ID_PATH)
@@ -92,7 +92,7 @@ public class AccountRestController {
 
     @GetMapping(ACCOUNTS_PATH)
     public ResponseEntity<List<AccountDTO>> getClientAccountsByName(@RequestParam String name) {
-        return ok(service.findAccountsByNameAndRole(name, UserRole.CLIENT));
+        return ok(service.findAccountsByName(name));
     }
 
     @DeleteMapping(ACCOUNT_ID_PATH)

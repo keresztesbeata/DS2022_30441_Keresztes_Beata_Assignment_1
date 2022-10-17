@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Link} from 'react-router-dom'
 import {Button, FormControl, FormGroup, FormLabel, FormSelect} from "react-bootstrap";
-import {ERROR, Notification, SUCCESS} from "./Notification";
+import {ERROR, ModalNotification, SUCCESS} from "./ModalNotification";
 import {Register} from "../auth/Authentication";
 
 export class RegisterPage extends Component {
@@ -71,7 +71,7 @@ export class RegisterPage extends Component {
                 <div className="card col-sm-3 border-dark text-left">
                     <form onSubmit={this.handleSubmit} className="card-body">
                         <h3 className="card-title">Register</h3>
-                        {this.state.notification.show ? <Notification notification={this.state.notification}/> : <div/>}
+                        {this.state.notification.show ? <ModalNotification notification={this.state.notification}/> : <div/>}
                         <FormGroup className="mb-3" controlId="1">
                             <FormLabel>Name</FormLabel>
                             <FormControl type="text" placeholder="Enter name" name="name" required

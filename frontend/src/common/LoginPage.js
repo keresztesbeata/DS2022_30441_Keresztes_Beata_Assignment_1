@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Link} from 'react-router-dom'
 import {Button, FormControl, FormGroup, FormLabel} from "react-bootstrap";
-import {ERROR, Notification} from "./Notification";
+import {ERROR, ModalNotification} from "./ModalNotification";
 import {Login} from "../auth/Authentication";
 
 export class LoginPage extends Component {
@@ -61,7 +61,7 @@ export class LoginPage extends Component {
                 <div className="card col-sm-3 border-dark text-left">
                     <form onSubmit={this.handleSubmit} className="card-body">
                         <h3 className="card-title">Log in</h3>
-                        {this.state.notification.show ? <Notification notification={this.state.notification}/> : <div/>}
+                        {this.state.notification.show ? <ModalNotification notification={this.state.notification}/> : <div/>}
                         <FormGroup className="mb-3" controlId="formBasicText">
                             <FormLabel>Username</FormLabel>
                             <FormControl type="text" placeholder="Enter username" name="username" required

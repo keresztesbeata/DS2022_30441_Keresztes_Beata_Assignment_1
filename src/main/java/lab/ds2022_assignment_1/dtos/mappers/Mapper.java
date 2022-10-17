@@ -9,6 +9,7 @@ package lab.ds2022_assignment_1.dtos.mappers;
  */
 public interface Mapper<T, U, R> {
     T mapToEntity(U data);
+    T mapDtoToEntity(R dto);
 
     R mapToDto(T entity);
 }

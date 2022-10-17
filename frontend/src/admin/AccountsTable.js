@@ -1,7 +1,10 @@
 import React, {Component} from 'react';
-import {Button, FormControl, FormGroup, FormLabel, Table} from "react-bootstrap";
-import {GetAccounts} from "./AdminActions";
-import {ERROR, Notification} from "../common/Notification";
+import {BootstrapTable, TableHeaderColumn} from "react-bootstrap-table";
+import {DeleteAccount, GetAccounts, UpdateAccount} from "./AdminActions";
+import {ERROR, SUCCESS} from "../common/ModalNotification";
+import 'react-bootstrap-table/dist/react-bootstrap-table.min.css';
+import {ToastNotification} from "../common/ToastNotification";
+import {InsertAccountModal} from "./InsertAccountModal";
 
 export class AccountsTable extends Component {
     constructor(props) {
@@ -16,38 +19,18 @@ export class AccountsTable extends Component {
                 fields: []
             }
         }
-        this.handleInputChange = this.handleInputChange.bind(this);
-        this.search = this.search.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
-    }
-
-    handleInputChange(event) {
-        event.preventDefault();
-
-        this.setState({
-            ...this.state,
-            [event.target.name]: event.target.value
-        });
-    }
-
-    componentDidMount() {
-        this.search();
-    }
-
-    handleSubmit(event) {
-        event.preventDefault();
-        this.search();
     }
 
     search() {
         GetAccounts(this.state.name)
             .then(accountsData => {
                 this.setState({
-                    account: accountsData,
+                    ...this.state,
+                    accounts: accountsData,
                     notification: {
                         show: false
                     }
-                })
+                });
             })
             .catch(error => {
                 this.setState({
@@ -62,38 +45,146 @@ export class AccountsTable extends Component {
             });
     }
 
-    render() {
-        return (
-            <div className="content">
-                <form onSubmit={this.handleSubmit}>
-                    {this.state.notification.show ? <Notification notification={this.state.notification}/> : <div/>}
-                    <FormGroup className="mb-3" controlId="1">
-                        <FormLabel>Search by name</FormLabel>
-                        <FormControl type="text" placeholder="Name..." name="name"
-                                     onChange={this.handleInputChange}/>
-                    </FormGroup>
-                    <Button variant="primary" type="submit">Search</Button>
-                </form>
-                <Table>
-                    <thead>
-                    <tr>
-                        <th>UUID</th>
-                        <th>Name</th>
-                        <th>Username</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {
-                        this.state.accounts.map(account =>
-                            <tr>
-                                <td>{account.id}</td>
-                                <td>{account.name}</td>
-                                <td>{account.username}</td>
-                            </tr>
-                        )
+    componentDidMount() {
+        this.search();
+    }
+
+    onDelete(key) {
+        DeleteAccount(key)
+            .then(id => {
+                this.setState({
+                    notification: {
+                        show: true,
+                        type: SUCCESS,
+                        message: `Successfully deleted account with id ${id}!`
                     }
-                    </tbody>
-                </Table>
+                })
+            })
+            .catch(error => {
+                this.setState({
+                    ...this.state,
+                    notification: {
+                        show: true,
+                        type: ERROR,
+                        message: error.message,
+                        fields: error.errors
+                    }
+                })
+            });
+    }
+
+    onUpdate(row, cellName, cellValue) {
+        UpdateAccount(row)
+            .then(data => {
+                this.setState(prevState => ({
+                    ...this.state,
+                    accounts: {
+                        ...prevState.accounts.map(el =>
+                            el.id === row.id ? data : el
+                        )
+                    },
+                    notification: {
+                        show: true,
+                        type: SUCCESS,
+                        message: "Successful update!"
+                    }
+                }))
+            })
+            .catch(error => {
+                this.setState({
+                    ...this.state,
+                    notification: {
+                        show: true,
+                        type: ERROR,
+                        message: error.message,
+                        fields: error.errors
+                    }
+                })
+            });
+    }
+
+    onSave(row, cellName, cellValue) {
+        UpdateAccount(row)
+            .then(data => {
+                this.setState(prevState => ({
+                    ...this.state,
+                    accounts: [
+                        data,
+                        ...prevState.accounts
+                    ],
+                    notification: {
+                        show: true,
+                        type: SUCCESS,
+                        message: `Successfully saved account with id ${data.id}!`
+                    }
+                }))
+            })
+            .catch(error => {
+                this.setState({
+                    ...this.state,
+                    notification: {
+                        show: true,
+                        type: ERROR,
+                        message: error.message,
+                        fields: error.errors
+                    }
+                })
+            });
+    }
+
+    confirmDelete(next, dropRowKeys) {
+        const dropRowKeysStr = dropRowKeys.join(',');
+        if (window.confirm(`Are you sure you want to delete account with id ${dropRowKeysStr}?`)) {
+            next();
+        }
+    }
+
+    customRoleField = (column, attr, editorClass, ignoreEditable) => {
+        return (
+            <select className='form-select' {...attr}>
+                <option key="1" value="CLIENT">Client</option>
+                <option key="2" value="ADMIN">Admin</option>
+            </select>
+        );
+    }
+
+    createCustomModal = (onModalClose, onSave, columns, validateState, ignoreEditable) => {
+        const attr = {
+            onModalClose, onSave, columns, validateState, ignoreEditable
+        };
+        return (
+            <InsertAccountModal {...attr} />
+        );
+    }
+
+    render() {
+        const options = {
+            handleConfirmDeleteRow: this.confirmDelete,
+            afterDeleteRow: this.onDelete,
+            afterInsertRow: this.onSave,
+            insertModal: this.createCustomModal
+        };
+        const selectRow = {
+            mode: 'radio',
+            clickToSelect: true
+        };
+        return (
+            <div className="table-content">
+                {this.state.notification.show ? <ToastNotification notification={this.state.notification}/> : <div/>}
+                <BootstrapTable data={this.state.accounts} striped hover responsive
+                                options={options}
+                                search
+                                insertRow
+                                deleteRow
+                                selectRow={selectRow}
+                                cellEdit={{mode: 'click', afterSaveCell: this.onUpdate}}>
+                    <TableHeaderColumn dataField="id" isKey dataAlign="center"
+                                       hiddenOnInsert={true}>UUID</TableHeaderColumn>
+                    <TableHeaderColumn dataField="name" dataAlign="center" dataSort>Name</TableHeaderColumn>
+                    <TableHeaderColumn dataField="username" dataAlign="center" dataSort>Username</TableHeaderColumn>
+                    <TableHeaderColumn dataField="role" editable={false} dataAlign="center"
+                                       customInsertEditor={{getElement: this.customRoleField}}>Role</TableHeaderColumn>
+                </BootstrapTable>
             </div>
         );
     }

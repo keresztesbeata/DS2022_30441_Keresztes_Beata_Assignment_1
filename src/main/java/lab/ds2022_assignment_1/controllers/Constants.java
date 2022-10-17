@@ -21,7 +21,6 @@ public class Constants {
     public static final String DEVICE_ID = "id";
     public static final String DEVICE_ID_PATH = DEVICES_PATH + "/{" + DEVICE_ID + "}";
     public static final String LINK_DEVICE_PATH = API + "/link_device";
-
     public static final String CLIENT = "/client";
     public static final String CLIENT_ACCOUNT_PATH = CLIENT + "/account";
     public static final String CLIENT_DEVICES_PATH = CLIENT + "/devices";

@@ -9,5 +9,6 @@ import lombok.*;
 public class AccountDTO {
     private String id;
     private String name;
+    private String username;
     private String role;
 }

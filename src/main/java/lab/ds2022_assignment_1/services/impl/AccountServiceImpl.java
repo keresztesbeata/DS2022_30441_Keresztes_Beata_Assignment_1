@@ -5,7 +5,6 @@ import lab.ds2022_assignment_1.controllers.handlers.requests.AccountData;
 import lab.ds2022_assignment_1.dtos.AccountDTO;
 import lab.ds2022_assignment_1.dtos.mappers.AccountMapper;
 import lab.ds2022_assignment_1.model.entities.Account;
-import lab.ds2022_assignment_1.model.entities.UserRole;
 import lab.ds2022_assignment_1.model.exceptions.DuplicateDataException;
 import lab.ds2022_assignment_1.model.exceptions.EntityNotFoundException;
 import lab.ds2022_assignment_1.model.exceptions.NoLoggedInUserException;
@@ -89,19 +88,18 @@ public class AccountServiceImpl implements AccountService {
      * {@inheritDoc}
      */
     @Override
-    public AccountDTO updateAccount(final String id, final AccountData request) throws DuplicateDataException, EntityNotFoundException {
-        Account newAccount = mapper.mapToEntity(request);
+    public AccountDTO updateAccount(final String id, final AccountDTO dto) throws DuplicateDataException, EntityNotFoundException {
+        Account newAccount = mapper.mapDtoToEntity(dto);
         final Account oldAccount = repository.findById(UUID.fromString(id))
                 .orElseThrow(() -> new EntityNotFoundException(NOT_EXISTENT_ACCOUNT_ERR_MSG));
         newAccount.setId(oldAccount.getId());
+        newAccount.setPassword(oldAccount.getPassword());
 
         if (!newAccount.getUsername().equals(oldAccount.getUsername()) &&
                 repository.findByUsername(newAccount.getUsername()).isPresent()) {
             throw new DuplicateDataException(String.format(DUPLICATE_USERNAME_ERR_MSG, newAccount.getUsername()));
         }
 
-        final String encodedPassword = passwordEncoder.encode(newAccount.getPassword());
-        newAccount.setPassword(encodedPassword);
         final Account savedAccount = repository.save(newAccount);
         log.info("Account with id {} was successfully updated!", id);
 
@@ -125,8 +123,8 @@ public class AccountServiceImpl implements AccountService {
      * {@inheritDoc}
      */
     @Override
-    public List<AccountDTO> findAccountsByNameAndRole(final String name, final UserRole role) {
-        return repository.findByNameContainingIgnoreCaseAndRole(name.toLowerCase(), role)
+    public List<AccountDTO> findAccountsByName(final String name) {
+        return repository.findByNameContainingIgnoreCase(name.toLowerCase())
                 .stream()
                 .map(mapper::mapToDto)
                 .collect(Collectors.toList());
