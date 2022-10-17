@@ -1,17 +1,20 @@
 import React, {Component} from 'react';
-import {BootstrapTable, TableHeaderColumn} from "react-bootstrap-table";
-import {DeleteAccount, GetAccounts, UpdateAccount} from "./AdminActions";
+import {DeleteAccount, GetAccounts, InsertAccount, UpdateAccount} from "./AdminActions";
 import {ERROR, SUCCESS} from "../common/ModalNotification";
-import 'react-bootstrap-table/dist/react-bootstrap-table.min.css';
 import {ToastNotification} from "../common/ToastNotification";
 import {InsertAccountModal} from "./InsertAccountModal";
+import {Button, Table} from "react-bootstrap";
+import {EditAccountModal} from "./EditAccountModal";
 
 export class AccountsTable extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            accounts: [],
+            data: [],
             name: "",
+            edit: false,
+            insert: false,
+            selected: {},
             notification: {
                 show: false,
                 type: ERROR,
@@ -19,6 +22,15 @@ export class AccountsTable extends Component {
                 fields: []
             }
         }
+        this.search = this.search.bind(this);
+        this.onDelete = this.onDelete.bind(this);
+        this.onEdit = this.onEdit.bind(this);
+        this.onUpdate = this.onUpdate.bind(this);
+        this.onInsert = this.onInsert.bind(this);
+        this.toggleEdit = this.toggleEdit.bind(this);
+        this.toggleInsert = this.toggleInsert.bind(this);
+        this.confirmDelete = this.confirmDelete.bind(this);
+        this.handleInputChange = this.handleInputChange.bind(this);
     }
 
     search() {
@@ -26,7 +38,7 @@ export class AccountsTable extends Component {
             .then(accountsData => {
                 this.setState({
                     ...this.state,
-                    accounts: accountsData,
+                    data: accountsData,
                     notification: {
                         show: false
                     }
@@ -49,10 +61,14 @@ export class AccountsTable extends Component {
         this.search();
     }
 
-    onDelete(key) {
-        DeleteAccount(key)
+    onDelete(id) {
+        DeleteAccount(id)
             .then(id => {
                 this.setState({
+                    ...this.state,
+                    data:
+                        this.state.data.filter((d) => d.id !== id)
+                    ,
                     notification: {
                         show: true,
                         type: SUCCESS,
@@ -73,22 +89,20 @@ export class AccountsTable extends Component {
             });
     }
 
-    onUpdate(row, cellName, cellValue) {
+    onUpdate(row) {
         UpdateAccount(row)
             .then(data => {
-                this.setState(prevState => ({
+                this.setState({
                     ...this.state,
-                    accounts: {
-                        ...prevState.accounts.map(el =>
-                            el.id === row.id ? data : el
-                        )
-                    },
+                    data:
+                        this.state.data.map((d) => d.id === data.id ? data : d)
+                    ,
                     notification: {
                         show: true,
                         type: SUCCESS,
-                        message: "Successful update!"
+                        message: `Successfully updated account with id ${data.id}!`
                     }
-                }))
+                })
             })
             .catch(error => {
                 this.setState({
@@ -103,19 +117,19 @@ export class AccountsTable extends Component {
             });
     }
 
-    onSave(row, cellName, cellValue) {
-        UpdateAccount(row)
-            .then(data => {
+    onInsert(row) {
+        InsertAccount(row)
+            .then(elem => {
                 this.setState(prevState => ({
                     ...this.state,
-                    accounts: [
-                        data,
-                        ...prevState.accounts
+                    data: [
+                        elem,
+                        ...prevState.data
                     ],
                     notification: {
                         show: true,
                         type: SUCCESS,
-                        message: `Successfully saved account with id ${data.id}!`
+                        message: `Successfully saved account with id ${elem.id}!`
                     }
                 }))
             })
@@ -132,59 +146,88 @@ export class AccountsTable extends Component {
             });
     }
 
-    confirmDelete(next, dropRowKeys) {
-        const dropRowKeysStr = dropRowKeys.join(',');
-        if (window.confirm(`Are you sure you want to delete account with id ${dropRowKeysStr}?`)) {
-            next();
+    confirmDelete(id) {
+        if (window.confirm(`Are you sure you want to delete account with id ${id}?`)) {
+            this.onDelete(id);
         }
     }
 
-    customRoleField = (column, attr, editorClass, ignoreEditable) => {
-        return (
-            <select className='form-select' {...attr}>
-                <option key="1" value="CLIENT">Client</option>
-                <option key="2" value="ADMIN">Admin</option>
-            </select>
-        );
+    toggleInsert(visible) {
+        this.setState({
+            ...this.state,
+            insert: visible
+        })
     }
 
-    createCustomModal = (onModalClose, onSave, columns, validateState, ignoreEditable) => {
-        const attr = {
-            onModalClose, onSave, columns, validateState, ignoreEditable
-        };
-        return (
-            <InsertAccountModal {...attr} />
-        );
+    toggleEdit(visible) {
+        this.setState({
+            ...this.state,
+            edit: visible
+        })
+    }
+
+    handleInputChange(event) {
+        this.setState({
+            ...this.state,
+            selected: {
+                ...this.state.selected,
+                [event.target.name]: event.target.value
+            }
+        });
+    }
+
+    onEdit(id) {
+        this.setState({
+            ...this.state,
+            selected: this.state.data.find(elem => elem.id === id),
+            edit: true
+        });
     }
 
     render() {
-        const options = {
-            handleConfirmDeleteRow: this.confirmDelete,
-            afterDeleteRow: this.onDelete,
-            afterInsertRow: this.onSave,
-            insertModal: this.createCustomModal
-        };
-        const selectRow = {
-            mode: 'radio',
-            clickToSelect: true
-        };
         return (
-            <div className="table-content">
+            <div className="table-container">
                 {this.state.notification.show ? <ToastNotification notification={this.state.notification}/> : <div/>}
-                <BootstrapTable data={this.state.accounts} striped hover responsive
-                                options={options}
-                                search
-                                insertRow
-                                deleteRow
-                                selectRow={selectRow}
-                                cellEdit={{mode: 'click', afterSaveCell: this.onUpdate}}>
-                    <TableHeaderColumn dataField="id" isKey dataAlign="center"
-                                       hiddenOnInsert={true}>UUID</TableHeaderColumn>
-                    <TableHeaderColumn dataField="name" dataAlign="center" dataSort>Name</TableHeaderColumn>
-                    <TableHeaderColumn dataField="username" dataAlign="center" dataSort>Username</TableHeaderColumn>
-                    <TableHeaderColumn dataField="role" editable={false} dataAlign="center"
-                                       customInsertEditor={{getElement: this.customRoleField}}>Role</TableHeaderColumn>
-                </BootstrapTable>
+                <Button variant="success" onClick={this.toggleInsert}>+ New</Button>
+                <InsertAccountModal show={this.state.insert} toggleShow={this.toggleInsert} onSave={this.onInsert}/>
+                {this.state.edit ?
+                    <EditAccountModal data={this.state.selected} show={this.state.edit} toggleShow={this.toggleEdit}
+                                      onUpdate={this.onUpdate}/>
+                    :
+                    <div/>
+                }
+                <Table data={this.state.data} striped hover responsive>
+                    <thead>
+                    <tr>
+                        <th>UUID</th>
+                        <th>Name</th>
+                        <th>Username</th>
+                        <th>Role</th>
+                        <th>Edit</th>
+                        <th>Delete</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {
+                        this.state.data.map(elem =>
+                            <tr id={elem.id}>
+                                <td>{elem.id}</td>
+                                <td>{elem.name}</td>
+                                <td>{elem.username}</td>
+                                <td>{elem.role}</td>
+                                <td>
+                                    <Button variant="outline-primary"
+                                            onClick={() => this.onEdit(elem.id)}>Update</Button>
+                                </td>
+                                <td>
+                                    <Button variant="outline-danger"
+                                            onClick={() => this.confirmDelete(elem.id)}>Delete</Button>
+                                </td>
+                            </tr>
+                        )
+                    }
+                    </tbody>
+                </Table>
             </div>
         );
     }
