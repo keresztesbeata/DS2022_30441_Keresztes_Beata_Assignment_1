@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -32,6 +33,16 @@ public class DeviceServiceImpl implements DeviceService {
     private static final String NOT_EXISTENT_DEVICE_ERR_MSG = "This device doesn't exist!";
     private static final String DUPLICATE_ADDRESS_ERR_MSG = "Duplicate address! The user %s already has a smart device linked to the address %s.";
     private static final String CANNOT_ACCESS_DEVICE_ERR_MSG = "You cannot access this device, it belongs to a different user!";
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<DeviceDTO> findDevices() {
+        return deviceRepository.findAll().stream()
+                .map(deviceMapper::mapToDto)
+                .collect(Collectors.toList());
+    }
 
     /**
      * {@inheritDoc}
@@ -91,6 +102,12 @@ public class DeviceServiceImpl implements DeviceService {
      */
     @Override
     public List<DeviceDTO> findDevicesByAccountId(final String accountId) throws EntityNotFoundException {
+        if (accountId == null) {
+            return deviceRepository.findAll()
+                    .stream()
+                    .map(deviceMapper::mapToDto)
+                    .toList();
+        }
         final Account account =
                 accountRepository.findById(UUID.fromString(accountId))
                         .orElseThrow(() -> new EntityNotFoundException(NOT_EXISTENT_ACCOUNT_ERR_MSG));

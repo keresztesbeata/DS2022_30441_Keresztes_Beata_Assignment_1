@@ -12,6 +12,13 @@ import java.util.List;
 public interface DeviceService {
 
     /**
+     * Find a list of all devices.
+     *
+     * @return a list of {@link DeviceDTO}
+     */
+    List<DeviceDTO> findDevices();
+
+    /**
      * Create a device and link it to a user account.
      *
      * @param request the {@link DeviceData}

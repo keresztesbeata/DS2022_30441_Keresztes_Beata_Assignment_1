@@ -1,9 +1,11 @@
 package lab.ds2022_assignment_1.services.api;
 
 import lab.ds2022_assignment_1.controllers.handlers.requests.AccountData;
+import lab.ds2022_assignment_1.controllers.handlers.requests.FilterRequest;
 import lab.ds2022_assignment_1.dtos.AccountDTO;
 import lab.ds2022_assignment_1.model.exceptions.DuplicateDataException;
 import lab.ds2022_assignment_1.model.exceptions.EntityNotFoundException;
+import lab.ds2022_assignment_1.model.exceptions.InvalidFilterException;
 import lab.ds2022_assignment_1.model.exceptions.NoLoggedInUserException;
 
 import java.util.List;
@@ -27,6 +29,14 @@ public interface AccountService {
      * @throws EntityNotFoundException if no account exists with the given username
      */
     AccountDTO findAccountByUsername(final String username) throws EntityNotFoundException;
+
+    /**
+     * Filter accounts by the given field.
+     *
+     * @param filter the name of the field to be filtered
+     * @return a list of {@link AccountDTO}
+     */
+    List<AccountDTO> filterAccounts(final FilterRequest filter) throws InvalidFilterException;
 
     /**
      * Find accounts containing the given name.

@@ -1,20 +1,21 @@
 import React, {Component} from 'react';
-import {DeleteAccount, GetAccounts, InsertAccount, UpdateAccount} from "./AdminActions";
-import {ERROR, SUCCESS} from "../common/ModalNotification";
-import {ToastNotification} from "../common/ToastNotification";
-import {InsertAccountModal} from "./InsertAccountModal";
-import {Button, Table} from "react-bootstrap";
-import {EditAccountModal} from "./EditAccountModal";
+import {Button, FormControl, FormLabel, FormSelect, InputGroup, Table} from "react-bootstrap";
+import {ERROR, SUCCESS} from "../Utils";
+import {ToastNotification} from "./ToastNotification";
+import {Delete, Filter, GetAll, Insert, Update} from "../../admin/AdminActions";
+import {GeneralInsertModal} from "./GeneralInsertModal";
+import {GeneralEditModal} from "./GeneralEditModal";
 
-export class AccountsTable extends Component {
+export class GeneralTable extends Component {
     constructor(props) {
         super(props);
         this.state = {
             data: [],
-            name: "",
             edit: false,
             insert: false,
-            selected: {},
+            selectedFilter: (this.props.filters !== null)? this.props.filters[0] : "",
+            filterValue: "",
+            selectedData: null,
             notification: {
                 show: false,
                 type: ERROR,
@@ -22,7 +23,8 @@ export class AccountsTable extends Component {
                 fields: []
             }
         }
-        this.search = this.search.bind(this);
+        this.onSearch = this.onSearch.bind(this);
+        this.onLoad = this.onLoad.bind(this);
         this.onDelete = this.onDelete.bind(this);
         this.onEdit = this.onEdit.bind(this);
         this.onUpdate = this.onUpdate.bind(this);
@@ -33,12 +35,12 @@ export class AccountsTable extends Component {
         this.handleInputChange = this.handleInputChange.bind(this);
     }
 
-    search() {
-        GetAccounts(this.state.name)
-            .then(accountsData => {
+    onLoad() {
+        GetAll(this.props.type)
+            .then(data => {
                 this.setState({
                     ...this.state,
-                    data: accountsData,
+                    data: data,
                     notification: {
                         show: false
                     }
@@ -58,11 +60,41 @@ export class AccountsTable extends Component {
     }
 
     componentDidMount() {
-        this.search();
+        this.onLoad();
+    }
+
+
+    onSearch() {
+        // check if filter is set
+        ((this.state.selectedFilter === null || this.state.filterValue === null || this.state.filterValue.trim() === '') ?
+            GetAll(this.props.type)
+            :
+            Filter(this.props.type, this.state.selectedFilter, this.state.filterValue)
+        )
+            .then(data => {
+                this.setState({
+                    ...this.state,
+                    data: data,
+                    notification: {
+                        show: false
+                    }
+                });
+            })
+            .catch(error => {
+                this.setState({
+                    ...this.state,
+                    notification: {
+                        show: true,
+                        type: ERROR,
+                        message: error.message,
+                        fields: []
+                    }
+                })
+            });
     }
 
     onDelete(id) {
-        DeleteAccount(id)
+        Delete(this.state.type, id)
             .then(id => {
                 this.setState({
                     ...this.state,
@@ -90,7 +122,7 @@ export class AccountsTable extends Component {
     }
 
     onUpdate(row) {
-        UpdateAccount(row)
+        Update(this.props.type, row)
             .then(data => {
                 this.setState({
                     ...this.state,
@@ -118,7 +150,7 @@ export class AccountsTable extends Component {
     }
 
     onInsert(row) {
-        InsertAccount(row)
+        Insert(this.props.type, row)
             .then(elem => {
                 this.setState(prevState => ({
                     ...this.state,
@@ -129,7 +161,7 @@ export class AccountsTable extends Component {
                     notification: {
                         show: true,
                         type: SUCCESS,
-                        message: `Successfully saved account with id ${elem.id}!`
+                        message: `Successfully saved ${this.state.type} with id ${elem.id}!`
                     }
                 }))
             })
@@ -147,7 +179,7 @@ export class AccountsTable extends Component {
     }
 
     confirmDelete(id) {
-        if (window.confirm(`Are you sure you want to delete account with id ${id}?`)) {
+        if (window.confirm(`Are you sure you want to delete the ${this.props.type} with id ${id}?`)) {
             this.onDelete(id);
         }
     }
@@ -169,10 +201,7 @@ export class AccountsTable extends Component {
     handleInputChange(event) {
         this.setState({
             ...this.state,
-            selected: {
-                ...this.state.selected,
-                [event.target.name]: event.target.value
-            }
+            [event.target.name]: event.target.value
         });
     }
 
@@ -188,21 +217,37 @@ export class AccountsTable extends Component {
         return (
             <div className="table-container">
                 {this.state.notification.show ? <ToastNotification notification={this.state.notification}/> : <div/>}
+                <InputGroup className="gap-3 mb-3">
+                    <FormLabel>Search by </FormLabel>
+                    <FormSelect name="selectedFilter" onChange={this.handleInputChange}>
+                        {
+                            this.props.filters.map(filter =>
+                                <option value={filter}>{filter}</option>
+                            )
+                        }
+                    </FormSelect>
+                    <FormControl type='text' name="filterValue" placeholder={`Enter ${this.state.selectedFilter}...`}
+                                 onChange={this.handleInputChange}/>
+                    <Button variant="primary" onClick={this.onSearch}>Search</Button>
+                </InputGroup>
                 <Button variant="success" onClick={this.toggleInsert}>+ New</Button>
-                <InsertAccountModal show={this.state.insert} toggleShow={this.toggleInsert} onSave={this.onInsert}/>
+                <GeneralInsertModal type={this.props.type} fields={this.props.editableColumns}
+                                    show={this.state.insert} toggleShow={this.toggleInsert} onSave={this.onInsert}/>
                 {this.state.edit ?
-                    <EditAccountModal data={this.state.selected} show={this.state.edit} toggleShow={this.toggleEdit}
-                                      onUpdate={this.onUpdate}/>
+                    <GeneralEditModal type={this.props.type} fields={this.props.editableColumns}
+                                      data={this.state.selected}
+                                      show={this.state.edit} toggleShow={this.toggleEdit} onUpdate={this.onUpdate}/>
                     :
                     <div/>
                 }
                 <Table data={this.state.data} striped hover responsive>
                     <thead>
                     <tr>
-                        <th>UUID</th>
-                        <th>Name</th>
-                        <th>Username</th>
-                        <th>Role</th>
+                        {
+                            this.props.columns.map(col =>
+                                <th>{col.Header}</th>
+                            )
+                        }
                         <th>Edit</th>
                         <th>Delete</th>
                     </tr>
@@ -211,10 +256,11 @@ export class AccountsTable extends Component {
                     {
                         this.state.data.map(elem =>
                             <tr id={elem.id}>
-                                <td>{elem.id}</td>
-                                <td>{elem.name}</td>
-                                <td>{elem.username}</td>
-                                <td>{elem.role}</td>
+                                {
+                                    this.props.columns.map(col =>
+                                        <td>{elem[col.accessor]}</td>
+                                    )
+                                }
                                 <td>
                                     <Button variant="outline-primary"
                                             onClick={() => this.onEdit(elem.id)}>Update</Button>

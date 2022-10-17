@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Link} from 'react-router-dom'
 import {Button, FormControl, FormGroup, FormLabel, FormSelect} from "react-bootstrap";
-import {ERROR, ModalNotification, SUCCESS} from "./ModalNotification";
+import {ERROR, ModalNotification, SUCCESS} from "./components/ModalNotification";
 import {Register} from "../auth/Authentication";
 
 export class RegisterPage extends Component {

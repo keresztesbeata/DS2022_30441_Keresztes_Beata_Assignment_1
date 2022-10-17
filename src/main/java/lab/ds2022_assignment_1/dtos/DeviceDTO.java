@@ -10,4 +10,5 @@ public class DeviceDTO {
     private String id;
     private String description;
     private String address;
+    private String accountId;
 }

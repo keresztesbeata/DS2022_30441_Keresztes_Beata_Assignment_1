@@ -33,7 +33,12 @@ public class DeviceRestController {
     }
 
     @GetMapping(DEVICES_PATH)
-    public ResponseEntity<List<DeviceDTO>> getDevicesByAccountId(@RequestParam @ValidUUID String accountId) throws EntityNotFoundException {
+    public ResponseEntity<List<DeviceDTO>> getDevices() {
+        return ok(deviceService.findDevices());
+    }
+
+    @GetMapping(ACCOUNT_DEVICES_PATH)
+    public ResponseEntity<List<DeviceDTO>> getDevicesByAccountId(@PathVariable(ACCOUNT_ID) @ValidUUID String accountId) throws EntityNotFoundException {
         return ok(deviceService.findDevicesByAccountId(accountId));
     }
 

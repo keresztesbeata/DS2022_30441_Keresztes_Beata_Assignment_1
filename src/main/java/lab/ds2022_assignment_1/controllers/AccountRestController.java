@@ -3,10 +3,12 @@ package lab.ds2022_assignment_1.controllers;
 import lab.ds2022_assignment_1.config.JwtTokenProvider;
 import lab.ds2022_assignment_1.controllers.handlers.requests.AccountData;
 import lab.ds2022_assignment_1.controllers.handlers.requests.AuthenticationRequest;
+import lab.ds2022_assignment_1.controllers.handlers.requests.FilterRequest;
 import lab.ds2022_assignment_1.controllers.handlers.requests.ValidUUID;
 import lab.ds2022_assignment_1.dtos.AccountDTO;
 import lab.ds2022_assignment_1.model.exceptions.DuplicateDataException;
 import lab.ds2022_assignment_1.model.exceptions.EntityNotFoundException;
+import lab.ds2022_assignment_1.model.exceptions.InvalidFilterException;
 import lab.ds2022_assignment_1.model.exceptions.NoLoggedInUserException;
 import lab.ds2022_assignment_1.services.api.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,13 +35,12 @@ import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
 @Validated
-@CrossOrigin(origins = "http://localhost:4200", allowedHeaders = "Requestor-Type")
 public class AccountRestController {
 
     @Autowired
-    AuthenticationManager authenticationManager;
+    private AuthenticationManager authenticationManager;
     @Autowired
-    JwtTokenProvider tokenProvider;
+    private JwtTokenProvider tokenProvider;
     @Autowired
     private AccountService service;
 
@@ -85,14 +87,28 @@ public class AccountRestController {
         return ok(service.findAccountById(id));
     }
 
-    @GetMapping(ACCOUNT_USERNAME_PATH)
-    public ResponseEntity<AccountDTO> getAccountByUsername(@PathVariable(ACCOUNT_USERNAME) @NotBlank String username) throws EntityNotFoundException {
+    @GetMapping(ACCOUNTS_PATH)
+    public ResponseEntity<AccountDTO> getAccountByUsername(@RequestParam @NotBlank String username) throws EntityNotFoundException {
         return ok(service.findAccountByUsername(username));
     }
 
-    @GetMapping(ACCOUNTS_PATH)
-    public ResponseEntity<List<AccountDTO>> getClientAccountsByName(@RequestParam String name) {
-        return ok(service.findAccountsByName(name));
+//    @GetMapping(ACCOUNTS_FILTER_PATH)
+//    public ResponseEntity<List<AccountDTO>> getAccountsByName(@RequestParam String name) {
+//        return ok(service.findAccountsByName(name));
+//    }
+//
+//    @GetMapping(ACCOUNTS_FILTER_PATH)
+//    public ResponseEntity<List<AccountDTO>> getAccountsByUserName(@RequestParam String username) {
+//        try {
+//            return ok(List.of(service.findAccountByUsername(username)));
+//        }catch (EntityNotFoundException e) {
+//            return ok(Collections.emptyList());
+//        }
+//    }
+
+    @GetMapping(ACCOUNTS_FILTER_PATH)
+    public ResponseEntity<List<AccountDTO>> filterAccounts(@RequestParam FilterRequest filter) throws InvalidFilterException {
+        return ok(service.filterAccounts(filter));
     }
 
     @DeleteMapping(ACCOUNT_ID_PATH)

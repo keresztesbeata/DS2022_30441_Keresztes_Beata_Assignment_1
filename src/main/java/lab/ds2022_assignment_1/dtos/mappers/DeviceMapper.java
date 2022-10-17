@@ -4,6 +4,8 @@ import lab.ds2022_assignment_1.controllers.handlers.requests.DeviceData;
 import lab.ds2022_assignment_1.dtos.DeviceDTO;
 import lab.ds2022_assignment_1.model.entities.Device;
 
+import java.util.UUID;
+
 public class DeviceMapper implements Mapper<Device, DeviceData, DeviceDTO> {
     @Override
     public Device mapToEntity(DeviceData data) {
@@ -25,6 +27,7 @@ public class DeviceMapper implements Mapper<Device, DeviceData, DeviceDTO> {
     public DeviceDTO mapToDto(Device entity) {
         return DeviceDTO.builder()
                 .id(entity.getId().toString())
+                .accountId(entity.getAccount().getId().toString())
                 .address(entity.getAddress())
                 .description(entity.getDescription())
                 .build();

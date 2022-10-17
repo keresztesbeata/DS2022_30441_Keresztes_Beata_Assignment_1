@@ -8,6 +8,7 @@ import {ADMIN_ROLE, CLIENT_ROLE, isLoggedIn, ProtectedComponent} from "./auth/Au
 import {AdminHomePage} from "./admin/AdminHomePage";
 import {ClientHomePage} from "./client/ClientHomePage";
 import {AdminAccountsPage} from "./admin/AdminAccountsPage";
+import {AdminDevicesPage} from "./admin/AdminDevicesPage";
 
 export default function App() {
     return (
@@ -23,6 +24,8 @@ export default function App() {
                     <Route path="/register" element={<RegisterPage/>}/>
                     <Route path="/admin/accounts"
                            element={<ProtectedComponent component={<AdminAccountsPage/>} authority={ADMIN_ROLE}/>}/>
+                    <Route path="/admin/devices"
+                           element={<ProtectedComponent component={<AdminDevicesPage/>} authority={ADMIN_ROLE}/>}/>
                 </Routes>
             </BrowserRouter>
         </>

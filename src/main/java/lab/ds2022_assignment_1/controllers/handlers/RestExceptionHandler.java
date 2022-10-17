@@ -49,7 +49,8 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException e, HttpHeaders headers, HttpStatus status, WebRequest request) {
-        ErrorResponse errorResponse = constructFieldErrorResponse(e);
+        final ErrorResponse errorResponse = constructFieldErrorResponse(e);
+
         return handleExceptionInternal(
                 e,
                 errorResponse,
@@ -61,7 +62,8 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = ConstraintViolationException.class)
     ResponseEntity<Object> handleConstraintViolationException(ConstraintViolationException e, WebRequest request) {
-        ErrorResponse errorResponse = constructConstraintViolationResponse(e);
+        final ErrorResponse errorResponse = constructConstraintViolationResponse(e);
+
         return handleExceptionInternal(
                 e,
                 errorResponse,
@@ -73,7 +75,8 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = {MethodArgumentTypeMismatchException.class})
     public ResponseEntity<Object> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e, WebRequest request) {
-        ErrorResponse errorResponse = constructMethodArgumentTypeMismatchResponse(e);
+        final ErrorResponse errorResponse = constructMethodArgumentTypeMismatchResponse(e);
+
         return handleExceptionInternal(
                 e,
                 errorResponse,
@@ -101,6 +104,19 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
                 e.getMessage(),
                 new HttpHeaders(),
                 FORBIDDEN,
+                request
+        );
+    }
+
+    @ExceptionHandler(value = {InvalidFilterException.class})
+    public ResponseEntity<Object> handleInvalidFilterException(InvalidFilterException e, WebRequest request) {
+        final ErrorResponse errorResponse = constructInvalidFilterResponse(e);
+
+        return handleExceptionInternal(
+                e,
+                errorResponse,
+                new HttpHeaders(),
+                errorResponse.getStatus(),
                 request
         );
     }
@@ -159,6 +175,13 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     private ErrorResponse constructMethodArgumentTypeMismatchResponse(MethodArgumentTypeMismatchException e) {
         ErrorResponse errorResponse = new ErrorResponse(BAD_REQUEST, "Method argument type mismatch!");
         errorResponse.addValidationError(e.getName(),
+                e.getMessage());
+        return errorResponse;
+    }
+
+    private ErrorResponse constructInvalidFilterResponse(InvalidFilterException e) {
+        ErrorResponse errorResponse = new ErrorResponse(BAD_REQUEST, "Could not filter by field! The entity has no such field.");
+        errorResponse.addValidationError(e.getField(),
                 e.getMessage());
         return errorResponse;
     }
