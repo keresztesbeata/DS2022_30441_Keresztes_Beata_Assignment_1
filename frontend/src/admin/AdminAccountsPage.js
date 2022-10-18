@@ -32,7 +32,7 @@ export class AdminAccountsPage extends Component {
             isCategorical: true,
             categories: ['ADMIN', 'CLIENT']
         }]
-        const filters = ['id', 'name', 'username']
+        const filters = ['id', 'name', 'username','role']
         return (
             <div className="page-container">
                 <AdminNavigationMenu/>

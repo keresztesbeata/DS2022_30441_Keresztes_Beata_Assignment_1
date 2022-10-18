@@ -13,11 +13,12 @@ public class Constants {
     public static final String ACCOUNTS_BASE_PATH = "/accounts";
     public static final String ACCOUNTS_PATH = API + ACCOUNTS_BASE_PATH;
     public static final String ACCOUNT_ID = "id";
-    public static final String ACCOUNTS_FILTER_PATH = ACCOUNTS_PATH + "/filter";
+    public static final String FILTER = "/filter";
+    public static final String ACCOUNTS_FILTER_PATH = ACCOUNTS_PATH + FILTER;
     public static final String ACCOUNT_ID_PATH = ACCOUNTS_PATH + "/{" + ACCOUNT_ID + "}";
-    public static final String ACCOUNTS_NAME_PATH = ACCOUNTS_PATH + "/name";
     public static final String DEVICES_BASE_PATH = "/devices";
     public static final String DEVICES_PATH = API + DEVICES_BASE_PATH;
+    public static final String DEVICES_FILTER_PATH = DEVICES_PATH + FILTER;
     public static final String ACCOUNT_DEVICES_PATH = DEVICES_PATH + "/account" + "/{" + ACCOUNT_ID + "}";
     public static final String DEVICE_ID = "id";
     public static final String DEVICE_ID_PATH = DEVICES_PATH + "/{" + DEVICE_ID + "}";

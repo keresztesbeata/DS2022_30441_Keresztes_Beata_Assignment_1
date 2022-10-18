@@ -2,7 +2,7 @@ package lab.ds2022_assignment_1.services.impl;
 
 import lab.ds2022_assignment_1.config.UserDetailsImpl;
 import lab.ds2022_assignment_1.controllers.handlers.requests.AccountData;
-import lab.ds2022_assignment_1.controllers.handlers.requests.FilterRequest;
+import lab.ds2022_assignment_1.controllers.handlers.requests.SearchCriteria;
 import lab.ds2022_assignment_1.dtos.AccountDTO;
 import lab.ds2022_assignment_1.dtos.mappers.AccountMapper;
 import lab.ds2022_assignment_1.model.entities.Account;
@@ -14,6 +14,7 @@ import lab.ds2022_assignment_1.repositories.AccountRepository;
 import lab.ds2022_assignment_1.services.api.AccountService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -30,12 +31,9 @@ public class AccountServiceImpl implements AccountService {
     @Autowired
     private PasswordEncoder passwordEncoder;
     private final AccountMapper mapper = new AccountMapper();
-
-    private static final List<String> FILTERABLE_FIELDS = List.of("id", "name", "username", "role");
     private static final String DUPLICATE_USERNAME_ERR_MSG = "Duplicate username! The name %s is already taken.";
     private static final String NOT_EXISTENT_ACCOUNT_ERR_MSG = "This account doesn't exist!";
     private static final String NO_LOGGED_IN_USER_ERR_MS = "No logged in user!";
-    private static final String INVALID_FILTER_ERR_MSG = "Invalid filter!";
 
     /**
      * {@inheritDoc}
@@ -128,19 +126,19 @@ public class AccountServiceImpl implements AccountService {
      * {@inheritDoc}
      */
     @Override
-    public List<AccountDTO> filterAccounts(FilterRequest filter) throws InvalidFilterException {
-        if(filter.getField() == null || filter.getValue() == null) {
-            return repository.findAll()
-                    .stream()
-                    .map(mapper::mapToDto)
-                    .collect(Collectors.toList());
-        }
+    public List<AccountDTO> filterAccounts(final SearchCriteria searchCriteria) throws InvalidFilterException {
+        final Specification<Account> specification = new AccountSpecification(searchCriteria);
+        ((FilterValidator) specification).validate(searchCriteria);
 
-        if(!FILTERABLE_FIELDS.contains(filter.getField())) {
-            throw new InvalidFilterException(filter.getField(), INVALID_FILTER_ERR_MSG);
-        }
+        return repository.findAll(specification)
+                .stream()
+                .map(mapper::mapToDto)
+                .collect(Collectors.toList());
+    }
 
-        return repository.filterBy(filter.getField(), filter.getValue())
+    @Override
+    public List<AccountDTO> findAccounts() {
+        return repository.findAll()
                 .stream()
                 .map(mapper::mapToDto)
                 .collect(Collectors.toList());

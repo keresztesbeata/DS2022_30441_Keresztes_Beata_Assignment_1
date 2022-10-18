@@ -1,7 +1,7 @@
 package lab.ds2022_assignment_1.services.api;
 
 import lab.ds2022_assignment_1.controllers.handlers.requests.AccountData;
-import lab.ds2022_assignment_1.controllers.handlers.requests.FilterRequest;
+import lab.ds2022_assignment_1.controllers.handlers.requests.SearchCriteria;
 import lab.ds2022_assignment_1.dtos.AccountDTO;
 import lab.ds2022_assignment_1.model.exceptions.DuplicateDataException;
 import lab.ds2022_assignment_1.model.exceptions.EntityNotFoundException;
@@ -31,12 +31,20 @@ public interface AccountService {
     AccountDTO findAccountByUsername(final String username) throws EntityNotFoundException;
 
     /**
+     * Find all accounts.
+     *
+     * @return a list of {@link AccountDTO}
+     */
+    List<AccountDTO> findAccounts();
+
+    /**
      * Filter accounts by the given field.
      *
      * @param filter the name of the field to be filtered
      * @return a list of {@link AccountDTO}
+     * @throws InvalidFilterException if the field in the filter is not present in the entity
      */
-    List<AccountDTO> filterAccounts(final FilterRequest filter) throws InvalidFilterException;
+    List<AccountDTO> filterAccounts(final SearchCriteria filter) throws InvalidFilterException;
 
     /**
      * Find accounts containing the given name.

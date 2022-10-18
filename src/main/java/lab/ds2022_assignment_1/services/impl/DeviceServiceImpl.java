@@ -2,6 +2,7 @@ package lab.ds2022_assignment_1.services.impl;
 
 import lab.ds2022_assignment_1.controllers.handlers.requests.DeviceData;
 import lab.ds2022_assignment_1.controllers.handlers.requests.LinkDeviceRequest;
+import lab.ds2022_assignment_1.controllers.handlers.requests.SearchCriteria;
 import lab.ds2022_assignment_1.dtos.DeviceDTO;
 import lab.ds2022_assignment_1.dtos.mappers.DeviceMapper;
 import lab.ds2022_assignment_1.model.entities.Account;
@@ -9,11 +10,13 @@ import lab.ds2022_assignment_1.model.entities.Device;
 import lab.ds2022_assignment_1.model.exceptions.DuplicateDataException;
 import lab.ds2022_assignment_1.model.exceptions.EntityNotFoundException;
 import lab.ds2022_assignment_1.model.exceptions.InvalidAccessException;
+import lab.ds2022_assignment_1.model.exceptions.InvalidFilterException;
 import lab.ds2022_assignment_1.repositories.AccountRepository;
 import lab.ds2022_assignment_1.repositories.DeviceRepository;
 import lab.ds2022_assignment_1.services.api.DeviceService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,6 +36,17 @@ public class DeviceServiceImpl implements DeviceService {
     private static final String NOT_EXISTENT_DEVICE_ERR_MSG = "This device doesn't exist!";
     private static final String DUPLICATE_ADDRESS_ERR_MSG = "Duplicate address! The user %s already has a smart device linked to the address %s.";
     private static final String CANNOT_ACCESS_DEVICE_ERR_MSG = "You cannot access this device, it belongs to a different user!";
+
+    @Override
+    public List<DeviceDTO> filterDevices(SearchCriteria searchCriteria) throws InvalidFilterException {
+        final Specification<Device> specification = new DeviceSpecification(searchCriteria);
+        ((FilterValidator) specification).validate(searchCriteria);
+
+        return deviceRepository.findAll(specification)
+                .stream()
+                .map(deviceMapper::mapToDto)
+                .collect(Collectors.toList());
+    }
 
     /**
      * {@inheritDoc}

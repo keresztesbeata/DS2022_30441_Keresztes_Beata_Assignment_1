@@ -2,10 +2,12 @@ package lab.ds2022_assignment_1.services.api;
 
 import lab.ds2022_assignment_1.controllers.handlers.requests.DeviceData;
 import lab.ds2022_assignment_1.controllers.handlers.requests.LinkDeviceRequest;
+import lab.ds2022_assignment_1.controllers.handlers.requests.SearchCriteria;
 import lab.ds2022_assignment_1.dtos.DeviceDTO;
 import lab.ds2022_assignment_1.model.exceptions.DuplicateDataException;
 import lab.ds2022_assignment_1.model.exceptions.EntityNotFoundException;
 import lab.ds2022_assignment_1.model.exceptions.InvalidAccessException;
+import lab.ds2022_assignment_1.model.exceptions.InvalidFilterException;
 
 import java.util.List;
 
@@ -17,6 +19,15 @@ public interface DeviceService {
      * @return a list of {@link DeviceDTO}
      */
     List<DeviceDTO> findDevices();
+
+    /**
+     * Filter devices based on some criteria.
+     *
+     * @param searchCriteria the criteria to filter the devices
+     * @return a list of {@link DeviceDTO}
+     * @throws InvalidFilterException if the field in the filter is not present in the entity
+     */
+    List<DeviceDTO> filterDevices(final SearchCriteria searchCriteria) throws InvalidFilterException;
 
     /**
      * Create a device and link it to a user account.

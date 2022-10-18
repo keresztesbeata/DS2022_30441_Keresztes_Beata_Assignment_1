@@ -25,7 +25,7 @@ export class AdminDevicesPage extends Component {
             Header: 'Description',
             accessor: 'description'
         }]
-        const filters = ['id', 'accountId']
+        const filters = ['id', 'address', 'description', 'accountId']
         return (
             <div className="page-container">
                 <AdminNavigationMenu/>

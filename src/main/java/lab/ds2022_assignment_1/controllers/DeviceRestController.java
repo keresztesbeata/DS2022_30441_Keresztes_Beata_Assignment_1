@@ -2,10 +2,12 @@ package lab.ds2022_assignment_1.controllers;
 
 import lab.ds2022_assignment_1.controllers.handlers.requests.DeviceData;
 import lab.ds2022_assignment_1.controllers.handlers.requests.LinkDeviceRequest;
+import lab.ds2022_assignment_1.controllers.handlers.requests.SearchCriteria;
 import lab.ds2022_assignment_1.controllers.handlers.requests.ValidUUID;
 import lab.ds2022_assignment_1.dtos.DeviceDTO;
 import lab.ds2022_assignment_1.model.exceptions.DuplicateDataException;
 import lab.ds2022_assignment_1.model.exceptions.EntityNotFoundException;
+import lab.ds2022_assignment_1.model.exceptions.InvalidFilterException;
 import lab.ds2022_assignment_1.services.api.DeviceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -40,6 +42,11 @@ public class DeviceRestController {
     @GetMapping(ACCOUNT_DEVICES_PATH)
     public ResponseEntity<List<DeviceDTO>> getDevicesByAccountId(@PathVariable(ACCOUNT_ID) @ValidUUID String accountId) throws EntityNotFoundException {
         return ok(deviceService.findDevicesByAccountId(accountId));
+    }
+
+    @GetMapping(DEVICES_FILTER_PATH)
+    public ResponseEntity<List<DeviceDTO>> filterDevices(@RequestParam String filterKey, @RequestParam String filterValue) throws InvalidFilterException {
+        return ok(deviceService.filterDevices(new SearchCriteria(filterKey, filterValue)));
     }
 
     @PutMapping(value = DEVICE_ID_PATH, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)

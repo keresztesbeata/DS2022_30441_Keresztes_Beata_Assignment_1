@@ -3,7 +3,7 @@ package lab.ds2022_assignment_1.controllers;
 import lab.ds2022_assignment_1.config.JwtTokenProvider;
 import lab.ds2022_assignment_1.controllers.handlers.requests.AccountData;
 import lab.ds2022_assignment_1.controllers.handlers.requests.AuthenticationRequest;
-import lab.ds2022_assignment_1.controllers.handlers.requests.FilterRequest;
+import lab.ds2022_assignment_1.controllers.handlers.requests.SearchCriteria;
 import lab.ds2022_assignment_1.controllers.handlers.requests.ValidUUID;
 import lab.ds2022_assignment_1.dtos.AccountDTO;
 import lab.ds2022_assignment_1.model.exceptions.DuplicateDataException;
@@ -24,8 +24,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -88,27 +86,13 @@ public class AccountRestController {
     }
 
     @GetMapping(ACCOUNTS_PATH)
-    public ResponseEntity<AccountDTO> getAccountByUsername(@RequestParam @NotBlank String username) throws EntityNotFoundException {
-        return ok(service.findAccountByUsername(username));
+    public ResponseEntity<List<AccountDTO>> getAccounts() {
+        return ok(service.findAccounts());
     }
 
-//    @GetMapping(ACCOUNTS_FILTER_PATH)
-//    public ResponseEntity<List<AccountDTO>> getAccountsByName(@RequestParam String name) {
-//        return ok(service.findAccountsByName(name));
-//    }
-//
-//    @GetMapping(ACCOUNTS_FILTER_PATH)
-//    public ResponseEntity<List<AccountDTO>> getAccountsByUserName(@RequestParam String username) {
-//        try {
-//            return ok(List.of(service.findAccountByUsername(username)));
-//        }catch (EntityNotFoundException e) {
-//            return ok(Collections.emptyList());
-//        }
-//    }
-
     @GetMapping(ACCOUNTS_FILTER_PATH)
-    public ResponseEntity<List<AccountDTO>> filterAccounts(@RequestParam FilterRequest filter) throws InvalidFilterException {
-        return ok(service.filterAccounts(filter));
+    public ResponseEntity<List<AccountDTO>> filterAccounts(@RequestParam String filterKey, @RequestParam String filterValue) throws InvalidFilterException {
+        return ok(service.filterAccounts(new SearchCriteria(filterKey, filterValue)));
     }
 
     @DeleteMapping(ACCOUNT_ID_PATH)

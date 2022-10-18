@@ -27,14 +27,14 @@ const buildUrl = (entityType) => {
  * @returns {Promise<AxiosResponse<any>>}
  */
 export function GetAll(entityType) {
+    // build url
+    const url = buildUrl(entityType)
+
     const config = {
         headers: {
             'Authorization': 'Bearer ' + localStorage.getItem(TOKEN),
         }
     }
-
-    // build url
-    const url = buildUrl(entityType)
 
     return axios.get(url, config)
         .then((response) => {
@@ -53,19 +53,25 @@ export function GetAll(entityType) {
 /**
  * Fetch all entities
  * @param entityType
- * @param filterParam
+ * @param filterKey
  * @param filterValue
  * @returns {Promise<AxiosResponse<any>>}
  */
-export function Filter(entityType, filterParam, filterValue) {
+export function Filter(entityType, filterKey, filterValue) {
+    // build url
+    const url = buildUrl(entityType) + "/filter"
+
     const config = {
         headers: {
             'Authorization': 'Bearer ' + localStorage.getItem(TOKEN),
+        },
+        params: {
+            'filterKey': filterKey,
+            'filterValue': filterValue
         }
     }
 
-    // build url
-    const url = buildUrl(entityType) + "/filter?" + filterParam + "=" + filterValue
+    console.log(config)
 
     return axios.get(url, config)
         .then((response) => {
@@ -89,13 +95,13 @@ export function Filter(entityType, filterParam, filterValue) {
  * @constructor
  */
 export function Update(entityType, data) {
+    const url = buildUrl(entityType) + "/" + data.id;
+
     const config = {
         headers: {
             'Authorization': 'Bearer ' + localStorage.getItem(TOKEN),
         }
     }
-
-    const url = buildUrl(entityType) + "/" + data.id;
 
     return axios.put(url, data, config)
         .then((response) => {
@@ -119,13 +125,13 @@ export function Update(entityType, data) {
  * @constructor
  */
 export function Insert(entityType, data) {
+    const url = buildUrl(entityType);
+
     const config = {
         headers: {
             'Authorization': 'Bearer ' + localStorage.getItem(TOKEN),
         }
     }
-
-    const url = buildUrl(entityType);
 
     return axios.post(url, data, config)
         .then((response) => {
@@ -149,13 +155,13 @@ export function Insert(entityType, data) {
  * @constructor
  */
 export function Delete(entityType, id) {
+    const url = buildUrl(entityType) + "/" + id;
+
     const config = {
         headers: {
             'Authorization': 'Bearer ' + localStorage.getItem(TOKEN),
         }
     }
-
-    const url = buildUrl(entityType) + "/" + id;
 
     return axios.delete(url, config)
         .then((response) => {
@@ -184,6 +190,7 @@ export function LinkDeviceToUser(deviceId, accountId) {
             'Authorization': 'Bearer ' + localStorage.getItem(TOKEN),
         }
     }
+
     const data = {
         deviceId: deviceId,
         accountId: accountId
