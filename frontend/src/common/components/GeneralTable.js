@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import {Button, FormControl, FormLabel, FormSelect, InputGroup, Table} from "react-bootstrap";
-import {ERROR, SUCCESS} from "../Utils";
-import {ToastNotification} from "./ToastNotification";
+import {ERROR_TOAST, SUCCESS_TOAST, ToastNotification} from "./ToastNotification";
 import {Delete, Filter, GetAll, Insert, Update} from "../../admin/AdminActions";
 import {GeneralInsertModal} from "./GeneralInsertModal";
 import {GeneralEditModal} from "./GeneralEditModal";
@@ -13,12 +12,12 @@ export class GeneralTable extends Component {
             data: [],
             edit: false,
             insert: false,
-            selectedFilter: (this.props.filters !== null)? this.props.filters[0] : "",
+            selectedFilter: (this.props.filters !== null) ? this.props.filters[0] : "",
             filterValue: "",
             selectedData: null,
             notification: {
                 show: false,
-                type: ERROR,
+                type: ERROR_TOAST,
                 message: "",
                 fields: []
             }
@@ -51,7 +50,7 @@ export class GeneralTable extends Component {
                     ...this.state,
                     notification: {
                         show: true,
-                        type: ERROR,
+                        type: ERROR_TOAST,
                         message: error.message,
                         fields: []
                     }
@@ -67,9 +66,9 @@ export class GeneralTable extends Component {
     onSearch() {
         // check if filter is set
         ((this.state.selectedFilter === null || this.state.filterValue === null || this.state.filterValue.trim() === '') ?
-            GetAll(this.props.type)
-            :
-            Filter(this.props.type, this.state.selectedFilter, this.state.filterValue)
+                GetAll(this.props.type)
+                :
+                Filter(this.props.type, this.state.selectedFilter, this.state.filterValue)
         )
             .then(data => {
                 this.setState({
@@ -85,7 +84,7 @@ export class GeneralTable extends Component {
                     ...this.state,
                     notification: {
                         show: true,
-                        type: ERROR,
+                        type: ERROR_TOAST,
                         message: error.message,
                         fields: []
                     }
@@ -94,7 +93,7 @@ export class GeneralTable extends Component {
     }
 
     onDelete(id) {
-        Delete(this.state.type, id)
+        Delete(this.props.type, id)
             .then(id => {
                 this.setState({
                     ...this.state,
@@ -103,7 +102,7 @@ export class GeneralTable extends Component {
                     ,
                     notification: {
                         show: true,
-                        type: SUCCESS,
+                        type: SUCCESS_TOAST,
                         message: `Successfully deleted account with id ${id}!`
                     }
                 })
@@ -113,7 +112,7 @@ export class GeneralTable extends Component {
                     ...this.state,
                     notification: {
                         show: true,
-                        type: ERROR,
+                        type: ERROR_TOAST,
                         message: error.message,
                         fields: error.errors
                     }
@@ -131,7 +130,7 @@ export class GeneralTable extends Component {
                     ,
                     notification: {
                         show: true,
-                        type: SUCCESS,
+                        type: SUCCESS_TOAST,
                         message: `Successfully updated account with id ${data.id}!`
                     }
                 })
@@ -141,7 +140,7 @@ export class GeneralTable extends Component {
                     ...this.state,
                     notification: {
                         show: true,
-                        type: ERROR,
+                        type: ERROR_TOAST,
                         message: error.message,
                         fields: error.errors
                     }
@@ -160,8 +159,8 @@ export class GeneralTable extends Component {
                     ],
                     notification: {
                         show: true,
-                        type: SUCCESS,
-                        message: `Successfully saved ${this.state.type} with id ${elem.id}!`
+                        type: SUCCESS_TOAST,
+                        message: `Successfully saved ${this.props.type} with id ${elem.id}!`
                     }
                 }))
             })
@@ -170,7 +169,7 @@ export class GeneralTable extends Component {
                     ...this.state,
                     notification: {
                         show: true,
-                        type: ERROR,
+                        type: ERROR_TOAST,
                         message: error.message,
                         fields: error.errors
                     }
@@ -216,7 +215,11 @@ export class GeneralTable extends Component {
     render() {
         return (
             <div className="table-container">
-                {this.state.notification.show ? <ToastNotification notification={this.state.notification}/> : <div/>}
+                {this.state.notification.show ?
+                    <ToastNotification notification={this.state.notification}/>
+                    :
+                    <div/>
+                }
                 <InputGroup className="gap-3 mb-3">
                     <FormLabel>Search by </FormLabel>
                     <FormSelect name="selectedFilter" onChange={this.handleInputChange}>

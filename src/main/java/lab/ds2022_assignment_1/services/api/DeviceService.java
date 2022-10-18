@@ -8,6 +8,7 @@ import lab.ds2022_assignment_1.model.exceptions.DuplicateDataException;
 import lab.ds2022_assignment_1.model.exceptions.EntityNotFoundException;
 import lab.ds2022_assignment_1.model.exceptions.InvalidAccessException;
 import lab.ds2022_assignment_1.model.exceptions.InvalidFilterException;
+import org.springframework.security.access.annotation.Secured;
 
 import java.util.List;
 
@@ -35,6 +36,7 @@ public interface DeviceService {
      * @param request the {@link DeviceData}
      * @return the device that was added
      */
+    @Secured("ADMIN")
     DeviceDTO addDevice(final DeviceData request);
 
     /**

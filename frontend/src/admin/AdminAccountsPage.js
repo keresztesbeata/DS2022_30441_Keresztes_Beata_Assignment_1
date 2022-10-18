@@ -26,6 +26,9 @@ export class AdminAccountsPage extends Component {
         }, {
             Header: 'Username',
             accessor: 'username'
+        },{
+            Header: 'Password',
+            accessor: 'password'
         }, {
             Header: 'Role',
             accessor: 'role',

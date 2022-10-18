@@ -100,6 +100,8 @@ export function Update(entityType, data) {
     const config = {
         headers: {
             'Authorization': 'Bearer ' + localStorage.getItem(TOKEN),
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
         }
     }
 
@@ -130,6 +132,8 @@ export function Insert(entityType, data) {
     const config = {
         headers: {
             'Authorization': 'Bearer ' + localStorage.getItem(TOKEN),
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
         }
     }
 
@@ -160,6 +164,8 @@ export function Delete(entityType, id) {
     const config = {
         headers: {
             'Authorization': 'Bearer ' + localStorage.getItem(TOKEN),
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
         }
     }
 
@@ -188,6 +194,8 @@ export function LinkDeviceToUser(deviceId, accountId) {
     const config = {
         headers: {
             'Authorization': 'Bearer ' + localStorage.getItem(TOKEN),
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
         }
     }
 
