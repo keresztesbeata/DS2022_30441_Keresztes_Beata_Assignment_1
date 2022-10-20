@@ -9,6 +9,8 @@ import {AdminHomePage} from "./admin/AdminHomePage";
 import {ClientHomePage} from "./client/ClientHomePage";
 import {AdminAccountsPage} from "./admin/AdminAccountsPage";
 import {AdminDevicesPage} from "./admin/AdminDevicesPage";
+import {ErrorPage} from "./common/ErrorPage";
+import {AdminLinkDevicePage} from "./admin/AdminLinkDevicePage";
 
 export default function App() {
     return (
@@ -26,6 +28,9 @@ export default function App() {
                            element={<ProtectedComponent component={<AdminAccountsPage/>} authority={ADMIN_ROLE}/>}/>
                     <Route path="/admin/devices"
                            element={<ProtectedComponent component={<AdminDevicesPage/>} authority={ADMIN_ROLE}/>}/>
+                    <Route path="/admin/link_device"
+                           element={<ProtectedComponent component={<AdminLinkDevicePage/>} authority={ADMIN_ROLE}/>}/>
+                    <Route path='/error' element={<ErrorPage/>}/>
                 </Routes>
             </BrowserRouter>
         </>

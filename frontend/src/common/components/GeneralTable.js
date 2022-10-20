@@ -1,9 +1,10 @@
 import React, {Component} from 'react';
 import {Button, FormControl, FormLabel, FormSelect, InputGroup, Table} from "react-bootstrap";
-import {ERROR_TOAST, SUCCESS_TOAST, ToastNotification} from "./ToastNotification";
+import {ERROR_TOAST, SUCCESS_TOAST} from "./ToastNotification";
 import {Delete, Filter, GetAll, Insert, Update} from "../../admin/AdminActions";
 import {GeneralInsertModal} from "./GeneralInsertModal";
 import {GeneralEditModal} from "./GeneralEditModal";
+import {ModalNotification} from "./ModalNotification";
 
 export class GeneralTable extends Component {
     constructor(props) {
@@ -30,6 +31,7 @@ export class GeneralTable extends Component {
         this.onInsert = this.onInsert.bind(this);
         this.toggleEdit = this.toggleEdit.bind(this);
         this.toggleInsert = this.toggleInsert.bind(this);
+        this.hideNotification = this.hideNotification.bind(this);
         this.confirmDelete = this.confirmDelete.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
     }
@@ -61,7 +63,6 @@ export class GeneralTable extends Component {
     componentDidMount() {
         this.onLoad();
     }
-
 
     onSearch() {
         // check if filter is set
@@ -103,7 +104,7 @@ export class GeneralTable extends Component {
                     notification: {
                         show: true,
                         type: SUCCESS_TOAST,
-                        message: `Successfully deleted account with id ${id}!`
+                        message: `Successfully deleted ${this.props.type} with id ${id}!`
                     }
                 })
             })
@@ -128,10 +129,11 @@ export class GeneralTable extends Component {
                     data:
                         this.state.data.map((d) => d.id === data.id ? data : d)
                     ,
+                    edit: false,
                     notification: {
                         show: true,
                         type: SUCCESS_TOAST,
-                        message: `Successfully updated account with id ${data.id}!`
+                        message: `Successfully updated ${this.props.type} with id ${data.id}!`
                     }
                 })
             })
@@ -157,6 +159,7 @@ export class GeneralTable extends Component {
                         elem,
                         ...prevState.data
                     ],
+                    insert: false,
                     notification: {
                         show: true,
                         type: SUCCESS_TOAST,
@@ -197,6 +200,16 @@ export class GeneralTable extends Component {
         })
     }
 
+    hideNotification() {
+        this.setState({
+            ...this.state,
+            notification: {
+                ...this.state.notification,
+                show: false
+            }
+        });
+    }
+
     handleInputChange(event) {
         this.setState({
             ...this.state,
@@ -216,7 +229,7 @@ export class GeneralTable extends Component {
         return (
             <div className="table-container">
                 {this.state.notification.show ?
-                    <ToastNotification notification={this.state.notification}/>
+                    <ModalNotification notification={this.state.notification} onHide={this.hideNotification}/>
                     :
                     <div/>
                 }
@@ -234,10 +247,10 @@ export class GeneralTable extends Component {
                     <Button variant="primary" onClick={this.onSearch}>Search</Button>
                 </InputGroup>
                 <Button variant="success" onClick={this.toggleInsert}>+ New</Button>
-                <GeneralInsertModal type={this.props.type} fields={this.props.editableColumns}
+                <GeneralInsertModal type={this.props.type} fields={this.props.columns.filter(field => field.required)}
                                     show={this.state.insert} toggleShow={this.toggleInsert} onSave={this.onInsert}/>
                 {this.state.edit ?
-                    <GeneralEditModal type={this.props.type} fields={this.props.editableColumns}
+                    <GeneralEditModal type={this.props.type} fields={this.props.columns.filter(field => field.editable)}
                                       data={this.state.selected}
                                       show={this.state.edit} toggleShow={this.toggleEdit} onUpdate={this.onUpdate}/>
                     :

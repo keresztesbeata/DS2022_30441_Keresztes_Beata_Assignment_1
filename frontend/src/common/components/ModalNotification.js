@@ -7,41 +7,23 @@ export const WARNING = {name: "Warning!", style: "warning-modal"};
 export const ERROR = {name: "Error!", style: "error-modal"};
 
 export class ModalNotification extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            show: this.props.notification.show,
-            type: this.props.notification.type,
-            message: this.props.notification.message,
-            fields: this.props.notification.fields || [],
-        }
-        this.hide = this.hide.bind(this);
-    }
-
-    hide() {
-        this.setState({
-            ...this.state,
-            show: false
-        });
-    }
-
     render() {
         return (
-            <Modal show={this.state.show}
-                   onHide={this.hide}
+            <Modal show={this.props.notification.show}
+                   onHide={this.props.onHide}
                    size="lg"
                    aria-labelledby="contained-modal-title-vcenter"
                    centered>
-                <Modal.Header closeButton className={this.state.type.style}>
-                    <Modal.Title>{this.state.type.name}</Modal.Title>
+                <Modal.Header closeButton className={this.props.notification.type.style}>
+                    <Modal.Title>{this.props.notification.type.name}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <p><strong>{this.state.message}</strong></p>
+                    <p><strong>{this.props.notification.message}</strong></p>
                     {
-                        (this.state.fields.length > 0) ?
+                        (this.props.notification.fields) ?
                             <>
                                 {
-                                    this.state.fields.map((e) =>
+                                    this.props.notification.fields.map((e) =>
                                         <p>{e.field} - {e.message}</p>)
                                 }
                             </>
@@ -50,7 +32,7 @@ export class ModalNotification extends Component {
                     }
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={this.hide}>
+                    <Button variant="secondary" onClick={this.props.onHide}>
                         Close
                     </Button>
                 </Modal.Footer>

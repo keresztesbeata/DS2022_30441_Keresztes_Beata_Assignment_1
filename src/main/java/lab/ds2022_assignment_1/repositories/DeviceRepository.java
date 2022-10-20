@@ -14,4 +14,6 @@ public interface DeviceRepository extends JpaRepository<Device, UUID>, JpaSpecif
     List<Device> findByAccountAndAddress(Account account, String address);
 
     List<Device> findByAccount(Account account);
+
+    List<Device> findByAccountNull();
 }

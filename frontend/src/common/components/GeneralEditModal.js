@@ -21,33 +21,37 @@ export class GeneralEditModal extends Component {
 
     render() {
         return (
-            <Modal show={this.props.show} onHide={() => this.props.toggleShow(false)} onShow={() => this.props.toggleShow(true)}>
+            <Modal show={this.props.show} onHide={() => this.props.toggleShow(false)}
+                   onShow={() => this.props.toggleShow(true)}>
                 <Modal.Header closeButton>
                     <h3>Edit {this.props.type}</h3>
                 </Modal.Header>
                 <Modal.Body>
                     {
-                        this.props.fields.map(field =>
-                            field.isCategorical ?
-                                <InputGroup className='gap-3 mb-3'>
-                                    <FormLabel>{field.Header} : </FormLabel>
-                                    <FormSelect name={field.accessor} required onChange={this.handleInputChange}>
-                                        <option value="">-- Select {field.Header} --</option>
-                                        {
-                                            field.categories.map(category =>
-                                                <option value={category} selected={this.state.data[field.accessor] === category}>{category}</option>
-                                            )
-                                        }
-                                    </FormSelect>
-                                </InputGroup>
-                                :
-                                <InputGroup className='gap-3 mb-3'>
-                                    <FormLabel>{field.Header} : </FormLabel>
-                                    <FormControl type='text' placeholder={`Enter ${field.Header}...`} name={field.accessor}
-                                                 value={this.state.data[field.accessor]}
-                                                 required onChange={this.handleInputChange}/>
-                                </InputGroup>
-                        )
+                        this.props.fields
+                            .map(field =>
+                                field.isCategorical ?
+                                    <InputGroup className='gap-3 mb-3'>
+                                        <FormLabel>{field.Header} : </FormLabel>
+                                        <FormSelect name={field.accessor} required onChange={this.handleInputChange}>
+                                            <option key="" value="">-- Select {field.Header} --</option>
+                                            {
+                                                field.categories.map(category =>
+                                                    <option key={category} value={category}
+                                                            selected={this.state.data[field.accessor] === category}>{category}</option>
+                                                )
+                                            }
+                                        </FormSelect>
+                                    </InputGroup>
+                                    :
+                                    <InputGroup className='gap-3 mb-3'>
+                                        <FormLabel>{field.Header} : </FormLabel>
+                                        <FormControl type='text' placeholder={`Enter ${field.Header}...`}
+                                                     name={field.accessor}
+                                                     value={this.state.data[field.accessor]}
+                                                     required onChange={this.handleInputChange}/>
+                                    </InputGroup>
+                            )
                     }
                 </Modal.Body>
                 <Modal.Footer>

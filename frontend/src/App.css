@@ -126,8 +126,7 @@
 }
 
 .side-nav a:active {
-    color: #60beb1;
-    font-size: 18px;
+    color: #137769;
 }
 
 .side-nav p {
@@ -138,6 +137,10 @@
 }
 
 .table-container {
+    margin: 2%;
+}
+
+.page-content {
     margin: 2%;
 }
 

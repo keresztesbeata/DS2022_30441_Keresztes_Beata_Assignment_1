@@ -7,23 +7,10 @@ export const WARNING_TOAST = {name: "Warning!", style: "warning-modal"};
 export const ERROR_TOAST = {name: "Error!", style: "error-modal"};
 
 export class ToastNotification extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            show: this.props.notification.show
-        }
-        this.hide = this.hide.bind(this);
-    }
-
-    hide() {
-        this.setState({
-            ...this.state, show: false
-        });
-    }
 
     render() {
-        return (<Toast show={this.state.show}
-                       onClose={this.hide}
+        return (<Toast show={this.props.notification.show}
+                       onClose={this.props.onHide}
                        size="lg"
                        aria-labelledby="contained-modal-title-vcenter"
                        centered="true">

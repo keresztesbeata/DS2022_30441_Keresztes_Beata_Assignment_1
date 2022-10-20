@@ -28,15 +28,16 @@ export class GeneralInsertModal extends Component {
                 </Modal.Header>
                 <Modal.Body>
                     {
-                        this.props.fields.map(field =>
+                        this.props.fields.filter(field => field.required)
+                            .map(field =>
                             field.isCategorical ?
                                 <InputGroup className='gap-3 mb-3'>
                                     <FormLabel>{field.Header} : </FormLabel>
                                     <FormSelect name={field.accessor} required onChange={this.handleInputChange}>
-                                        <option value=""> Select {field.Header} </option>
+                                        <option key="" value=""> Select {field.Header} </option>
                                         {
                                             field.categories.map(category =>
-                                                <option value={category}>{category}</option>
+                                                <option key={category} value={category}>{category}</option>
                                             )
                                         }
                                     </FormSelect>

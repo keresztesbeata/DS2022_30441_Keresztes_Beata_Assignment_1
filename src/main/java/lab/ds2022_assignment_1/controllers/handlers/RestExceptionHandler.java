@@ -18,7 +18,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import java.io.IOException;
-import java.util.Objects;
 
 import static org.springframework.http.HttpStatus.*;
 
@@ -29,7 +28,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleEntityNotFoundException(EntityNotFoundException e, WebRequest request) {
         return handleExceptionInternal(
                 e,
-                e.getMessage(),
+                new ErrorResponse(HttpStatus.NOT_FOUND, e.getMessage()),
                 new HttpHeaders(),
                 HttpStatus.NOT_FOUND,
                 request
@@ -40,7 +39,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleDuplicateUsernameException(DuplicateDataException e, WebRequest request) {
         return handleExceptionInternal(
                 e,
-                e.getMessage(),
+                new ErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage()),
                 new HttpHeaders(),
                 HttpStatus.BAD_REQUEST,
                 request
@@ -90,7 +89,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleAuthenticationException(AuthenticationException e, WebRequest request) {
         return handleExceptionInternal(
                 e,
-                e.getMessage(),
+                new ErrorResponse(HttpStatus.UNAUTHORIZED, e.getMessage()),
                 new HttpHeaders(),
                 HttpStatus.UNAUTHORIZED,
                 request
@@ -101,7 +100,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleNoLoggedInUserException(NoLoggedInUserException e, WebRequest request) {
         return handleExceptionInternal(
                 e,
-                e.getMessage(),
+                new ErrorResponse(HttpStatus.FORBIDDEN, e.getMessage()),
                 new HttpHeaders(),
                 FORBIDDEN,
                 request
@@ -125,7 +124,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleIOException(IOException e, WebRequest request) {
         return handleExceptionInternal(
                 e,
-                e.getMessage(),
+                new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage()),
                 new HttpHeaders(),
                 HttpStatus.INTERNAL_SERVER_ERROR,
                 request
@@ -136,7 +135,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleUsernameNotFoundException(UsernameNotFoundException e, WebRequest request) {
         return handleExceptionInternal(
                 e,
-                e.getMessage(),
+                new ErrorResponse(HttpStatus.NOT_FOUND, e.getMessage()),
                 new HttpHeaders(),
                 HttpStatus.NOT_FOUND,
                 request
@@ -147,7 +146,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleInvalidAccessException(InvalidAccessException e, WebRequest request) {
         return handleExceptionInternal(
                 e,
-                e.getMessage(),
+                new ErrorResponse(HttpStatus.FORBIDDEN, e.getMessage()),
                 new HttpHeaders(),
                 HttpStatus.FORBIDDEN,
                 request

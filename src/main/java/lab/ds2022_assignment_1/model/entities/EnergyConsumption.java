@@ -1,18 +1,17 @@
 package lab.ds2022_assignment_1.model.entities;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Getter
+@Setter
+@ToString
 public class EnergyConsumption {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

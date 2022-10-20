@@ -49,6 +49,11 @@ public class DeviceRestController {
         return ok(deviceService.filterDevices(new SearchCriteria(filterKey, filterValue)));
     }
 
+    @GetMapping(AVAILABLE_DEVICES_PATH)
+    public ResponseEntity<List<DeviceDTO>> findAvailableDevices() {
+        return ok(deviceService.findAvailableDevices());
+    }
+
     @PutMapping(value = DEVICE_ID_PATH, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<DeviceDTO> updateDevice(@PathVariable(DEVICE_ID) @ValidUUID String deviceId,
                                                   @RequestBody @Valid DeviceData data) throws DuplicateDataException, EntityNotFoundException {

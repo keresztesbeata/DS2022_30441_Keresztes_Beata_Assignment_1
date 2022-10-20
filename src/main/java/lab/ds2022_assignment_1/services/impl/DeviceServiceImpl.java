@@ -38,7 +38,15 @@ public class DeviceServiceImpl implements DeviceService {
     private static final String CANNOT_ACCESS_DEVICE_ERR_MSG = "You cannot access this device, it belongs to a different user!";
 
     @Override
-    public List<DeviceDTO> filterDevices(SearchCriteria searchCriteria) throws InvalidFilterException {
+    public List<DeviceDTO> findAvailableDevices() {
+        return deviceRepository.findByAccountNull()
+                .stream()
+                .map(deviceMapper::mapToDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<DeviceDTO> filterDevices(final SearchCriteria searchCriteria) throws InvalidFilterException {
         final Specification<Device> specification = new DeviceSpecification(searchCriteria);
         ((FilterValidator) specification).validate(searchCriteria);
 

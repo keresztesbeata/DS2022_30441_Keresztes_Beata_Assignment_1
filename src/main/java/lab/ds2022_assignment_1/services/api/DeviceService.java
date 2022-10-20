@@ -8,7 +8,6 @@ import lab.ds2022_assignment_1.model.exceptions.DuplicateDataException;
 import lab.ds2022_assignment_1.model.exceptions.EntityNotFoundException;
 import lab.ds2022_assignment_1.model.exceptions.InvalidAccessException;
 import lab.ds2022_assignment_1.model.exceptions.InvalidFilterException;
-import org.springframework.security.access.annotation.Secured;
 
 import java.util.List;
 
@@ -20,6 +19,13 @@ public interface DeviceService {
      * @return a list of {@link DeviceDTO}
      */
     List<DeviceDTO> findDevices();
+
+    /**
+     * Find a list of all available devices for the given user which are not assigned to a user yet.
+     *
+     * @return a list of {@link DeviceDTO}
+     */
+    List<DeviceDTO> findAvailableDevices();
 
     /**
      * Filter devices based on some criteria.
@@ -36,7 +42,6 @@ public interface DeviceService {
      * @param request the {@link DeviceData}
      * @return the device that was added
      */
-    @Secured("ADMIN")
     DeviceDTO addDevice(final DeviceData request);
 
     /**

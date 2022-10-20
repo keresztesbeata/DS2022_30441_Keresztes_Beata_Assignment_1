@@ -6,6 +6,7 @@ const API_URL = SERVER_BASE_URL + "/api"
 const ACCOUNTS_URL = API_URL + "/accounts"
 const DEVICES_URL = API_URL + "/devices"
 const LINK_DEVICE_URL = API_URL + "/link_device"
+const AVAILABLE_DEVICES_URL = DEVICES_URL + "/available"
 
 export const ACCOUNT_ENTITY = "Account"
 export const DEVICE_ENTITY = "Device"
@@ -71,8 +72,6 @@ export function Filter(entityType, filterKey, filterValue) {
         }
     }
 
-    console.log(config)
-
     return axios.get(url, config)
         .then((response) => {
             if (response.status === 200) {
@@ -132,7 +131,6 @@ export function Insert(entityType, data) {
     const config = {
         headers: {
             'Authorization': 'Bearer ' + localStorage.getItem(TOKEN),
-            'Accept': 'application/json',
             'Content-Type': 'application/json',
         }
     }
@@ -184,6 +182,32 @@ export function Delete(entityType, id) {
 }
 
 /**
+ * Fetch all available devices.
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+export function FindAvailableDevices() {
+    const config = {
+        headers: {
+            'Authorization': 'Bearer ' + localStorage.getItem(TOKEN),
+        }
+    }
+
+    return axios.get(AVAILABLE_DEVICES_URL, config)
+        .then((response) => {
+            if (response.status === 200) {
+                return response.data;
+            }
+        })
+        .catch(error => {
+            if (error.response.status !== 200) {
+                // failed to retrieve data
+                throw new Error(error.response.data);
+            }
+        })
+}
+
+/**
  * Link a device to a user account.
  * @param deviceId
  * @param accountId
@@ -194,14 +218,13 @@ export function LinkDeviceToUser(deviceId, accountId) {
     const config = {
         headers: {
             'Authorization': 'Bearer ' + localStorage.getItem(TOKEN),
-            'Accept': 'application/json',
             'Content-Type': 'application/json',
         }
     }
 
     const data = {
-        deviceId: deviceId,
-        accountId: accountId
+        'deviceId': deviceId,
+        'accountId': accountId
     }
 
     return axios.post(LINK_DEVICE_URL, data, config)
@@ -211,6 +234,7 @@ export function LinkDeviceToUser(deviceId, accountId) {
             }
         })
         .catch(error => {
+            console.log(error)
             if (error.response.status !== 200) {
                 // failed to delete data
                 throw new Error(error.response.data);

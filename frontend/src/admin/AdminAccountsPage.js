@@ -7,40 +7,32 @@ export class AdminAccountsPage extends Component {
     render() {
         const columns = [{
             Header: 'ID',
-            accessor: 'id'
+            accessor: 'id',
+            editable: false, // the value of the field can be updated
+            required: false, // the value of the field is required when a entity is inserted in the table
         }, {
             Header: 'Name',
-            accessor: 'name'
+            accessor: 'name',
+            editable: true,
+            required: true,
         }, {
             Header: 'Username',
-            accessor: 'username'
+            accessor: 'username',
+            editable: true,
+            required: true,
         }, {
             Header: 'Role',
             accessor: 'role',
-            isCategorical: true,
-            categories: ['ADMIN', 'CLIENT']
+            isCategorical: true,    // the field can have a discrete set of values
+            categories: ['ADMIN', 'CLIENT'], // the set of values reserved for the field
+            editable: false,
+            required: true,
         }]
-        const editableColumns = [{
-            Header: 'Name',
-            accessor: 'name'
-        }, {
-            Header: 'Username',
-            accessor: 'username'
-        },{
-            Header: 'Password',
-            accessor: 'password'
-        }, {
-            Header: 'Role',
-            accessor: 'role',
-            isCategorical: true,
-            categories: ['ADMIN', 'CLIENT']
-        }]
-        const filters = ['id', 'name', 'username','role']
+        const filters = ['id', 'name', 'username', 'role']
         return (
             <div className="page-container">
                 <AdminNavigationMenu/>
-                <GeneralTable type={ACCOUNT_ENTITY} columns={columns} editableColumns={editableColumns}
-                              filters={filters}/>
+                <GeneralTable type={ACCOUNT_ENTITY} columns={columns} filters={filters}/>
             </div>
         );
     }

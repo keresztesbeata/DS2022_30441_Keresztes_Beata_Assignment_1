@@ -7,29 +7,30 @@ export class AdminDevicesPage extends Component {
     render() {
         const columns = [{
             Header: 'ID',
-            accessor: 'id'
+            accessor: 'id',
+            editable: false,
+            required: false,
         }, {
             Header: 'Address',
-            accessor: 'address'
+            accessor: 'address',
+            editable: true,
+            required: true,
         }, {
             Header: 'Description',
-            accessor: 'description'
+            accessor: 'description',
+            editable: true,
+            required: true,
         }, {
             Header: 'Account ID',
-            accessor: 'accountId'
+            accessor: 'accountId',
+            editable: false,
+            required: false,
         }]
-        const editableColumns = [{
-            Header: 'Address',
-            accessor: 'address'
-        }, {
-            Header: 'Description',
-            accessor: 'description'
-        }]
-        const filters = ['id', 'address', 'description', 'accountId']
+        const filters = ['id', 'address', 'description', 'accountId'];
         return (
             <div className="page-container">
                 <AdminNavigationMenu/>
-                <GeneralTable type={DEVICE_ENTITY} columns={columns} editableColumns={editableColumns} filters={filters}/>
+                <GeneralTable type={DEVICE_ENTITY} columns={columns} filters={filters}/>
             </div>
         );
     }
