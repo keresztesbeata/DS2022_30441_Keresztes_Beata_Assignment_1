@@ -14,7 +14,10 @@ import javax.persistence.criteria.Root;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.UUID;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import static lab.ds2022_assignment_1.controllers.Constants.UUID_REGEX;
 
 public class AccountSpecification implements Specification<Account>, FilterValidator {
     private final SearchCriteria searchCriteria;
@@ -34,7 +37,9 @@ public class AccountSpecification implements Specification<Account>, FilterValid
         }
     }
 
-    private static final String INVALID_FILTER_ERR_MSG = "Invalid filter!";
+    private static final String INVALID_FILTER_NAME_ERR_MSG = "Invalid filter name!";
+    private static final String INVALID_FILTER_VALUE_ERR_MSG = "Invalid filter value!";
+    private static final Pattern UUID_PATTERN = Pattern.compile(UUID_REGEX);
 
     public AccountSpecification(SearchCriteria searchCriteria) {
         super();
@@ -46,7 +51,12 @@ public class AccountSpecification implements Specification<Account>, FilterValid
     @Override
     public void validate(SearchCriteria searchCriteria) throws InvalidFilterException {
         if (Arrays.stream(FilterableField.values()).noneMatch(field -> field.getValue().equals(searchCriteria.getFilterKey()))) {
-            throw new InvalidFilterException(searchCriteria.getFilterKey(), INVALID_FILTER_ERR_MSG);
+            throw new InvalidFilterException(searchCriteria.getFilterKey(), INVALID_FILTER_NAME_ERR_MSG + " The entity has no such field.");
+        }
+        if (FilterableField.ID.equals(FilterableField.valueOf(dictionary.get(searchCriteria.getFilterKey())))) {
+            if (!UUID_PATTERN.matcher(searchCriteria.getFilterValue()).matches()) {
+                throw new InvalidFilterException(searchCriteria.getFilterKey(), INVALID_FILTER_VALUE_ERR_MSG + " Not a valid uuid!");
+            }
         }
     }
 

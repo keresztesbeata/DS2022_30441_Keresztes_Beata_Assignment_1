@@ -1,5 +1,5 @@
 import axios from "axios";
-import {SERVER_BASE_URL} from "../../common/Utils";
+import {customError, SERVER_BASE_URL} from "../../common/Utils";
 import {TOKEN} from "../../common/auth/Authentication";
 
 const API_URL = SERVER_BASE_URL + "/api"
@@ -46,7 +46,7 @@ export function GetAll(entityType) {
         .catch(error => {
             if (error.response.status !== 200) {
                 // failed to retrieve data
-                throw new Error(error.response.data);
+                throw customError(error.response.data);
             }
         })
 }
@@ -81,7 +81,7 @@ export function Filter(entityType, filterKey, filterValue) {
         .catch(error => {
             if (error.response.status !== 200) {
                 // failed to retrieve data
-                throw new Error(error.response.data);
+                throw customError(error.response.data);
             }
         })
 }
@@ -113,7 +113,7 @@ export function Update(entityType, data) {
         .catch(error => {
             if (error.response.status !== 200) {
                 // failed to update data
-                throw new Error(error.response.data);
+                throw customError(error.response.data);
             }
         })
 }
@@ -144,7 +144,7 @@ export function Insert(entityType, data) {
         .catch(error => {
             if (error.response.status !== 201) {
                 // failed to insert data
-                throw new Error(error.response.data);
+                throw customError(error.response.data);
             }
         })
 }
@@ -176,7 +176,7 @@ export function Delete(entityType, id) {
         .catch(error => {
             if (error.response.status !== 200) {
                 // failed to delete data
-                throw new Error(error.response.data);
+                throw customError(error.response.data);
             }
         })
 }
@@ -202,7 +202,7 @@ export function FindAvailableDevices() {
         .catch(error => {
             if (error.response.status !== 200) {
                 // failed to retrieve data
-                throw new Error(error.response.data);
+                throw customError(error.response.data);
             }
         })
 }
@@ -237,7 +237,7 @@ export function LinkDeviceToUser(deviceId, accountId) {
             console.log(error)
             if (error.response.status !== 200) {
                 // failed to delete data
-                throw new Error(error.response.data);
+                throw customError(error.response.data);
             }
         })
 }

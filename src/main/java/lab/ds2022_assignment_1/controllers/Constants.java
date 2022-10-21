@@ -30,4 +30,6 @@ public class Constants {
     public static final String CLIENT_DEVICE_ID_PATH = CLIENT_DEVICES_PATH + "/{" + DEVICE_ID + "}";
     public static final String ENERGY_CONSUMPTION_PATH = CLIENT + "/energy_consumption";
     public static final String DEVICE_ENERGY_CONSUMPTION_PATH = ENERGY_CONSUMPTION_PATH + "/{" + DEVICE_ID + "}";
+
+    public static final String UUID_REGEX = "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$|";
 }

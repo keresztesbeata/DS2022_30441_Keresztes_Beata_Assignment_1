@@ -1,10 +1,9 @@
 import React, {Component} from 'react';
 import {Button, FormControl, FormLabel, FormSelect, InputGroup, Table} from "react-bootstrap";
-import {ERROR_TOAST, SUCCESS_TOAST} from "../../common/components/ToastNotification";
 import {Delete, Filter, GetAll, Insert, Update} from "../api/AdminApi";
 import {GeneralInsertModal} from "./GeneralInsertModal";
 import {GeneralEditModal} from "./GeneralEditModal";
-import {ModalNotification} from "../../common/components/ModalNotification";
+import {ERROR, ModalNotification, SUCCESS} from "../../common/components/ModalNotification";
 
 export class GeneralTable extends Component {
     constructor(props) {
@@ -18,7 +17,7 @@ export class GeneralTable extends Component {
             selectedData: null,
             notification: {
                 show: false,
-                type: ERROR_TOAST,
+                type: ERROR,
                 message: "",
                 fields: []
             }
@@ -34,6 +33,19 @@ export class GeneralTable extends Component {
         this.hideNotification = this.hideNotification.bind(this);
         this.confirmDelete = this.confirmDelete.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
+        this.onError = this.onError.bind(this);
+    }
+
+    onError(error) {
+        this.setState({
+            ...this.state,
+            notification: {
+                show: true,
+                type: ERROR,
+                message: error.message,
+                fields: error.errors
+            }
+        });
     }
 
     onLoad() {
@@ -47,17 +59,7 @@ export class GeneralTable extends Component {
                     }
                 });
             })
-            .catch(error => {
-                this.setState({
-                    ...this.state,
-                    notification: {
-                        show: true,
-                        type: ERROR_TOAST,
-                        message: error.message,
-                        fields: []
-                    }
-                })
-            });
+            .catch(error => this.onError(error));
     }
 
     componentDidMount() {
@@ -80,17 +82,7 @@ export class GeneralTable extends Component {
                     }
                 });
             })
-            .catch(error => {
-                this.setState({
-                    ...this.state,
-                    notification: {
-                        show: true,
-                        type: ERROR_TOAST,
-                        message: error.message,
-                        fields: []
-                    }
-                })
-            });
+            .catch(error => this.onError(error));
     }
 
     onDelete(id) {
@@ -103,22 +95,12 @@ export class GeneralTable extends Component {
                     ,
                     notification: {
                         show: true,
-                        type: SUCCESS_TOAST,
+                        type: SUCCESS,
                         message: `Successfully deleted ${this.props.type} with id ${id}!`
                     }
                 })
             })
-            .catch(error => {
-                this.setState({
-                    ...this.state,
-                    notification: {
-                        show: true,
-                        type: ERROR_TOAST,
-                        message: error.message,
-                        fields: error.errors
-                    }
-                })
-            });
+            .catch(error => this.onError(error));
     }
 
     onUpdate(row) {
@@ -132,22 +114,12 @@ export class GeneralTable extends Component {
                     edit: false,
                     notification: {
                         show: true,
-                        type: SUCCESS_TOAST,
+                        type: SUCCESS,
                         message: `Successfully updated ${this.props.type} with id ${data.id}!`
                     }
                 })
             })
-            .catch(error => {
-                this.setState({
-                    ...this.state,
-                    notification: {
-                        show: true,
-                        type: ERROR_TOAST,
-                        message: error.message,
-                        fields: error.errors
-                    }
-                })
-            });
+            .catch(error => this.onError(error));
     }
 
     onInsert(row) {
@@ -162,22 +134,12 @@ export class GeneralTable extends Component {
                     insert: false,
                     notification: {
                         show: true,
-                        type: SUCCESS_TOAST,
+                        type: SUCCESS,
                         message: `Successfully saved ${this.props.type} with id ${elem.id}!`
                     }
                 }))
             })
-            .catch(error => {
-                this.setState({
-                    ...this.state,
-                    notification: {
-                        show: true,
-                        type: ERROR_TOAST,
-                        message: error.message,
-                        fields: error.errors
-                    }
-                })
-            });
+            .catch(error => this.onError(error));
     }
 
     confirmDelete(id) {

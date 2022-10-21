@@ -179,7 +179,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     private ErrorResponse constructInvalidFilterResponse(InvalidFilterException e) {
-        ErrorResponse errorResponse = new ErrorResponse(BAD_REQUEST, "Could not filter by field! The entity has no such field.");
+        ErrorResponse errorResponse = new ErrorResponse(BAD_REQUEST, "Could not filter by field!");
         errorResponse.addValidationError(e.getField(),
                 e.getMessage());
         return errorResponse;

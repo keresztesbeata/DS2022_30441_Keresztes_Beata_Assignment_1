@@ -5,7 +5,7 @@ export class GeneralListComponent extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            selectedId: this.props.selectedId,
+            selectedItem: this.props.selectedItem,
         }
     }
 

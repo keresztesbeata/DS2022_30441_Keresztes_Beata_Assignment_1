@@ -6,3 +6,11 @@ export function redirect(url) {
 }
 
 
+export function customError(apiError) {
+    let error = new Error(apiError.message);
+    error.errors = apiError.errors;
+
+    return error;
+}
+
+

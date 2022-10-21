@@ -2,9 +2,8 @@ import React, {Component} from 'react';
 import {AdminNavigationMenu} from "./AdminNavigationMenu";
 import {ACCOUNT_ENTITY, FindAvailableDevices, LinkDeviceToUser} from "./api/AdminApi";
 import {GeneralFilterComponent} from "./components/GeneralFilterComponent";
-import {ERROR_TOAST, SUCCESS_TOAST} from "../common/components/ToastNotification";
 import {Button, FormLabel} from "react-bootstrap";
-import {ModalNotification} from "../common/components/ModalNotification";
+import {ERROR, ModalNotification, SUCCESS} from "../common/components/ModalNotification";
 import {GeneralListComponent} from "./components/GeneralListComponent";
 
 export class AdminLinkDevicePage extends Component {
@@ -16,7 +15,7 @@ export class AdminLinkDevicePage extends Component {
             devices: [],
             notification: {
                 show: false,
-                type: ERROR_TOAST,
+                type: ERROR,
                 message: "",
                 fields: []
             }
@@ -26,16 +25,29 @@ export class AdminLinkDevicePage extends Component {
         this.onSave = this.onSave.bind(this);
         this.hideNotification = this.hideNotification.bind(this);
         this.findDevices = this.findDevices.bind(this);
+        this.onError = this.onError.bind(this);
+    }
+
+    onError(error) {
+        this.setState({
+            ...this.state,
+            notification: {
+                show: true,
+                type: ERROR,
+                message: error.message,
+                fields: error.errors
+            }
+        });
     }
 
     componentDidMount() {
         this.findDevices();
     }
 
-    onSelectAccount(accountId) {
+    onSelectAccount(account) {
         this.setState({
             ...this.state,
-            selectedAccount: accountId,
+            selectedAccount: account,
         })
         this.findDevices();
     }
@@ -49,27 +61,21 @@ export class AdminLinkDevicePage extends Component {
                     selectedDevice: data[0]
                 })
             })
-            .catch(error => {
-                this.setState({
-                    ...this.state,
-                    notification: {
-                        show: true,
-                        type: ERROR_TOAST,
-                        message: error.message,
-                        fields: []
-                    }
-                })
-            });
+            .catch(error => this.onError(error));
     }
 
-    onSelectDevice(deviceId) {
+    onSelectDevice(device) {
         this.setState({
             ...this.state,
-            selectedDevice: deviceId
+            selectedDevice: device
         })
     }
 
     onSave() {
+        if (!this.state.selectedDevice || !this.state.selectedAccount) {
+            this.onError({message: "Cannot link device! No device or user has been selected!"})
+        }
+
         LinkDeviceToUser(this.state.selectedDevice.id, this.state.selectedAccount.id)
             .then(() => {
                 this.setState({
@@ -78,24 +84,13 @@ export class AdminLinkDevicePage extends Component {
                         this.state.devices.filter((d) => d.id !== this.state.selectedDevice.id),
                     notification: {
                         show: true,
-                        type: SUCCESS_TOAST,
+                        type: SUCCESS,
                         message: `Device with id ${this.state.selectedDevice.id} has been successfully added to the user with id ${this.state.selectedAccount.id}`,
                         fields: []
                     }
                 })
             })
-            .catch(error => {
-                console.log(error)
-                this.setState({
-                    ...this.state,
-                    notification: {
-                        show: true,
-                        type: ERROR_TOAST,
-                        message: error.message,
-                        fields: []
-                    }
-                })
-            });
+            .catch(error => this.onError(error));
     }
 
     hideNotification() {
@@ -121,11 +116,12 @@ export class AdminLinkDevicePage extends Component {
                     }
                     <FormLabel>Select user:</FormLabel>
                     <GeneralFilterComponent type={ACCOUNT_ENTITY} filters={accountFilters} showList
-                                            selectedId={this.state.selectedAccount}
-                                            onSelectItem={this.onSelectAccount}/>
+                                            selectedItem={this.state.selectedAccount}
+                                            onSelectItem={this.onSelectAccount}
+                                            errorHandler={this.onError}/>
                     <FormLabel>Select from the available devices:</FormLabel>
                     <GeneralListComponent items={this.state.devices} fields={deviceFilters} showList
-                                          selectedId={this.state.selectedDevice}
+                                          selectedItem={this.state.selectedDevice}
                                           onSelect={this.onSelectDevice}/>
                     <Button variant="primary" onClick={this.onSave}>Link device to user</Button>
                 </div>

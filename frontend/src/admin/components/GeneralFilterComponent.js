@@ -9,8 +9,7 @@ export class GeneralFilterComponent extends Component {
         this.state = {
             items: [],
             selectedFilter: this.props.filters !== null ? this.props.filters[0] : "",
-            filterValue: "",
-            errorMessage: null
+            filterValue: ""
         }
         this.handleInputChange = this.handleInputChange.bind(this);
         this.onSearch = this.onSearch.bind(this);
@@ -22,20 +21,18 @@ export class GeneralFilterComponent extends Component {
             .then(data => {
                 this.setState({
                     ...this.state,
-                    items: data
+                    items: data,
+                    hasError: false
                 });
-
-                if(data !== null) {
-                    this.props.onSelectItem(data[0])
-                }
+                this.selectFirst(data);
             })
-            .catch(error => {
-                this.setState({
-                    ...this.state,
-                    items: [],
-                    errorMessage: error.message
-                })
-            });
+            .catch(error => this.props.errorHandler(error));
+    }
+
+    selectFirst(data) {
+        if(this.props.showList && data != null) {
+            this.props.onSelectItem(data[0])
+        }
     }
 
     handleInputChange(event) {
@@ -53,34 +50,21 @@ export class GeneralFilterComponent extends Component {
                 Filter(this.props.type, this.state.selectedFilter, this.state.filterValue)
         )
             .then(data => {
+                console.log(data)
                 this.setState({
                     ...this.state,
                     items: data,
-                    errorMessage: null
+                    hasError: false
                 });
-
-                if(data !== null) {
-                    this.props.onSelectItem(data[0])
-                }
+                this.selectFirst(data);
             })
-            .catch(error => {
-                this.setState({
-                    ...this.state,
-                    errorMessage: error.message
-                })
-            });
+            .catch(error =>  this.props.errorHandler(error));
     }
 
     render() {
         return (
             <div>
                 <InputGroup className="gap-3 mb-3">
-                    {
-                        this.state.errorMessage ?
-                            <p>{this.state.errorMessage}</p>
-                            :
-                            <p/>
-                    }
                     <FormLabel>Search by </FormLabel>
                     <FormSelect name="selectedFilter" onChange={this.handleInputChange}>
                         {
@@ -98,7 +82,7 @@ export class GeneralFilterComponent extends Component {
                     this.props.showList ?
                         <GeneralListComponent fields={this.props.filters}
                                               items={this.state.items}
-                                              selectedId={this.props.selectedId}
+                                              selectedItem={this.props.selectedItem}
                                               onSelect={this.props.onSelectItem}/>
                         :
                         <div/>

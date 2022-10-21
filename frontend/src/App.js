@@ -31,7 +31,7 @@ export default function App() {
                     <Route path="/admin/link_device"
                            element={<ProtectedComponent component={<AdminLinkDevicePage/>} authority={ADMIN_ROLE}/>}/>
                     <Route path='/error' element={<ErrorPage/>}/>
-                    <Route element={<ErrorPage/>}/>
+                    <Route element={<ErrorPage message={"Page not found!"}/>}/>
                 </Routes>
             </BrowserRouter>
         </>

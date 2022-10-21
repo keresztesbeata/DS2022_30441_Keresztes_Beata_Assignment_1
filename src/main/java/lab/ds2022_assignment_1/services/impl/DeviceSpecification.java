@@ -13,12 +13,16 @@ import javax.persistence.criteria.Root;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.UUID;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import static lab.ds2022_assignment_1.controllers.Constants.UUID_REGEX;
 
 public class DeviceSpecification implements Specification<Device>, FilterValidator {
     private final SearchCriteria searchCriteria;
 
     private final Map<String, String> dictionary;
+
     private enum FilterableField {
         ID("id"),
         ADDRESS("address"),
@@ -27,11 +31,15 @@ public class DeviceSpecification implements Specification<Device>, FilterValidat
 
         @Getter
         private final String value;
+
         FilterableField(String value) {
             this.value = value;
         }
     }
-    private static final String INVALID_FILTER_ERR_MSG = "Invalid filter!";
+
+    private static final String INVALID_FILTER_NAME_ERR_MSG = "Invalid filter name!";
+    private static final String INVALID_FILTER_VALUE_ERR_MSG = "Invalid filter value!";
+    private static final Pattern UUID_PATTERN = Pattern.compile(UUID_REGEX);
 
     public DeviceSpecification(SearchCriteria searchCriteria) {
         super();
@@ -42,8 +50,15 @@ public class DeviceSpecification implements Specification<Device>, FilterValidat
 
     @Override
     public void validate(SearchCriteria searchCriteria) throws InvalidFilterException {
-        if(Arrays.stream(FilterableField.values()).noneMatch(field-> field.getValue().equals(searchCriteria.getFilterKey()))) {
-            throw new InvalidFilterException(searchCriteria.getFilterKey(), INVALID_FILTER_ERR_MSG);
+        if (Arrays.stream(FilterableField.values()).noneMatch(field -> field.getValue().equals(searchCriteria.getFilterKey()))) {
+            throw new InvalidFilterException(searchCriteria.getFilterKey(), INVALID_FILTER_NAME_ERR_MSG + " The entity has no such field.");
+        }
+        if (FilterableField.ACCOUNT_ID.equals(FilterableField.valueOf(dictionary.get(searchCriteria.getFilterKey()))) ||
+                FilterableField.ID.equals(FilterableField.valueOf(dictionary.get(searchCriteria.getFilterKey())))) {
+
+            if (!UUID_PATTERN.matcher(searchCriteria.getFilterValue()).matches()) {
+                throw new InvalidFilterException(searchCriteria.getFilterKey(), INVALID_FILTER_VALUE_ERR_MSG + " Not a valid uuid!");
+            }
         }
     }
 
