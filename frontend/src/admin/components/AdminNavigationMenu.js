@@ -1,6 +1,6 @@
 import React from 'react'
 import {Nav} from "react-bootstrap";
-import {Logout} from "../common/auth/Authentication";
+import {Logout} from "../../common/auth/Authentication";
 
 export class AdminNavigationMenu extends React.Component {
     render() {

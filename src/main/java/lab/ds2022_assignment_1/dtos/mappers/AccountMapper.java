@@ -17,11 +17,12 @@ public class AccountMapper implements Mapper<Account, AccountData, AccountDTO> {
     }
 
     @Override
-    public Account mapDtoToEntity(AccountDTO data) {
+    public Account mapDtoToEntity(AccountDTO dto) {
         return Account.builder()
-                .username(data.getUsername())
-                .name(data.getName())
-                .role(UserRole.valueOf(data.getRole()))
+                .username(dto.getUsername())
+                .password(dto.getPassword())
+                .name(dto.getName())
+                .role(UserRole.valueOf(dto.getRole()))
                 .build();
     }
 

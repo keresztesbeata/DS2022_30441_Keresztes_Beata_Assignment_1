@@ -6,11 +6,13 @@ import lab.ds2022_assignment_1.controllers.handlers.requests.SearchCriteria;
 import lab.ds2022_assignment_1.dtos.AccountDTO;
 import lab.ds2022_assignment_1.dtos.mappers.AccountMapper;
 import lab.ds2022_assignment_1.model.entities.Account;
+import lab.ds2022_assignment_1.model.entities.UserRole;
 import lab.ds2022_assignment_1.model.exceptions.DuplicateDataException;
 import lab.ds2022_assignment_1.model.exceptions.EntityNotFoundException;
 import lab.ds2022_assignment_1.model.exceptions.InvalidFilterException;
 import lab.ds2022_assignment_1.model.exceptions.NoLoggedInUserException;
 import lab.ds2022_assignment_1.repositories.AccountRepository;
+import lab.ds2022_assignment_1.repositories.DeviceRepository;
 import lab.ds2022_assignment_1.services.api.AccountService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -28,6 +31,8 @@ import java.util.stream.Collectors;
 public class AccountServiceImpl implements AccountService {
     @Autowired
     private AccountRepository repository;
+    @Autowired
+    private DeviceRepository deviceRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
     private final AccountMapper mapper = new AccountMapper();
@@ -83,8 +88,16 @@ public class AccountServiceImpl implements AccountService {
         final Account account = repository.findById(UUID.fromString(id))
                 .orElseThrow(() -> new EntityNotFoundException(NOT_EXISTENT_ACCOUNT_ERR_MSG));
 
+        // delete the account from all associated devices, but keep the devices themselves
+        deviceRepository.findByAccount(account).forEach(device -> {
+            device.setAccount(null);
+            deviceRepository.save(device);
+        });
+        log.info("Account with id {} was removed from all associated devices!", id);
+
+        // finally delete the account
         repository.delete(account);
-        log.debug("Account with id {} was successfully deleted!", id);
+        log.info("Account with id {} was successfully deleted!", id);
     }
 
     /**
@@ -122,23 +135,35 @@ public class AccountServiceImpl implements AccountService {
         }
     }
 
+    @Override
+    public List<AccountDTO> findClientAccounts() {
+        return repository.findByRole(UserRole.CLIENT)
+                .stream()
+                .map(mapper::mapToDto)
+                .collect(Collectors.toList());
+    }
+
     /**
      * {@inheritDoc}
      */
     @Override
-    public List<AccountDTO> filterAccounts(final SearchCriteria searchCriteria) throws InvalidFilterException {
+    public List<AccountDTO> filterAccounts(final SearchCriteria searchCriteria, final Optional<String> userRole) throws InvalidFilterException {
         final Specification<Account> specification = new AccountSpecification(searchCriteria);
         ((FilterValidator) specification).validate(searchCriteria);
 
-        return repository.findAll(specification)
+        return (userRole.isPresent() ?
+                repository.findByRole(UserRole.valueOf(userRole.get()))
+                : repository.findAll(specification))
                 .stream()
                 .map(mapper::mapToDto)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<AccountDTO> findAccounts() {
-        return repository.findAll()
+    public List<AccountDTO> findAccounts(final Optional<String> userRole) {
+        return (userRole.isPresent() ?
+                repository.findByRole(UserRole.valueOf(userRole.get()))
+                : repository.findAll())
                 .stream()
                 .map(mapper::mapToDto)
                 .collect(Collectors.toList());

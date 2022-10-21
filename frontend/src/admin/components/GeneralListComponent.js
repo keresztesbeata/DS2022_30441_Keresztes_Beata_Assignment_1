@@ -2,13 +2,6 @@ import React, {Component} from 'react';
 import {FormSelect} from "react-bootstrap";
 
 export class GeneralListComponent extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            selectedItem: this.props.selectedItem,
-        }
-    }
-
     render() {
         return (
             <FormSelect onSelect={this.props.onSelect}>

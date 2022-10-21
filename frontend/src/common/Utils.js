@@ -5,7 +5,6 @@ export function redirect(url) {
     window.location.href = url;
 }
 
-
 export function customError(apiError) {
     let error = new Error(apiError.message);
     error.errors = apiError.errors;

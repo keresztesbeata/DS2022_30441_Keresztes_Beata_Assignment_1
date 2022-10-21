@@ -1,9 +1,11 @@
 import React, {Component} from 'react';
-import {Button, FormControl, FormLabel, FormSelect, InputGroup, Table} from "react-bootstrap";
-import {Delete, Filter, GetAll, Insert, Update} from "../api/AdminApi";
+import {Button, Table} from "react-bootstrap";
+import {Delete, GetAll, Insert, Update} from "../api/AdminApi";
 import {GeneralInsertModal} from "./GeneralInsertModal";
 import {GeneralEditModal} from "./GeneralEditModal";
 import {ERROR, ModalNotification, SUCCESS} from "../../common/components/ModalNotification";
+import {GeneralFilterComponent} from "./GeneralFilterComponent";
+import {CREATE_REQUIRED_FIELD, EDIT_FIELD, VIEW_FIELD} from "./Constants";
 
 export class GeneralTable extends Component {
     constructor(props) {
@@ -22,7 +24,6 @@ export class GeneralTable extends Component {
                 fields: []
             }
         }
-        this.onSearch = this.onSearch.bind(this);
         this.onLoad = this.onLoad.bind(this);
         this.onDelete = this.onDelete.bind(this);
         this.onEdit = this.onEdit.bind(this);
@@ -34,6 +35,7 @@ export class GeneralTable extends Component {
         this.confirmDelete = this.confirmDelete.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
         this.onError = this.onError.bind(this);
+        this.updateTable = this.updateTable.bind(this);
     }
 
     onError(error) {
@@ -48,41 +50,24 @@ export class GeneralTable extends Component {
         });
     }
 
+    updateTable(data) {
+        this.setState({
+            ...this.state,
+            data: data,
+            notification: {
+                show: false
+            }
+        });
+    }
+
     onLoad() {
         GetAll(this.props.type)
-            .then(data => {
-                this.setState({
-                    ...this.state,
-                    data: data,
-                    notification: {
-                        show: false
-                    }
-                });
-            })
+            .then(data => this.updateTable(data))
             .catch(error => this.onError(error));
     }
 
     componentDidMount() {
         this.onLoad();
-    }
-
-    onSearch() {
-        // check if filter is set
-        ((this.state.selectedFilter === null || this.state.filterValue === null || this.state.filterValue.trim() === '') ?
-                GetAll(this.props.type)
-                :
-                Filter(this.props.type, this.state.selectedFilter, this.state.filterValue)
-        )
-            .then(data => {
-                this.setState({
-                    ...this.state,
-                    data: data,
-                    notification: {
-                        show: false
-                    }
-                });
-            })
-            .catch(error => this.onError(error));
     }
 
     onDelete(id) {
@@ -195,26 +180,24 @@ export class GeneralTable extends Component {
                     :
                     <div/>
                 }
-                <InputGroup className="gap-3 mb-3">
-                    <FormLabel>Search by </FormLabel>
-                    <FormSelect name="selectedFilter" onChange={this.handleInputChange}>
-                        {
-                            this.props.filters.map(filter =>
-                                <option value={filter}>{filter}</option>
-                            )
-                        }
-                    </FormSelect>
-                    <FormControl type='text' name="filterValue" placeholder={`Enter ${this.state.selectedFilter}...`}
-                                 onChange={this.handleInputChange}/>
-                    <Button variant="primary" onClick={this.onSearch}>Search</Button>
-                </InputGroup>
+                <GeneralFilterComponent type={this.props.type}
+                                        filters={this.props.filters}
+                                        showList={false}
+                                        afterSearch={this.updateTable}
+                                        errorHandler={this.onError}/>
                 <Button variant="success" onClick={this.toggleInsert}>+ New</Button>
-                <GeneralInsertModal type={this.props.type} fields={this.props.columns.filter(field => field.required)}
-                                    show={this.state.insert} toggleShow={this.toggleInsert} onSave={this.onInsert}/>
+                <GeneralInsertModal type={this.props.type}
+                                    fields={this.props.columns.filter(field => field.options.includes(CREATE_REQUIRED_FIELD))}
+                                    show={this.state.insert}
+                                    toggleShow={this.toggleInsert}
+                                    onSave={this.onInsert}/>
                 {this.state.edit ?
-                    <GeneralEditModal type={this.props.type} fields={this.props.columns.filter(field => field.editable)}
+                    <GeneralEditModal type={this.props.type}
+                                      fields={this.props.columns.filter(field => field.options.includes(EDIT_FIELD))}
                                       data={this.state.selected}
-                                      show={this.state.edit} toggleShow={this.toggleEdit} onUpdate={this.onUpdate}/>
+                                      show={this.state.edit}
+                                      toggleShow={this.toggleEdit}
+                                      onUpdate={this.onUpdate}/>
                     :
                     <div/>
                 }
@@ -222,9 +205,8 @@ export class GeneralTable extends Component {
                     <thead>
                     <tr>
                         {
-                            this.props.columns.map(col =>
-                                <th>{col.Header}</th>
-                            )
+                            this.props.columns.filter(field => field.options.includes(VIEW_FIELD))
+                                .map(col => <th>{col.Header}</th>)
                         }
                         <th>Edit</th>
                         <th>Delete</th>
@@ -235,8 +217,8 @@ export class GeneralTable extends Component {
                         this.state.data.map(elem =>
                             <tr id={elem.id}>
                                 {
-                                    this.props.columns.map(col =>
-                                        <td>{elem[col.accessor]}</td>
+                                    this.props.columns.filter(field => field.options.includes(VIEW_FIELD))
+                                        .map(col => <td>{elem[col.accessor]}</td>
                                     )
                                 }
                                 <td>

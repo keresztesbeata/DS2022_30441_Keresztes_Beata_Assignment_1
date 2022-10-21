@@ -1,10 +1,12 @@
 import React, {Component} from 'react';
-import {AdminNavigationMenu} from "./AdminNavigationMenu";
-import {ACCOUNT_ENTITY, FindAvailableDevices, LinkDeviceToUser} from "./api/AdminApi";
+import {AdminNavigationMenu} from "./components/AdminNavigationMenu";
+import {FindAvailableDevices, LinkDeviceToUser} from "./api/AdminApi";
 import {GeneralFilterComponent} from "./components/GeneralFilterComponent";
 import {Button, FormLabel} from "react-bootstrap";
 import {ERROR, ModalNotification, SUCCESS} from "../common/components/ModalNotification";
 import {GeneralListComponent} from "./components/GeneralListComponent";
+import {ACCOUNT_ENTITY} from "./components/Constants";
+import {CLIENT_ROLE} from "../common/auth/Authentication";
 
 export class AdminLinkDevicePage extends Component {
     constructor(props) {
@@ -115,12 +117,17 @@ export class AdminLinkDevicePage extends Component {
                         <div/>
                     }
                     <FormLabel>Select user:</FormLabel>
-                    <GeneralFilterComponent type={ACCOUNT_ENTITY} filters={accountFilters} showList
+                    <GeneralFilterComponent type={ACCOUNT_ENTITY}
+                                            filters={accountFilters}
+                                            showList
+                                            userRole={CLIENT_ROLE}
                                             selectedItem={this.state.selectedAccount}
                                             onSelectItem={this.onSelectAccount}
                                             errorHandler={this.onError}/>
                     <FormLabel>Select from the available devices:</FormLabel>
-                    <GeneralListComponent items={this.state.devices} fields={deviceFilters} showList
+                    <GeneralListComponent items={this.state.devices}
+                                          fields={deviceFilters}
+                                          showList
                                           selectedItem={this.state.selectedDevice}
                                           onSelect={this.onSelectDevice}/>
                     <Button variant="primary" onClick={this.onSave}>Link device to user</Button>

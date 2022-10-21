@@ -1,6 +1,7 @@
 package lab.ds2022_assignment_1.services.impl;
 
 import lab.ds2022_assignment_1.controllers.handlers.requests.AccountData;
+import lab.ds2022_assignment_1.dtos.AccountDTO;
 import lab.ds2022_assignment_1.model.entities.Account;
 import lab.ds2022_assignment_1.model.entities.UserRole;
 import lab.ds2022_assignment_1.model.exceptions.DuplicateDataException;
@@ -38,6 +39,7 @@ class AccountServiceImplTest {
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private Account account;
     private AccountData accountData;
+    private AccountDTO accountDTO;
 
     @BeforeEach
     void setUp() {
@@ -54,6 +56,13 @@ class AccountServiceImplTest {
         accountData.setUsername(USERNAME_1);
         accountData.setPassword(PASSWORD_1);
         accountData.setRole(UserRole.CLIENT.name());
+
+        accountDTO = AccountDTO.builder()
+                .id(ID_1)
+                .name(NAME_1)
+                .username(USERNAME_1)
+                .role(UserRole.ADMIN.name())
+                .build();
     }
 
     @Test
@@ -106,20 +115,20 @@ class AccountServiceImplTest {
 
     @Test
     void updateAccount() {
-        Assertions.assertThrows(EntityNotFoundException.class, () -> service.updateAccount(ID_1, accountData));
+        Assertions.assertThrows(EntityNotFoundException.class, () -> service.updateAccount(ID_1, accountDTO));
 
         Mockito.when(repository.findById(UUID.fromString(ID_1)))
                 .thenReturn(Optional.ofNullable(account));
         Mockito.when(repository.save(any(Account.class)))
                 .thenReturn(account);
 
-        Assertions.assertDoesNotThrow(() -> service.updateAccount(ID_1, accountData));
+        Assertions.assertDoesNotThrow(() -> service.updateAccount(ID_1, accountDTO));
         verify(repository).save(any(Account.class));
 
         Mockito.when(repository.findByUsername(USERNAME_2))
                 .thenReturn(Optional.ofNullable(account));
-        accountData.setUsername(USERNAME_2);
+        accountDTO.setUsername(USERNAME_2);
 
-        Assertions.assertThrows(DuplicateDataException.class, () -> service.updateAccount(ID_1, accountData));
+        Assertions.assertThrows(DuplicateDataException.class, () -> service.updateAccount(ID_1, accountDTO));
     }
 }

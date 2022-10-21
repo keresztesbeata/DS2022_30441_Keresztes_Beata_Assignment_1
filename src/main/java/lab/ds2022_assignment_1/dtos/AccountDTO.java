@@ -10,5 +10,6 @@ public class AccountDTO {
     private String id;
     private String name;
     private String username;
+    private String password;
     private String role;
 }

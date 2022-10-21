@@ -1,30 +1,26 @@
 import React, {Component} from 'react';
-import {AdminNavigationMenu} from "./AdminNavigationMenu";
+import {AdminNavigationMenu} from "./components/AdminNavigationMenu";
 import {GeneralTable} from "./components/GeneralTable";
-import {DEVICE_ENTITY} from "./api/AdminApi";
+import {CREATE_REQUIRED_FIELD, DEVICE_ENTITY, EDIT_FIELD, VIEW_FIELD} from "./components/Constants";
 
 export class AdminDevicesPage extends Component {
     render() {
         const columns = [{
             Header: 'ID',
             accessor: 'id',
-            editable: false,
-            required: false,
+            options: [VIEW_FIELD]
         }, {
             Header: 'Address',
             accessor: 'address',
-            editable: true,
-            required: true,
+            options: [VIEW_FIELD, EDIT_FIELD, CREATE_REQUIRED_FIELD]
         }, {
             Header: 'Description',
             accessor: 'description',
-            editable: true,
-            required: true,
+            options: [VIEW_FIELD, EDIT_FIELD, CREATE_REQUIRED_FIELD]
         }, {
             Header: 'Account ID',
             accessor: 'accountId',
-            editable: false,
-            required: false,
+            options: [VIEW_FIELD]
         }]
         const filters = ['id', 'address', 'description', 'accountId'];
         return (

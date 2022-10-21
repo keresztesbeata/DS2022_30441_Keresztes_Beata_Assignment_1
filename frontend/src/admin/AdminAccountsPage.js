@@ -1,32 +1,32 @@
 import React, {Component} from 'react';
-import {AdminNavigationMenu} from "./AdminNavigationMenu";
+import {AdminNavigationMenu} from "./components/AdminNavigationMenu";
 import {GeneralTable} from "./components/GeneralTable";
-import {ACCOUNT_ENTITY} from "./api/AdminApi";
+import {ACCOUNT_ENTITY, CREATE_REQUIRED_FIELD, EDIT_FIELD, VIEW_FIELD} from "./components/Constants";
 
 export class AdminAccountsPage extends Component {
     render() {
         const columns = [{
             Header: 'ID',
             accessor: 'id',
-            editable: false, // the value of the field can be updated
-            required: false, // the value of the field is required when a entity is inserted in the table
+            options: [VIEW_FIELD]
         }, {
             Header: 'Name',
             accessor: 'name',
-            editable: true,
-            required: true,
+            options: [VIEW_FIELD, EDIT_FIELD, CREATE_REQUIRED_FIELD]
         }, {
             Header: 'Username',
             accessor: 'username',
-            editable: true,
-            required: true,
+            options: [VIEW_FIELD, EDIT_FIELD, CREATE_REQUIRED_FIELD]
+        }, {
+            Header: 'Password',
+            accessor: 'password',
+            options: [EDIT_FIELD, CREATE_REQUIRED_FIELD]
         }, {
             Header: 'Role',
             accessor: 'role',
             isCategorical: true,    // the field can have a discrete set of values
             categories: ['ADMIN', 'CLIENT'], // the set of values reserved for the field
-            editable: false,
-            required: true,
+            options: [VIEW_FIELD, CREATE_REQUIRED_FIELD]
         }]
         const filters = ['id', 'name', 'username', 'role']
         return (

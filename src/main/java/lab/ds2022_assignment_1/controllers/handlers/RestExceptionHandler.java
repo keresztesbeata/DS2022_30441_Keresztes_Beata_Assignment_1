@@ -28,9 +28,9 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleEntityNotFoundException(EntityNotFoundException e, WebRequest request) {
         return handleExceptionInternal(
                 e,
-                new ErrorResponse(HttpStatus.NOT_FOUND, e.getMessage()),
+                new ErrorResponse(NOT_FOUND, e.getMessage()),
                 new HttpHeaders(),
-                HttpStatus.NOT_FOUND,
+                NOT_FOUND,
                 request
         );
     }
@@ -39,9 +39,9 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleDuplicateUsernameException(DuplicateDataException e, WebRequest request) {
         return handleExceptionInternal(
                 e,
-                new ErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage()),
+                new ErrorResponse(BAD_REQUEST, e.getMessage()),
                 new HttpHeaders(),
-                HttpStatus.BAD_REQUEST,
+                BAD_REQUEST,
                 request
         );
     }
@@ -89,9 +89,9 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleAuthenticationException(AuthenticationException e, WebRequest request) {
         return handleExceptionInternal(
                 e,
-                new ErrorResponse(HttpStatus.UNAUTHORIZED, e.getMessage()),
+                new ErrorResponse(UNAUTHORIZED, e.getMessage()),
                 new HttpHeaders(),
-                HttpStatus.UNAUTHORIZED,
+                UNAUTHORIZED,
                 request
         );
     }
@@ -100,7 +100,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleNoLoggedInUserException(NoLoggedInUserException e, WebRequest request) {
         return handleExceptionInternal(
                 e,
-                new ErrorResponse(HttpStatus.FORBIDDEN, e.getMessage()),
+                new ErrorResponse(FORBIDDEN, e.getMessage()),
                 new HttpHeaders(),
                 FORBIDDEN,
                 request
@@ -124,9 +124,9 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleIOException(IOException e, WebRequest request) {
         return handleExceptionInternal(
                 e,
-                new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage()),
+                new ErrorResponse(INTERNAL_SERVER_ERROR, e.getMessage()),
                 new HttpHeaders(),
-                HttpStatus.INTERNAL_SERVER_ERROR,
+                INTERNAL_SERVER_ERROR,
                 request
         );
     }
@@ -135,9 +135,9 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleUsernameNotFoundException(UsernameNotFoundException e, WebRequest request) {
         return handleExceptionInternal(
                 e,
-                new ErrorResponse(HttpStatus.NOT_FOUND, e.getMessage()),
+                new ErrorResponse(NOT_FOUND, e.getMessage()),
                 new HttpHeaders(),
-                HttpStatus.NOT_FOUND,
+                NOT_FOUND,
                 request
         );
     }
@@ -146,9 +146,20 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleInvalidAccessException(InvalidAccessException e, WebRequest request) {
         return handleExceptionInternal(
                 e,
-                new ErrorResponse(HttpStatus.FORBIDDEN, e.getMessage()),
+                new ErrorResponse(FORBIDDEN, e.getMessage()),
                 new HttpHeaders(),
-                HttpStatus.FORBIDDEN,
+                FORBIDDEN,
+                request
+        );
+    }
+
+    @ExceptionHandler(value = {InvalidDataException.class})
+    public ResponseEntity<Object> handleInvalidDataException(InvalidDataException e, WebRequest request) {
+        return handleExceptionInternal(
+                e,
+                new ErrorResponse(BAD_REQUEST, e.getMessage()),
+                new HttpHeaders(),
+                BAD_REQUEST,
                 request
         );
     }

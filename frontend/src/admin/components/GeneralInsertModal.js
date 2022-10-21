@@ -28,8 +28,7 @@ export class GeneralInsertModal extends Component {
                 </Modal.Header>
                 <Modal.Body>
                     {
-                        this.props.fields.filter(field => field.required)
-                            .map(field =>
+                        this.props.fields.map(field =>
                             field.isCategorical ?
                                 <InputGroup className='gap-3 mb-3'>
                                     <FormLabel>{field.Header} : </FormLabel>

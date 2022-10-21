@@ -2,11 +2,8 @@ package lab.ds2022_assignment_1.model.entities;
 
 
 import lombok.*;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
-import org.springframework.security.access.annotation.Secured;
 
 import javax.persistence.*;
 import java.util.HashSet;

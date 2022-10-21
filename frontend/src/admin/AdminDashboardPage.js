@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {AdminNavigationMenu} from "./AdminNavigationMenu";
+import {AdminNavigationMenu} from "./components/AdminNavigationMenu";
 
 export class AdminDashboardPage extends Component {
     render() {

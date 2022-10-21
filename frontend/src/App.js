@@ -11,6 +11,8 @@ import {AdminAccountsPage} from "./admin/AdminAccountsPage";
 import {AdminDevicesPage} from "./admin/AdminDevicesPage";
 import {ErrorPage} from "./common/ErrorPage";
 import {AdminLinkDevicePage} from "./admin/AdminLinkDevicePage";
+import {ClientDevicesPage} from "./client/ClientDevicesPage";
+import {ClientEnergyConsumptionPage} from "./client/ClientEnergyConsumptionPage";
 
 export default function App() {
     return (
@@ -30,6 +32,10 @@ export default function App() {
                            element={<ProtectedComponent component={<AdminDevicesPage/>} authority={ADMIN_ROLE}/>}/>
                     <Route path="/admin/link_device"
                            element={<ProtectedComponent component={<AdminLinkDevicePage/>} authority={ADMIN_ROLE}/>}/>
+                    <Route path="/client/devices"
+                           element={<ProtectedComponent component={<ClientDevicesPage/>} authority={CLIENT_ROLE}/>}/>
+                    <Route path="/client/energy_consumption"
+                           element={<ProtectedComponent component={<ClientEnergyConsumptionPage/>} authority={CLIENT_ROLE}/>}/>
                     <Route path='/error' element={<ErrorPage/>}/>
                     <Route element={<ErrorPage message={"Page not found!"}/>}/>
                 </Routes>

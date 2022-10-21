@@ -17,7 +17,7 @@ export class GeneralFilterComponent extends Component {
 
     componentDidMount() {
         // get all entities
-        GetAll(this.props.type)
+        GetAll(this.props.type, this.props.userRole)
             .then(data => {
                 this.setState({
                     ...this.state,
@@ -30,7 +30,7 @@ export class GeneralFilterComponent extends Component {
     }
 
     selectFirst(data) {
-        if(this.props.showList && data != null) {
+        if (this.props.showList && data != null) {
             this.props.onSelectItem(data[0])
         }
     }
@@ -45,20 +45,23 @@ export class GeneralFilterComponent extends Component {
     onSearch() {
         // check if filter is set
         ((this.state.selectedFilter === null || this.state.filterValue === null || this.state.filterValue.trim() === '') ?
-                GetAll(this.props.type)
+                GetAll(this.props.type, this.props.userRole)
                 :
-                Filter(this.props.type, this.state.selectedFilter, this.state.filterValue)
+                Filter(this.props.type, this.state.selectedFilter, this.state.filterValue, this.props.userRole)
         )
             .then(data => {
-                console.log(data)
                 this.setState({
                     ...this.state,
                     items: data,
                     hasError: false
                 });
                 this.selectFirst(data);
+                // pass the list of filtered items to the parent's callback function
+                if (this.props.afterSearch) {
+                    this.props.afterSearch(data);
+                }
             })
-            .catch(error =>  this.props.errorHandler(error));
+            .catch(error => this.props.errorHandler(error));
     }
 
     render() {

@@ -1,15 +1,13 @@
 import axios from "axios";
 import {customError, SERVER_BASE_URL} from "../../common/Utils";
 import {TOKEN} from "../../common/auth/Authentication";
+import {ACCOUNT_ENTITY, DEVICE_ENTITY} from "../components/Constants";
 
 const API_URL = SERVER_BASE_URL + "/api"
 const ACCOUNTS_URL = API_URL + "/accounts"
 const DEVICES_URL = API_URL + "/devices"
 const LINK_DEVICE_URL = API_URL + "/link_device"
 const AVAILABLE_DEVICES_URL = DEVICES_URL + "/available"
-
-export const ACCOUNT_ENTITY = "Account"
-export const DEVICE_ENTITY = "Device"
 
 const buildUrl = (entityType) => {
     switch (entityType) {
@@ -25,15 +23,18 @@ const buildUrl = (entityType) => {
 /**
  * Fetch all entities
  * @param entityType
+ * @param userRole if we only want to retrieve accounts with a given role
  * @returns {Promise<AxiosResponse<any>>}
  */
-export function GetAll(entityType) {
+export function GetAll(entityType, userRole) {
     // build url
-    const url = buildUrl(entityType)
+    const url = buildUrl(entityType, userRole)
 
     const config = {
         headers: {
             'Authorization': 'Bearer ' + localStorage.getItem(TOKEN),
+        }, params: {
+            'userRole': userRole
         }
     }
 
@@ -52,13 +53,14 @@ export function GetAll(entityType) {
 }
 
 /**
- * Fetch all entities
+ * Filter entities by some key.
  * @param entityType
  * @param filterKey
  * @param filterValue
+ * @param userRole if we only want to retrieve accounts with a given role
  * @returns {Promise<AxiosResponse<any>>}
  */
-export function Filter(entityType, filterKey, filterValue) {
+export function Filter(entityType, filterKey, filterValue, userRole) {
     // build url
     const url = buildUrl(entityType) + "/filter"
 
@@ -68,7 +70,8 @@ export function Filter(entityType, filterKey, filterValue) {
         },
         params: {
             'filterKey': filterKey,
-            'filterValue': filterValue
+            'filterValue': filterValue,
+            'userRole': userRole
         }
     }
 

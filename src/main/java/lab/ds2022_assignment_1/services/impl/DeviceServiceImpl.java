@@ -7,10 +7,7 @@ import lab.ds2022_assignment_1.dtos.DeviceDTO;
 import lab.ds2022_assignment_1.dtos.mappers.DeviceMapper;
 import lab.ds2022_assignment_1.model.entities.Account;
 import lab.ds2022_assignment_1.model.entities.Device;
-import lab.ds2022_assignment_1.model.exceptions.DuplicateDataException;
-import lab.ds2022_assignment_1.model.exceptions.EntityNotFoundException;
-import lab.ds2022_assignment_1.model.exceptions.InvalidAccessException;
-import lab.ds2022_assignment_1.model.exceptions.InvalidFilterException;
+import lab.ds2022_assignment_1.model.exceptions.*;
 import lab.ds2022_assignment_1.repositories.AccountRepository;
 import lab.ds2022_assignment_1.repositories.DeviceRepository;
 import lab.ds2022_assignment_1.services.api.DeviceService;
@@ -22,6 +19,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import static lab.ds2022_assignment_1.model.entities.UserRole.CLIENT;
 
 @Service
 @Slf4j
@@ -36,6 +35,7 @@ public class DeviceServiceImpl implements DeviceService {
     private static final String NOT_EXISTENT_DEVICE_ERR_MSG = "This device doesn't exist!";
     private static final String DUPLICATE_ADDRESS_ERR_MSG = "Duplicate address! The user %s already has a smart device linked to the address %s.";
     private static final String CANNOT_ACCESS_DEVICE_ERR_MSG = "You cannot access this device, it belongs to a different user!";
+    private static final String CANNOT_LINK_DEVICE_ERR_MSG = "You cannot link a device to an Admin user!";
 
     @Override
     public List<DeviceDTO> findAvailableDevices() {
@@ -81,10 +81,15 @@ public class DeviceServiceImpl implements DeviceService {
      * {@inheritDoc}
      */
     @Override
-    public void linkDeviceToUser(final LinkDeviceRequest request) throws EntityNotFoundException, DuplicateDataException {
+    public void linkDeviceToUser(final LinkDeviceRequest request) throws EntityNotFoundException, DuplicateDataException, InvalidOperationException {
         Account account =
                 accountRepository.findById(UUID.fromString(request.getAccountId()))
                         .orElseThrow(() -> new EntityNotFoundException(NOT_EXISTENT_ACCOUNT_ERR_MSG));
+
+        if(!CLIENT.equals(account.getRole())) {
+            throw new InvalidOperationException(CANNOT_LINK_DEVICE_ERR_MSG);
+        }
+
         Device device = deviceRepository.findById(UUID.fromString(request.getDeviceId()))
                 .orElseThrow(() -> new EntityNotFoundException(NOT_EXISTENT_DEVICE_ERR_MSG));
 
@@ -167,6 +172,7 @@ public class DeviceServiceImpl implements DeviceService {
             throw new DuplicateDataException(String.format(DUPLICATE_ADDRESS_ERR_MSG, oldDevice.getAccount().getUsername(), newDevice.getAddress()));
         }
 
+        newDevice.setAccount(oldDevice.getAccount());
         newDevice.setId(UUID.fromString(deviceId));
         final Device savedDevice = deviceRepository.save(newDevice);
         log.debug("Device with id {} was successfully updated!", deviceId);

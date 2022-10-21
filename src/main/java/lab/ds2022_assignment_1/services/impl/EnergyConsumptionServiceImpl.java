@@ -7,6 +7,7 @@ import lab.ds2022_assignment_1.model.entities.Device;
 import lab.ds2022_assignment_1.model.entities.EnergyConsumption;
 import lab.ds2022_assignment_1.model.exceptions.EntityNotFoundException;
 import lab.ds2022_assignment_1.model.exceptions.InvalidAccessException;
+import lab.ds2022_assignment_1.model.exceptions.InvalidDataException;
 import lab.ds2022_assignment_1.repositories.DeviceRepository;
 import lab.ds2022_assignment_1.repositories.EnergyConsumptionRepository;
 import lab.ds2022_assignment_1.services.api.EnergyConsumptionService;
@@ -27,17 +28,22 @@ public class EnergyConsumptionServiceImpl implements EnergyConsumptionService {
     private final EnergyConsumptionMapper mapper = new EnergyConsumptionMapper();
     private static final String NOT_EXISTENT_DEVICE_ERR_MSG = "This device doesn't exist!";
     private static final String CANNOT_ACCESS_DEVICE_ERR_MSG = "You cannot view the energy consumption of this device! It belongs to a different user.";
+    private static final String INVALID_DATE_ERR_MSG = "Invalid date! You cannot select a date in the future.";
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public List<EnergyConsumptionDTO> findHourlyDeviceEnergyConsumption(final String accountId, final String deviceId, final LocalDate date) throws EntityNotFoundException, InvalidAccessException {
+    public List<EnergyConsumptionDTO> findHourlyDeviceEnergyConsumption(final String accountId, final String deviceId, final LocalDate date) throws EntityNotFoundException, InvalidAccessException, InvalidDataException {
         final Device device = deviceRepository.findById(UUID.fromString(deviceId))
                 .orElseThrow(() -> new EntityNotFoundException(NOT_EXISTENT_DEVICE_ERR_MSG));
 
         if (!device.getAccount().getId().toString().equals(accountId)) {
             throw new InvalidAccessException(CANNOT_ACCESS_DEVICE_ERR_MSG);
+        }
+
+        if(date.isAfter(LocalDate.now())) {
+            throw new InvalidDataException(INVALID_DATE_ERR_MSG);
         }
 
         return repository.findByAccountIdDeviceIdAndTimestamp(accountId, deviceId, date)
@@ -50,7 +56,11 @@ public class EnergyConsumptionServiceImpl implements EnergyConsumptionService {
      * {@inheritDoc}
      */
     @Override
-    public List<EnergyConsumptionDTO> findHourlyEnergyConsumption(final String accountId, final LocalDate date) {
+    public List<EnergyConsumptionDTO> findHourlyEnergyConsumption(final String accountId, final LocalDate date) throws InvalidDataException {
+        if(date.isAfter(LocalDate.now())) {
+            throw new InvalidDataException(INVALID_DATE_ERR_MSG);
+        }
+
         return repository.findByAccountIdAndTimestamp(accountId, date)
                 .stream()
                 .map(mapper::mapToDto)

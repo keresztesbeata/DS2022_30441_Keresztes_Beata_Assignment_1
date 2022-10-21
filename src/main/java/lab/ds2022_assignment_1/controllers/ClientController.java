@@ -7,6 +7,7 @@ import lab.ds2022_assignment_1.dtos.DeviceDTO;
 import lab.ds2022_assignment_1.dtos.EnergyConsumptionDTO;
 import lab.ds2022_assignment_1.model.exceptions.EntityNotFoundException;
 import lab.ds2022_assignment_1.model.exceptions.InvalidAccessException;
+import lab.ds2022_assignment_1.model.exceptions.InvalidDataException;
 import lab.ds2022_assignment_1.model.exceptions.NoLoggedInUserException;
 import lab.ds2022_assignment_1.services.api.AccountService;
 import lab.ds2022_assignment_1.services.api.DeviceService;
@@ -55,7 +56,7 @@ public class ClientController {
     }
 
     @GetMapping(ENERGY_CONSUMPTION_PATH)
-    public ResponseEntity<List<EnergyConsumptionDTO>> getClientEnergyConsumption(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") @Valid LocalDate date) throws EntityNotFoundException, NoLoggedInUserException {
+    public ResponseEntity<List<EnergyConsumptionDTO>> getClientEnergyConsumption(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") @Valid LocalDate date) throws NoLoggedInUserException, InvalidDataException {
         final AccountDTO accountDTO = accountService.getCurrentUserAccount();
 
         return ResponseEntity.ok(energyConsumptionService.findHourlyEnergyConsumption(accountDTO.getId(), date));
@@ -63,7 +64,7 @@ public class ClientController {
 
     @GetMapping(DEVICE_ENERGY_CONSUMPTION_PATH)
     public ResponseEntity<List<EnergyConsumptionDTO>> getClientDeviceEnergyConsumption(@PathVariable(DEVICE_ID) @ValidUUID String deviceId,
-                                                                                       @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") @Valid LocalDate date) throws EntityNotFoundException, InvalidAccessException, NoLoggedInUserException {
+                                                                                       @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") @Valid LocalDate date) throws EntityNotFoundException, InvalidAccessException, NoLoggedInUserException, InvalidDataException {
         final AccountDTO accountDTO = accountService.getCurrentUserAccount();
 
         return ResponseEntity.ok(energyConsumptionService.findHourlyDeviceEnergyConsumption(accountDTO.getId(), deviceId, date));
