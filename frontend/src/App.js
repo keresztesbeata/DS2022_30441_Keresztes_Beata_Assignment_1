@@ -3,10 +3,10 @@ import {BrowserRouter, Route, Routes} from 'react-router-dom'
 import './App.css';
 import {LoginPage} from "./common/LoginPage";
 import {RegisterPage} from "./common/RegisterPage";
-import HomePage from "./common/HomePage";
-import {ADMIN_ROLE, CLIENT_ROLE, isLoggedIn, ProtectedComponent} from "./auth/Authentication";
-import {AdminHomePage} from "./admin/AdminHomePage";
-import {ClientHomePage} from "./client/ClientHomePage";
+import HomePage from "./home/HomePage";
+import {ADMIN_ROLE, CLIENT_ROLE, isLoggedIn, ProtectedComponent} from "./common/auth/Authentication";
+import {AdminDashboardPage} from "./admin/AdminDashboardPage";
+import {ClientDashboardPage} from "./client/ClientDashboardPage";
 import {AdminAccountsPage} from "./admin/AdminAccountsPage";
 import {AdminDevicesPage} from "./admin/AdminDevicesPage";
 import {ErrorPage} from "./common/ErrorPage";
@@ -19,9 +19,9 @@ export default function App() {
                 <Routes>
                     <Route path="/" element={<HomePage/>}/>
                     <Route path="/admin"
-                           element={<ProtectedComponent component={<AdminHomePage/>} authority={ADMIN_ROLE}/>}/>
+                           element={<ProtectedComponent component={<AdminDashboardPage/>} authority={ADMIN_ROLE}/>}/>
                     <Route path="/client"
-                           element={<ProtectedComponent component={<ClientHomePage/>} authority={CLIENT_ROLE}/>}/>
+                           element={<ProtectedComponent component={<ClientDashboardPage/>} authority={CLIENT_ROLE}/>}/>
                     <Route path="/login" element={isLoggedIn() ? <HomePage/> : <LoginPage/>}/>
                     <Route path="/register" element={<RegisterPage/>}/>
                     <Route path="/admin/accounts"
@@ -31,6 +31,7 @@ export default function App() {
                     <Route path="/admin/link_device"
                            element={<ProtectedComponent component={<AdminLinkDevicePage/>} authority={ADMIN_ROLE}/>}/>
                     <Route path='/error' element={<ErrorPage/>}/>
+                    <Route element={<ErrorPage/>}/>
                 </Routes>
             </BrowserRouter>
         </>

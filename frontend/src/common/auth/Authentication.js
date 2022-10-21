@@ -1,10 +1,9 @@
 import axios from "axios";
-import {redirect, SERVER_BASE_URL} from "../common/Utils";
+import {redirect, SERVER_BASE_URL} from "../Utils";
 import React from "react";
-import {ErrorPage} from "../common/ErrorPage";
+import {ErrorPage} from "../ErrorPage";
 
 const HOME_PAGE = "/";
-const LOGIN_PAGE = "/login";
 
 const LOGIN_URL = SERVER_BASE_URL + "/login";
 const REGISTER_URL = SERVER_BASE_URL + "/register";
@@ -91,7 +90,7 @@ export function Logout() {
             .then(() => {
                 localStorage.removeItem(TOKEN);
                 localStorage.removeItem(AUTHORITIES);
-                redirect(LOGIN_PAGE);
+                redirect(HOME_PAGE);
             })
     }
 }

@@ -1,6 +1,6 @@
 import axios from "axios";
-import {SERVER_BASE_URL} from "../common/Utils";
-import {TOKEN} from "../auth/Authentication";
+import {SERVER_BASE_URL} from "../../common/Utils";
+import {TOKEN} from "../../common/auth/Authentication";
 
 const API_URL = SERVER_BASE_URL + "/api"
 const ACCOUNTS_URL = API_URL + "/accounts"

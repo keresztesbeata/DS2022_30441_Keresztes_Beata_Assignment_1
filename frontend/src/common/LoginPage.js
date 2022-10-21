@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {Link} from 'react-router-dom'
 import {Button, FormControl, FormGroup, FormLabel} from "react-bootstrap";
 import {ERROR, ModalNotification} from "./components/ModalNotification";
-import {Login} from "../auth/Authentication";
+import {Login} from "./auth/Authentication";
 
 export class LoginPage extends Component {
     constructor(props, context) {
@@ -57,7 +57,7 @@ export class LoginPage extends Component {
     render() {
 
         return (
-            <div className="background-container bg-image d-flex justify-content-center align-items-center">
+            <div className="background-container page-background d-flex justify-content-center align-items-center">
                 <div className="card col-sm-3 border-dark text-left">
                     <form onSubmit={this.handleSubmit} className="card-body">
                         <h3 className="card-title">Log in</h3>

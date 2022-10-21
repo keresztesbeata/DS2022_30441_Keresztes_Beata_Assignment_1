@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {AdminNavigationMenu} from "./AdminNavigationMenu";
-import {GeneralTable} from "../common/components/GeneralTable";
-import {ACCOUNT_ENTITY} from "./AdminActions";
+import {GeneralTable} from "./components/GeneralTable";
+import {ACCOUNT_ENTITY} from "./api/AdminApi";
 
 export class AdminAccountsPage extends Component {
     render() {

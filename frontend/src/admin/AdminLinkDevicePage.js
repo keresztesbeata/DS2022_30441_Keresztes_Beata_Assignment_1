@@ -1,11 +1,11 @@
 import React, {Component} from 'react';
 import {AdminNavigationMenu} from "./AdminNavigationMenu";
-import {ACCOUNT_ENTITY, FindAvailableDevices, LinkDeviceToUser} from "./AdminActions";
-import {GeneralFilterComponent} from "../common/components/GeneralFilterComponent";
+import {ACCOUNT_ENTITY, FindAvailableDevices, LinkDeviceToUser} from "./api/AdminApi";
+import {GeneralFilterComponent} from "./components/GeneralFilterComponent";
 import {ERROR_TOAST, SUCCESS_TOAST} from "../common/components/ToastNotification";
 import {Button, FormLabel} from "react-bootstrap";
 import {ModalNotification} from "../common/components/ModalNotification";
-import {GeneralListComponent} from "../common/components/GeneralListComponent";
+import {GeneralListComponent} from "./components/GeneralListComponent";
 
 export class AdminLinkDevicePage extends Component {
     constructor(props) {

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Filter, GetAll} from "../../admin/AdminActions";
+import {Filter, GetAll} from "../api/AdminApi";
 import {Button, FormControl, FormLabel, FormSelect, InputGroup} from "react-bootstrap";
 import {GeneralListComponent} from "./GeneralListComponent";
 

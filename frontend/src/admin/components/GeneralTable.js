@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
 import {Button, FormControl, FormLabel, FormSelect, InputGroup, Table} from "react-bootstrap";
-import {ERROR_TOAST, SUCCESS_TOAST} from "./ToastNotification";
-import {Delete, Filter, GetAll, Insert, Update} from "../../admin/AdminActions";
+import {ERROR_TOAST, SUCCESS_TOAST} from "../../common/components/ToastNotification";
+import {Delete, Filter, GetAll, Insert, Update} from "../api/AdminApi";
 import {GeneralInsertModal} from "./GeneralInsertModal";
 import {GeneralEditModal} from "./GeneralEditModal";
-import {ModalNotification} from "./ModalNotification";
+import {ModalNotification} from "../../common/components/ModalNotification";
 
 export class GeneralTable extends Component {
     constructor(props) {
