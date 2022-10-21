@@ -28,14 +28,16 @@ const buildUrl = (entityType) => {
  */
 export function GetAll(entityType, userRole) {
     // build url
-    const url = buildUrl(entityType, userRole)
+    const url = buildUrl(entityType)
 
     const config = {
         headers: {
             'Authorization': 'Bearer ' + localStorage.getItem(TOKEN),
-        }, params: {
-            'userRole': userRole
         }
+    }
+
+    if (userRole !== null) {
+        config.params = {'userRole': userRole}
     }
 
     return axios.get(url, config)

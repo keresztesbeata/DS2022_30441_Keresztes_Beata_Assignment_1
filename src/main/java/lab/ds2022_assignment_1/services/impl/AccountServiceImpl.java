@@ -109,7 +109,12 @@ public class AccountServiceImpl implements AccountService {
         final Account oldAccount = repository.findById(UUID.fromString(id))
                 .orElseThrow(() -> new EntityNotFoundException(NOT_EXISTENT_ACCOUNT_ERR_MSG));
         newAccount.setId(oldAccount.getId());
-        newAccount.setPassword(oldAccount.getPassword());
+
+        if (dto.getPassword() != null) {
+            newAccount.setPassword(passwordEncoder.encode(dto.getPassword()));
+        } else {
+            newAccount.setPassword(oldAccount.getPassword());
+        }
 
         if (!newAccount.getUsername().equals(oldAccount.getUsername()) &&
                 repository.findByUsername(newAccount.getUsername()).isPresent()) {

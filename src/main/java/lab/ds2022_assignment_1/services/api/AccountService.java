@@ -3,12 +3,14 @@ package lab.ds2022_assignment_1.services.api;
 import lab.ds2022_assignment_1.controllers.handlers.requests.AccountData;
 import lab.ds2022_assignment_1.controllers.handlers.requests.SearchCriteria;
 import lab.ds2022_assignment_1.dtos.AccountDTO;
+import lab.ds2022_assignment_1.model.entities.UserRole;
 import lab.ds2022_assignment_1.model.exceptions.DuplicateDataException;
 import lab.ds2022_assignment_1.model.exceptions.EntityNotFoundException;
 import lab.ds2022_assignment_1.model.exceptions.InvalidFilterException;
 import lab.ds2022_assignment_1.model.exceptions.NoLoggedInUserException;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface AccountService {
 
@@ -33,18 +35,20 @@ public interface AccountService {
     /**
      * Find all accounts.
      *
+     * @param userRole optional param which restricts the search to user accounts with the given role
      * @return a list of {@link AccountDTO}
      */
-    List<AccountDTO> findAccounts();
+    List<AccountDTO> findAccounts(final Optional<String> userRole);
 
     /**
      * Filter accounts by the given field.
      *
      * @param filter the name of the field to be filtered
+     * @param userRole optional param which restricts the search to user accounts with the given role
      * @return a list of {@link AccountDTO}
      * @throws InvalidFilterException if the field in the filter is not present in the entity
      */
-    List<AccountDTO> filterAccounts(final SearchCriteria filter) throws InvalidFilterException;
+    List<AccountDTO> filterAccounts(final SearchCriteria filter, final Optional<String> userRole) throws InvalidFilterException;
 
     /**
      * Find accounts containing the given name.
@@ -53,6 +57,13 @@ public interface AccountService {
      * @return a list of {@link AccountDTO}
      */
     List<AccountDTO> findAccountsByName(final String name);
+
+    /**
+     * Get all client accounts.
+     *
+     * @return a list of {@link AccountDTO}
+     */
+    List<AccountDTO> findClientAccounts();
 
     /**
      * Find account by unique id.

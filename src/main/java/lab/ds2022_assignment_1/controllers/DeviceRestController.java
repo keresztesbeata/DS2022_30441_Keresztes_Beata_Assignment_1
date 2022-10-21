@@ -8,6 +8,7 @@ import lab.ds2022_assignment_1.dtos.DeviceDTO;
 import lab.ds2022_assignment_1.model.exceptions.DuplicateDataException;
 import lab.ds2022_assignment_1.model.exceptions.EntityNotFoundException;
 import lab.ds2022_assignment_1.model.exceptions.InvalidFilterException;
+import lab.ds2022_assignment_1.model.exceptions.InvalidOperationException;
 import lab.ds2022_assignment_1.services.api.DeviceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -73,7 +74,7 @@ public class DeviceRestController {
     }
 
     @PostMapping(value = LINK_DEVICE_PATH, consumes = APPLICATION_JSON_VALUE)
-    public ResponseEntity linkDevice(@RequestBody @Valid LinkDeviceRequest request) throws DuplicateDataException, EntityNotFoundException {
+    public ResponseEntity linkDevice(@RequestBody @Valid LinkDeviceRequest request) throws DuplicateDataException, EntityNotFoundException, InvalidOperationException {
         deviceService.linkDeviceToUser(request);
 
         return ResponseEntity.ok().build();

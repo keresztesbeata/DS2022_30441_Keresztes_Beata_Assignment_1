@@ -61,7 +61,7 @@ export class GeneralTable extends Component {
     }
 
     onLoad() {
-        GetAll(this.props.type)
+        GetAll(this.props.type, null)
             .then(data => this.updateTable(data))
             .catch(error => this.onError(error));
     }

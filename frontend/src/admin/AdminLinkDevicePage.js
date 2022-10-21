@@ -47,6 +47,7 @@ export class AdminLinkDevicePage extends Component {
     }
 
     onSelectAccount(account) {
+        console.log(account)
         this.setState({
             ...this.state,
             selectedAccount: account,
@@ -122,7 +123,7 @@ export class AdminLinkDevicePage extends Component {
                                             showList
                                             userRole={CLIENT_ROLE}
                                             selectedItem={this.state.selectedAccount}
-                                            onSelectItem={this.onSelectAccount}
+                                            onSelect={this.onSelectAccount}
                                             errorHandler={this.onError}/>
                     <FormLabel>Select from the available devices:</FormLabel>
                     <GeneralListComponent items={this.state.devices}

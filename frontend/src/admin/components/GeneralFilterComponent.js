@@ -9,7 +9,8 @@ export class GeneralFilterComponent extends Component {
         this.state = {
             items: [],
             selectedFilter: this.props.filters !== null ? this.props.filters[0] : "",
-            filterValue: ""
+            filterValue: "",
+            selectedItem: null
         }
         this.handleInputChange = this.handleInputChange.bind(this);
         this.onSearch = this.onSearch.bind(this);
@@ -31,7 +32,7 @@ export class GeneralFilterComponent extends Component {
 
     selectFirst(data) {
         if (this.props.showList && data != null) {
-            this.props.onSelectItem(data[0])
+            this.props.onSelect(data[0])
         }
     }
 
@@ -85,8 +86,7 @@ export class GeneralFilterComponent extends Component {
                     this.props.showList ?
                         <GeneralListComponent fields={this.props.filters}
                                               items={this.state.items}
-                                              selectedItem={this.props.selectedItem}
-                                              onSelect={this.props.onSelectItem}/>
+                                              onSelect={this.props.onSelect}/>
                         :
                         <div/>
                 }

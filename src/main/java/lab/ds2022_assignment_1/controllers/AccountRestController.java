@@ -14,6 +14,7 @@ import lab.ds2022_assignment_1.services.api.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static lab.ds2022_assignment_1.controllers.Constants.*;
@@ -86,13 +88,13 @@ public class AccountRestController {
     }
 
     @GetMapping(ACCOUNTS_PATH)
-    public ResponseEntity<List<AccountDTO>> getAccounts() {
-        return ok(service.findAccounts());
+    public ResponseEntity<List<AccountDTO>> getAccounts(@RequestParam @Nullable String userRole) {
+        return ok(service.findAccounts(Optional.ofNullable(userRole)));
     }
 
     @GetMapping(ACCOUNTS_FILTER_PATH)
-    public ResponseEntity<List<AccountDTO>> filterAccounts(@RequestParam String filterKey, @RequestParam String filterValue) throws InvalidFilterException {
-        return ok(service.filterAccounts(new SearchCriteria(filterKey, filterValue)));
+    public ResponseEntity<List<AccountDTO>> filterAccounts(@RequestParam String filterKey, @RequestParam String filterValue, @RequestParam @Nullable String userRole) throws InvalidFilterException {
+        return ok(service.filterAccounts(new SearchCriteria(filterKey, filterValue), Optional.ofNullable(userRole)));
     }
 
     @DeleteMapping(ACCOUNT_ID_PATH)

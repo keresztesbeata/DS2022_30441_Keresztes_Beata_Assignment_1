@@ -4,10 +4,7 @@ import lab.ds2022_assignment_1.controllers.handlers.requests.DeviceData;
 import lab.ds2022_assignment_1.controllers.handlers.requests.LinkDeviceRequest;
 import lab.ds2022_assignment_1.controllers.handlers.requests.SearchCriteria;
 import lab.ds2022_assignment_1.dtos.DeviceDTO;
-import lab.ds2022_assignment_1.model.exceptions.DuplicateDataException;
-import lab.ds2022_assignment_1.model.exceptions.EntityNotFoundException;
-import lab.ds2022_assignment_1.model.exceptions.InvalidAccessException;
-import lab.ds2022_assignment_1.model.exceptions.InvalidFilterException;
+import lab.ds2022_assignment_1.model.exceptions.*;
 
 import java.util.List;
 
@@ -49,8 +46,10 @@ public interface DeviceService {
      *
      * @param request {@link LinkDeviceRequest} which contains both the accountId and the associated device id
      * @throws EntityNotFoundException if no user account or no device exists with the given id
+     * @throws DuplicateDataException if the user already has an associated device on the given address
+     * @throws InvalidOperationException if the user has role Admin as only clients can have associated devices
      */
-    void linkDeviceToUser(final LinkDeviceRequest request) throws EntityNotFoundException, DuplicateDataException;
+    void linkDeviceToUser(final LinkDeviceRequest request) throws EntityNotFoundException, DuplicateDataException, InvalidOperationException;
 
     /**
      * Find a device by its unique id.

@@ -1,6 +1,7 @@
 package lab.ds2022_assignment_1.repositories;
 
 import lab.ds2022_assignment_1.model.entities.Account;
+import lab.ds2022_assignment_1.model.entities.UserRole;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
@@ -14,4 +15,6 @@ public interface AccountRepository extends JpaRepository<Account, UUID>, JpaSpec
     Optional<Account> findByUsername(String username);
 
     List<Account> findByNameContainingIgnoreCase(String name);
+
+    List<Account> findByRole(UserRole userRole);
 }
