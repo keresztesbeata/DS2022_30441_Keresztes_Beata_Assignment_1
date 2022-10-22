@@ -2,7 +2,8 @@ package lab.ds2022_assignment_1.dtos;
 
 import lombok.*;
 
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

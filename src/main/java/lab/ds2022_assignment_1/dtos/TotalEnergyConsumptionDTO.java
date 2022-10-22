@@ -10,9 +10,10 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class EnergyConsumptionDTO {
-    private String deviceId;
+public class TotalEnergyConsumptionDTO {
     private Float energy;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime timestamp;
+    private String accountId;
 }
+

@@ -51,7 +51,7 @@
 }
 
 .page-container {
-    width:100%;
+    width: 100%;
     display: grid;
     column-count: 2;
 }
@@ -100,15 +100,15 @@
     margin: 2%;
 }
 
-.error-modal{
+.error-modal {
     background-color: #c75c5c;
 }
 
-.success-modal{
+.success-modal {
     background-color: #5beec6;
 }
 
-.info-modal{
+.info-modal {
     background-color: #5f89e7;
 }
 
@@ -120,7 +120,7 @@
     background-color: #22af9c;
     border-radius: 10px;
     text-decoration: none;
-    text-align:center;
+    text-align: center;
     color: white;
     display: inline-block;
     padding: 2%;
@@ -131,7 +131,7 @@
     border-radius: 10px;
     padding: 2%;
     font-size: 18px;
-    text-align:center;
+    text-align: center;
     text-decoration: none;
     color: #0c0a0a;
     display: block;
@@ -142,7 +142,7 @@
     border-radius: 10px;
     padding: 2%;
     font-size: 18px;
-    text-align:center;
+    text-align: center;
     text-decoration: none;
     color: white;
     display: block;
@@ -152,4 +152,9 @@
     max-width: 50%;
     max-height: 50%;
     margin: auto;
+}
+
+.plot-container {
+    margin: auto;
+    width: 100%;
 }

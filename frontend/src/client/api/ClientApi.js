@@ -32,7 +32,7 @@ export function GetDevicesOfClient() {
 }
 
 /**
- * Fetch all devices associated to the currently logged in client.
+ * Fetch the total energy consumption of every device associated to the currently logged in client for each hour.
  * @returns {Promise<AxiosResponse<any>>}
  */
 export function GetEnergyConsumptionByDay(day) {
@@ -40,12 +40,42 @@ export function GetEnergyConsumptionByDay(day) {
         headers: {
             'Authorization': 'Bearer ' + localStorage.getItem(TOKEN),
         },
-        param: {
+        params: {
             date: day
         }
     }
 
     return axios.get(ENERGY_CONSUMPTION_URL, config)
+        .then((response) => {
+            if (response.status === 200) {
+                return response.data;
+            }
+        })
+        .catch(error => {
+            console.log(error)
+            if (error.response.status !== 200) {
+                // failed to retrieve data
+                throw customError(error.response.data);
+            }
+        })
+}
+
+/**
+ * Fetch the energy consumption of the given device associated to the currently logged in client for each hour.
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+export function GetEnergyConsumptionByDayAndDeviceId(day, deviceId) {
+    const url = ENERGY_CONSUMPTION_URL + "/" + deviceId;
+    const config = {
+        headers: {
+            'Authorization': 'Bearer ' + localStorage.getItem(TOKEN),
+        },
+        params: {
+            date: day
+        }
+    }
+
+    return axios.get(url, config)
         .then((response) => {
             if (response.status === 200) {
                 return response.data;

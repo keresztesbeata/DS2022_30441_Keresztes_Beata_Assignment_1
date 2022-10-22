@@ -155,23 +155,32 @@ public class AccountServiceImpl implements AccountService {
     public List<AccountDTO> filterAccounts(final SearchCriteria searchCriteria, final Optional<String> userRole) throws InvalidFilterException {
         final Specification<Account> specification = new AccountSpecification(searchCriteria);
         ((FilterValidator) specification).validate(searchCriteria);
+        final List<Account> accounts = repository.findAll(specification);
 
-        return (userRole.isPresent() ?
-                repository.findByRole(UserRole.valueOf(userRole.get()))
-                : repository.findAll(specification))
+        return userRole.map(s -> accounts
+                .stream()
+                .filter(account -> s.equals(account.getRole().name()))
+                .map(mapper::mapToDto)
+                .collect(Collectors.toList()))
+                .orElseGet(() -> accounts
                 .stream()
                 .map(mapper::mapToDto)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
     }
 
     @Override
     public List<AccountDTO> findAccounts(final Optional<String> userRole) {
-        return (userRole.isPresent() ?
-                repository.findByRole(UserRole.valueOf(userRole.get()))
-                : repository.findAll())
-                .stream()
-                .map(mapper::mapToDto)
-                .collect(Collectors.toList());
+        final List<Account> accounts = repository.findAll();
+
+        return userRole.map(s -> accounts
+                        .stream()
+                        .filter(account -> s.equals(account.getRole().name()))
+                        .map(mapper::mapToDto)
+                        .collect(Collectors.toList()))
+                .orElseGet(() -> accounts
+                        .stream()
+                        .map(mapper::mapToDto)
+                        .collect(Collectors.toList()));
     }
 
     /**
