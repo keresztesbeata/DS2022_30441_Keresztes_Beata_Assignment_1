@@ -8,12 +8,17 @@ export class GeneralFilterComponent extends Component {
         super(props);
         this.state = {
             items: [],
-            selectedFilter: this.props.filters !== null ? this.props.filters[0] : "",
+            selectedFilter: this.isEmpty(this.props.filters)? "" : this.props.filters[0],
             filterValue: "",
             selectedItem: null
         }
         this.handleInputChange = this.handleInputChange.bind(this);
         this.onSearch = this.onSearch.bind(this);
+        this.isEmpty = this.isEmpty.bind(this);
+    }
+
+    isEmpty(array) {
+        return array === null || array.length === 0;
     }
 
     componentDidMount() {
@@ -31,7 +36,7 @@ export class GeneralFilterComponent extends Component {
     }
 
     selectFirst(data) {
-        if (this.props.showList && data != null) {
+        if (this.props.showList && !this.isEmpty(data)) {
             this.props.onSelect(data[0])
         }
     }

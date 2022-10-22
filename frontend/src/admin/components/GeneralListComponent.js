@@ -4,7 +4,7 @@ import {FormSelect} from "react-bootstrap";
 export class GeneralListComponent extends Component {
     render() {
         return (
-            <FormSelect onChange={e=>this.props.onSelect(e)}>
+            <FormSelect onChange={this.props.onSelect}>
                 {
                     this.props.items.map(item =>
                         <option key={item.id} value={item.id}>

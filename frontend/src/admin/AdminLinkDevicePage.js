@@ -12,8 +12,8 @@ export class AdminLinkDevicePage extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            selectedAccount: null,
-            selectedDevice: null,
+            selectedAccountId: null,
+            selectedDeviceId: null,
             devices: [],
             notification: {
                 show: false,
@@ -46,11 +46,10 @@ export class AdminLinkDevicePage extends Component {
         this.findDevices();
     }
 
-    onSelectAccount(account) {
-        console.log(account)
+    onSelectAccount(accountId) {
         this.setState({
             ...this.state,
-            selectedAccount: account,
+            selectedAccountId: accountId,
         })
         this.findDevices();
     }
@@ -61,34 +60,34 @@ export class AdminLinkDevicePage extends Component {
                 this.setState({
                     ...this.state,
                     devices: data,
-                    selectedDevice: data[0]
+                    selectedDeviceId: data.length === 0 ? "" : data[0].id
                 })
             })
             .catch(error => this.onError(error));
     }
 
-    onSelectDevice(device) {
+    onSelectDevice(deviceId) {
         this.setState({
             ...this.state,
-            selectedDevice: device
+            selectedDeviceId: deviceId
         })
     }
 
     onSave() {
-        if (!this.state.selectedDevice || !this.state.selectedAccount) {
+        if (!this.state.selectedDeviceId || !this.state.selectedAccountId) {
             this.onError({message: "Cannot link device! No device or user has been selected!"})
         }
 
-        LinkDeviceToUser(this.state.selectedDevice.id, this.state.selectedAccount.id)
+        LinkDeviceToUser(this.state.selectedDeviceId, this.state.selectedAccountId)
             .then(() => {
                 this.setState({
                     ...this.state,
                     devices:
-                        this.state.devices.filter((d) => d.id !== this.state.selectedDevice.id),
+                        this.state.devices.filter((d) => d.id !== this.state.selectedDeviceId),
                     notification: {
                         show: true,
                         type: SUCCESS,
-                        message: `Device with id ${this.state.selectedDevice.id} has been successfully added to the user with id ${this.state.selectedAccount.id}`,
+                        message: `Device with id ${this.state.selectedDeviceId} has been successfully added to the user with id ${this.state.selectedAccountId}`,
                         fields: []
                     }
                 })
@@ -122,14 +121,14 @@ export class AdminLinkDevicePage extends Component {
                                             filters={accountFilters}
                                             showList
                                             userRole={CLIENT_ROLE}
-                                            selectedItem={this.state.selectedAccount}
+                                            selectedItem={this.state.selectedAccountId}
                                             onSelect={this.onSelectAccount}
                                             errorHandler={this.onError}/>
                     <FormLabel>Select from the available devices:</FormLabel>
                     <GeneralListComponent items={this.state.devices}
                                           fields={deviceFilters}
                                           showList
-                                          selectedItem={this.state.selectedDevice}
+                                          selectedItem={this.state.selectedDeviceId}
                                           onSelect={this.onSelectDevice}/>
                     <Button variant="primary" onClick={this.onSave}>Link device to user</Button>
                 </div>
