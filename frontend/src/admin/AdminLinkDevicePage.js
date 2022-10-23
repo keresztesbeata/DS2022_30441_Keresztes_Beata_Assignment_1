@@ -46,10 +46,10 @@ export class AdminLinkDevicePage extends Component {
         this.findDevices();
     }
 
-    onSelectAccount(accountId) {
+    onSelectAccount(account) {
         this.setState({
             ...this.state,
-            selectedAccountId: accountId,
+            selectedAccountId: account.id,
         })
         this.findDevices();
     }
@@ -87,7 +87,7 @@ export class AdminLinkDevicePage extends Component {
                     notification: {
                         show: true,
                         type: SUCCESS,
-                        message: `Device with id ${this.state.selectedDeviceId} has been successfully added to the user with id ${this.state.selectedAccountId}`,
+                        message: `Device with id ${this.state.selectedDeviceId} has been successfully added to the user with id ${this.state.selectedAccountId}!`,
                         fields: []
                     }
                 })

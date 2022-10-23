@@ -1,5 +1,5 @@
 import axios from "axios";
-import {redirect, SERVER_BASE_URL} from "../Utils";
+import {mapAndRethrowError, redirect, SERVER_BASE_URL} from "../Utils";
 import React from "react";
 import {ErrorPage} from "../ErrorPage";
 
@@ -51,12 +51,7 @@ export function Login(username, password) {
                 redirect(HOME_PAGE);
             }
         })
-        .catch(error => {
-            if (error.response.status !== 200) {
-                // failed to log in
-                throw new Error(error.response.data);
-            }
-        })
+        .catch(error => mapAndRethrowError(error));
 }
 
 /**
@@ -67,12 +62,7 @@ export function Login(username, password) {
  */
 export function Register(data) {
     return axios.post(REGISTER_URL, data)
-        .catch(error => {
-            if (error.response.status !== 201) {
-                // failed to register user
-                throw new Error(error.response.data);
-            }
-        })
+        .catch(error => mapAndRethrowError(error));
 }
 
 /**
@@ -92,6 +82,7 @@ export function Logout() {
                 localStorage.removeItem(AUTHORITIES);
                 redirect(HOME_PAGE);
             })
+            .catch(error => mapAndRethrowError(error));
     }
 }
 

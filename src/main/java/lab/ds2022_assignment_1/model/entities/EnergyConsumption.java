@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 @Builder
 @Getter
 @Setter
-@ToString
 public class EnergyConsumption {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

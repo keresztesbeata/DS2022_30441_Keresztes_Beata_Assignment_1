@@ -1,5 +1,5 @@
 import axios from "axios";
-import {customError, SERVER_BASE_URL} from "../../common/Utils";
+import {mapAndRethrowError, SERVER_BASE_URL} from "../../common/Utils";
 import {TOKEN} from "../../common/auth/Authentication";
 
 const CLIENT_URL = SERVER_BASE_URL + "/client"
@@ -23,12 +23,7 @@ export function GetDevicesOfClient() {
                 return response.data;
             }
         })
-        .catch(error => {
-            if (error.response.status !== 200) {
-                // failed to retrieve data
-                throw customError(error.response.data);
-            }
-        })
+        .catch(error => mapAndRethrowError(error));
 }
 
 /**
@@ -51,13 +46,7 @@ export function GetEnergyConsumptionByDay(day) {
                 return response.data;
             }
         })
-        .catch(error => {
-            console.log(error)
-            if (error.response.status !== 200) {
-                // failed to retrieve data
-                throw customError(error.response.data);
-            }
-        })
+        .catch(error => mapAndRethrowError(error));
 }
 
 /**
@@ -81,10 +70,5 @@ export function GetEnergyConsumptionByDayAndDeviceId(day, deviceId) {
                 return response.data;
             }
         })
-        .catch(error => {
-            if (error.response.status !== 200) {
-                // failed to retrieve data
-                throw customError(error.response.data);
-            }
-        })
+        .catch(error => mapAndRethrowError(error));
 }

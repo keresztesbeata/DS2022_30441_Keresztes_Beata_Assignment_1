@@ -47,7 +47,7 @@ public class EnergyConsumptionServiceImpl implements EnergyConsumptionService {
             throw new InvalidDataException(INVALID_DATE_ERR_MSG);
         }
 
-        return repository.findByAccountIdDeviceIdAndTimestamp(accountId, deviceId, date)
+        return repository.findByAccountIdAndDeviceIdAndTimestamp(accountId, deviceId, date)
                 .stream()
                 .map(mapper::mapToDto)
                 .collect(Collectors.toList());

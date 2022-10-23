@@ -1,5 +1,5 @@
 import axios from "axios";
-import {customError, SERVER_BASE_URL} from "../../common/Utils";
+import {mapAndRethrowError, SERVER_BASE_URL} from "../../common/Utils";
 import {TOKEN} from "../../common/auth/Authentication";
 import {ACCOUNT_ENTITY, DEVICE_ENTITY} from "../components/Constants";
 
@@ -46,12 +46,7 @@ export function GetAll(entityType, userRole) {
                 return response.data;
             }
         })
-        .catch(error => {
-            if (error.response.status !== 200) {
-                // failed to retrieve data
-                throw customError(error.response.data);
-            }
-        })
+        .catch(error => mapAndRethrowError(error));
 }
 
 /**
@@ -83,12 +78,7 @@ export function Filter(entityType, filterKey, filterValue, userRole) {
                 return response.data;
             }
         })
-        .catch(error => {
-            if (error.response.status !== 200) {
-                // failed to retrieve data
-                throw customError(error.response.data);
-            }
-        })
+        .catch(error => mapAndRethrowError(error));
 }
 
 /**
@@ -115,12 +105,7 @@ export function Update(entityType, data) {
                 return response.data;
             }
         })
-        .catch(error => {
-            if (error.response.status !== 200) {
-                // failed to update data
-                throw customError(error.response.data);
-            }
-        })
+        .catch(error => mapAndRethrowError(error));
 }
 
 /**
@@ -146,12 +131,7 @@ export function Insert(entityType, data) {
                 return response.data;
             }
         })
-        .catch(error => {
-            if (error.response.status !== 201) {
-                // failed to insert data
-                throw customError(error.response.data);
-            }
-        })
+        .catch(error => mapAndRethrowError(error));
 }
 
 /**
@@ -178,12 +158,7 @@ export function Delete(entityType, id) {
                 return id;
             }
         })
-        .catch(error => {
-            if (error.response.status !== 200) {
-                // failed to delete data
-                throw customError(error.response.data);
-            }
-        })
+        .catch(error => mapAndRethrowError(error));
 }
 
 /**
@@ -204,12 +179,7 @@ export function FindAvailableDevices() {
                 return response.data;
             }
         })
-        .catch(error => {
-            if (error.response.status !== 200) {
-                // failed to retrieve data
-                throw customError(error.response.data);
-            }
-        })
+        .catch(error => mapAndRethrowError(error));
 }
 
 /**
@@ -238,11 +208,5 @@ export function LinkDeviceToUser(deviceId, accountId) {
                 return data;
             }
         })
-        .catch(error => {
-            console.log(error)
-            if (error.response.status !== 200) {
-                // failed to delete data
-                throw customError(error.response.data);
-            }
-        })
+        .catch(error => mapAndRethrowError(error));
 }

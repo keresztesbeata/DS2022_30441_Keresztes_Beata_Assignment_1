@@ -22,6 +22,7 @@ export class LoginPage extends Component {
 
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
+        this.hideNotification = this.hideNotification.bind(this);
     }
 
     handleSubmit(event) {
@@ -39,6 +40,16 @@ export class LoginPage extends Component {
                     })
                 }
             );
+    }
+
+    hideNotification() {
+        this.setState({
+            ...this.state,
+            notification: {
+                ...this.state.notification,
+                show: false
+            }
+        });
     }
 
     handleInputChange(event) {
@@ -61,7 +72,8 @@ export class LoginPage extends Component {
                 <div className="card col-sm-3 border-dark text-left">
                     <form onSubmit={this.handleSubmit} className="card-body">
                         <h3 className="card-title">Log in</h3>
-                        {this.state.notification.show ? <ModalNotification notification={this.state.notification}/> : <div/>}
+                        {this.state.notification.show ? <ModalNotification notification={this.state.notification} onHide={this.hideNotification}/> :
+                            <div/>}
                         <FormGroup className="mb-3" controlId="formBasicText">
                             <FormLabel>Username</FormLabel>
                             <FormControl type="text" placeholder="Enter username" name="username" required

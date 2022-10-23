@@ -4,7 +4,7 @@ import {ClientNavigationMenu} from "./components/ClientNavigationMenu";
 export class ClientDashboardPage extends Component {
     render() {
         return (
-            <div>
+            <div className="d-flex client-dashboard-bg">
                 <ClientNavigationMenu/>
             </div>
         );

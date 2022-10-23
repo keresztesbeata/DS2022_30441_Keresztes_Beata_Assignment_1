@@ -4,7 +4,7 @@ import {AdminNavigationMenu} from "./components/AdminNavigationMenu";
 export class AdminDashboardPage extends Component {
     render() {
         return (
-            <div className="page-container">
+            <div className="d-flex admin-dashboard-bg">
                 <AdminNavigationMenu/>
             </div>
         );

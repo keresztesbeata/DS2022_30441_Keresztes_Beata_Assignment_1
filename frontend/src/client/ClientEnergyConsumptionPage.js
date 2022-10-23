@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {ERROR, ModalNotification, WARNING} from "../common/components/ModalNotification";
 import {ClientNavigationMenu} from "./components/ClientNavigationMenu";
-import {Button, Form, FormLabel, FormSelect, InputGroup} from "react-bootstrap";
+import {Button, FormControl, FormLabel, FormSelect, InputGroup} from "react-bootstrap";
 import {GetDevicesOfClient, GetEnergyConsumptionByDay, GetEnergyConsumptionByDayAndDeviceId} from "./api/ClientApi";
 import Plot from "react-plotly.js";
 
@@ -68,7 +68,7 @@ export class ClientEnergyConsumptionPage extends Component {
                 this.setState({
                     ...this.state,
                     devices: data,
-                    selectedDeviceId: data.isEmpty ? "" : data[0].id,
+                    selectedDeviceId: data === null || data.length === 0 ? "" : data[0].id,
                     notification: {
                         show: false
                     }
@@ -103,18 +103,19 @@ export class ClientEnergyConsumptionPage extends Component {
                     fields: []
                 }
             })
-        }
-        GetEnergyConsumptionByDayAndDeviceId(this.state.selectedDate, this.state.selectedDeviceId)
-            .then(data => {
-                this.setState({
-                    ...this.state,
-                    deviceEnergyData: data,
-                    notification: {
-                        show: false
-                    }
+        }else {
+            GetEnergyConsumptionByDayAndDeviceId(this.state.selectedDate, this.state.selectedDeviceId)
+                .then(data => {
+                    this.setState({
+                        ...this.state,
+                        deviceEnergyData: data,
+                        notification: {
+                            show: false
+                        }
+                    })
                 })
-            })
-            .catch(error => this.onError(error));
+                .catch(error => this.onError(error));
+        }
     }
 
     render() {
@@ -126,19 +127,20 @@ export class ClientEnergyConsumptionPage extends Component {
                     :
                     <div/>
                 }
-                <Form className="page-content d-flex flex-column gap-4 p-4 w-50 m-auto">
-                    <Form.Group>
-                        <Form.Label>Select a day:</Form.Label>
-                        <Form.Control type="date" name="selectedDate" defaultValue={this.state.selectedDate}
-                                      onChange={this.handleInputChange}/>
-                    </Form.Group>
+                <div className="page-content d-flex flex-column gap-2 p-4 m-auto">
                     <div className="plot-container">
+                        <InputGroup className="m-sm-2 gap-lg-3">
+                            <FormLabel>Select a day:</FormLabel>
+                            <FormControl type="date" name="selectedDate" defaultValue={this.state.selectedDate}
+                                         onChange={this.handleInputChange}/>
+                            <Button onClick={this.generateReport} variant="success">Generate report</Button>
+                        </InputGroup>
                         <Plot data={[{
                             x: this.state.energyData.map(d => d.timestamp),
                             y: this.state.energyData.map(d => d.energy),
                             type: 'bar',
                             marker: {
-                                color: "#306b48"
+                                color: "#10555e"
                             }
                         }]} layout={{
                             title: 'Hourly Energy Consumption',
@@ -150,32 +152,29 @@ export class ClientEnergyConsumptionPage extends Component {
                             },
                             yaxis: {
                                 title: {
-                                    text: 'Energy consumption',
-                                },
-                                tickformat: 'kWh'
+                                    text: 'Energy consumption [kWh]',
+                                }
                             }
                         }
                         }/>
-                        <Button onClick={this.generateReport} variant="success">Generate report</Button>
-                    </div>
-                    <div className="plot-container">
-                        <InputGroup className="m-sm-2 gap-lg-3">
-                            <FormLabel>Select a device:</FormLabel>
-                            <FormSelect onSelect={this.handleInputChange} name="selectedDeviceId">
-                                {
-                                    this.state.devices.map(device =>
-                                        <option key={device.id} value={device.id}>
-                                            {device.id}
-                                        </option>)
-                                }
-                            </FormSelect>
-                        </InputGroup>
+                    <InputGroup className="m-sm-2 gap-lg-3">
+                        <FormLabel>Select a device:</FormLabel>
+                        <FormSelect onChange={this.handleInputChange} name="selectedDeviceId">
+                            {
+                                this.state.devices.map(device =>
+                                    <option key={device.id} value={device.id}>
+                                        {device.id}
+                                    </option>)
+                            }
+                        </FormSelect>
+                        <Button onClick={this.generateDeviceReport} variant="success">Generate report for device</Button>
+                    </InputGroup>
                         <Plot data={[{
                             x: this.state.deviceEnergyData.map(d => d.timestamp),
                             y: this.state.deviceEnergyData.map(d => d.energy),
                             type: 'scatter',
                             marker: {
-                                color: "#338571",
+                                color: "#10555e",
                                 thickness: 2
                             }
                         }]} layout={{
@@ -188,15 +187,12 @@ export class ClientEnergyConsumptionPage extends Component {
                             },
                             yaxis: {
                                 title: {
-                                    text: 'Energy consumption',
-                                },
-                                tickformat: 'kWh'
+                                    text: 'Energy consumption [kWh]',
+                                }
                             }
                         }}/>
-                        <Button onClick={this.generateDeviceReport} variant="success">Generate report for
-                            device</Button>
                     </div>
-                </Form>
+                </div>
             </div>
         );
     }

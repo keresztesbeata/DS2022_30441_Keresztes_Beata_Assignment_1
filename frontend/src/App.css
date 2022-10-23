@@ -10,7 +10,31 @@
 }
 
 .page-background {
-    background-color: #22af9c;
+    background-image: linear-gradient(#103d3c, #256d79);
+}
+
+.client-dashboard-bg {
+    height: 100vh;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-image: url("images/waves.jpg");
+    resize: both;
+}
+
+.admin-dashboard-bg {
+    height: 100vh;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-image: url("images/blocks.jpg");
+    resize: both;
+}
+
+.welcome-bg {
+    height: 100vh;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-image: url("images/welcome.jpg");
+    resize: both;
 }
 
 .background-header {
@@ -117,35 +141,36 @@
 }
 
 .custom-link {
-    background-color: #22af9c;
-    border-radius: 10px;
+    color: #22af9c;
+    font-size: 30px;
     text-decoration: none;
     text-align: center;
-    color: white;
     display: inline-block;
     padding: 2%;
-    font-size: 18px;
 }
 
 .custom-link:hover {
+    color: #95d3cb;
     border-radius: 10px;
-    padding: 2%;
-    font-size: 18px;
-    text-align: center;
+    font-size: 32px;
     text-decoration: none;
-    color: #0c0a0a;
-    display: block;
+    text-align: center;
+    display: inline-block;
+    padding: 2%;
 }
 
 .custom-link:active {
-    background-color: #137769;
-    border-radius: 10px;
-    padding: 2%;
-    font-size: 18px;
-    text-align: center;
+    color: #0e443d;
+    font-size: 30px;
     text-decoration: none;
-    color: white;
-    display: block;
+    text-align: center;
+    display: inline-block;
+    padding: 2%;
+}
+
+.title {
+    color: #b4ece5;
+    padding-bottom: 15%;
 }
 
 .logo {

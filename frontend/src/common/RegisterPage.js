@@ -23,6 +23,17 @@ export class RegisterPage extends Component {
         }
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
+        this.hideNotification = this.hideNotification.bind(this);
+    }
+
+    hideNotification() {
+        this.setState({
+            ...this.state,
+            notification: {
+                ...this.state.notification,
+                show: false
+            }
+        });
     }
 
     handleSubmit(event) {
@@ -71,7 +82,7 @@ export class RegisterPage extends Component {
                 <div className="card col-sm-3 border-dark text-left">
                     <form onSubmit={this.handleSubmit} className="card-body">
                         <h3 className="card-title">Register</h3>
-                        {this.state.notification.show ? <ModalNotification notification={this.state.notification}/> : <div/>}
+                        {this.state.notification.show ? <ModalNotification notification={this.state.notification} onHide={this.hideNotification}/> : <div/>}
                         <FormGroup className="mb-3" controlId="1">
                             <FormLabel>Name</FormLabel>
                             <FormControl type="text" placeholder="Enter name" name="name" required
