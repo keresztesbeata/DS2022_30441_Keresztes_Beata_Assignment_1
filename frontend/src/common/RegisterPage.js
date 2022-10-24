@@ -3,17 +3,53 @@ import {Link} from 'react-router-dom'
 import {Button, FormControl, FormGroup, FormLabel, FormSelect} from "react-bootstrap";
 import {ERROR, ModalNotification, SUCCESS} from "./components/ModalNotification";
 import {Register} from "./auth/Authentication";
+import validate from "./components/validator/FormValidator";
 
 export class RegisterPage extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            data: {
-                name: "",
-                role: "",
-                username: "",
-                password: "",
+            formControls: {
+                name: {
+                    value: "",
+                    placeholder: "Enter name...",
+                    valid: false,
+                    validationRules: {
+                        minLength: 3,
+                        isRequired: true
+                    }
+                },
+                username: {
+                    value: "",
+                    placeholder: "Enter username...",
+                    valid: false,
+                    validationRules: {
+                        minLength: 3,
+                        isRequired: true,
+                        checkInvalidCharacters: true,
+                    }
+                },
+                role: {
+                    value: "",
+                    placeholder: "Select role...",
+                    valid: false,
+                    validationRules: {
+                        isRequired: true
+                    }
+                },
+                password: {
+                    value: "",
+                    placeholder: "Enter name...",
+                    valid: false,
+                    validationRules: {
+                        minLength: 3,
+                        isRequired: true,
+                        hasDigit: true,
+                        checkInvalidCharacters: true,
+                    }
+                }
             },
+            formIsValid: false,
             notification: {
                 show: false,
                 type: ERROR,
@@ -39,7 +75,14 @@ export class RegisterPage extends Component {
     handleSubmit(event) {
         event.preventDefault();
 
-        Register(this.state.data)
+        let account = {
+            name: this.state.formControls.name.value,
+            username: this.state.formControls.username.value,
+            password: this.state.formControls.password.value,
+            role: this.state.formControls.role.value
+        };
+
+        Register(account)
             .then(() => {
                 this.setState({
                     ...this.state,
@@ -64,15 +107,23 @@ export class RegisterPage extends Component {
     }
 
     handleInputChange(event) {
+        const name = event.target.name;
+        const value = event.target.value;
+        const updatedControls = this.state.formControls;
+        const updatedFormElement = updatedControls[name];
+
+        updatedFormElement.value = value;
+        updatedFormElement.valid = validate(value, updatedFormElement.validationRules);
+        updatedControls[name] = updatedFormElement;
+
+        let formIsValid = true;
+        for (let updatedFormElementName in updatedControls) {
+            formIsValid = updatedControls[updatedFormElementName].valid && formIsValid;
+        }
+
         this.setState({
-            ...this.state,
-            data: {
-                ...this.state.data,
-                [event.target.name]: event.target.value
-            },
-            notification: {
-                show: false
-            }
+            formControls: updatedControls,
+            formIsValid: formIsValid
         });
     }
 
@@ -82,15 +133,26 @@ export class RegisterPage extends Component {
                 <div className="card col-sm-3 border-dark text-left">
                     <form onSubmit={this.handleSubmit} className="card-body">
                         <h3 className="card-title">Register</h3>
-                        {this.state.notification.show ? <ModalNotification notification={this.state.notification} onHide={this.hideNotification}/> : <div/>}
+                        {this.state.notification.show ?
+                            <ModalNotification notification={this.state.notification} onHide={this.hideNotification}/> :
+                            <div/>}
                         <FormGroup className="mb-3" controlId="1">
                             <FormLabel>Name</FormLabel>
-                            <FormControl type="text" placeholder="Enter name" name="name" required
+                            <FormControl type="text" name="name"
+                                         placeholder={this.state.formControls.name.placeholder}
+                                         value={this.state.formControls.name.value}
+                                         required
+                                         isValid={this.state.formControls.name.valid}
                                          onChange={this.handleInputChange}/>
                         </FormGroup>
                         <FormGroup className="mb-3" controlId="2">
                             <FormLabel>Role</FormLabel>
-                            <FormSelect name="role" onChange={this.handleInputChange} required>
+                            <FormSelect name="role"
+                                        placeholder={this.state.formControls.role.placeholder}
+                                        value={this.state.formControls.role.value}
+                                        isValid={this.state.formControls.role.valid}
+                                        required
+                                        onChange={this.handleInputChange}>
                                 <option value="">-- Choose role --</option>
                                 <option value="ADMIN">Admin</option>
                                 <option value="CLIENT">Client</option>
@@ -98,16 +160,24 @@ export class RegisterPage extends Component {
                         </FormGroup>
                         <FormGroup className="mb-3" controlId="3">
                             <FormLabel>Username</FormLabel>
-                            <FormControl type="text" placeholder="Enter username" name="username" required
+                            <FormControl type="text" name="username"
+                                         placeholder={this.state.formControls.username.placeholder}
+                                         value={this.state.formControls.username.value}
+                                         isValid={this.state.formControls.username.valid}
+                                         required
                                          onChange={this.handleInputChange}/>
                         </FormGroup>
                         <FormGroup className="mb-3" controlId="4">
                             <FormLabel>Password</FormLabel>
-                            <FormControl type="password" placeholder="Enter Password" name="password" required
+                            <FormControl type="password" name="password"
+                                         placeholder={this.state.formControls.username.placeholder}
+                                         value={this.state.formControls.password.value}
+                                         isValid={this.state.formControls.password.valid}
+                                         required
                                          onChange={this.handleInputChange}/>
                         </FormGroup>
                         <div className="text-center">
-                            <Button variant="secondary" type="submit">
+                            <Button variant="secondary" type="submit" disabled={!this.state.formIsValid}>
                                 Register
                             </Button>
                         </div>
