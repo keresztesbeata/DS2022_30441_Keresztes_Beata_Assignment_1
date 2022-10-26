@@ -37,7 +37,7 @@ export class GeneralFilterComponent extends Component {
 
     selectFirst(data) {
         if (this.props.showList && !this.isEmpty(data)) {
-            this.props.onSelect(data[0])
+            this.props.onSelect(data[0].id)
         }
     }
 

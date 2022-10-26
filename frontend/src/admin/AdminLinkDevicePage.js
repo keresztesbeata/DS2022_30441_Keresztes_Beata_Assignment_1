@@ -46,10 +46,10 @@ export class AdminLinkDevicePage extends Component {
         this.findDevices();
     }
 
-    onSelectAccount(account) {
+    onSelectAccount(accountId) {
         this.setState({
             ...this.state,
-            selectedAccountId: account.id,
+            selectedAccountId: accountId,
         })
         this.findDevices();
     }
