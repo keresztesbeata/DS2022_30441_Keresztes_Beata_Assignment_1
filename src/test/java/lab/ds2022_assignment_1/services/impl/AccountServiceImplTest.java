@@ -7,6 +7,7 @@ import lab.ds2022_assignment_1.model.entities.UserRole;
 import lab.ds2022_assignment_1.model.exceptions.DuplicateDataException;
 import lab.ds2022_assignment_1.model.exceptions.EntityNotFoundException;
 import lab.ds2022_assignment_1.repositories.AccountRepository;
+import lab.ds2022_assignment_1.repositories.DeviceRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,6 +36,8 @@ class AccountServiceImplTest {
     private AccountServiceImpl service;
     @Mock
     private AccountRepository repository;
+    @Mock
+    private DeviceRepository deviceRepository;
     @Mock
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private Account account;

@@ -81,8 +81,8 @@ class DeviceServiceImplTest {
 
         Mockito.when(accountRepository.findById(UUID.fromString(ID_1)))
                 .thenReturn(Optional.of(account));
-        Mockito.when(accountRepository.save(any(Account.class)))
-                .thenReturn(account);
+        Mockito.when(deviceRepository.findById(UUID.fromString(DEVICE_ID_1)))
+                .thenReturn(Optional.of(device));
 
         LinkDeviceRequest linkDeviceRequest = new LinkDeviceRequest();
         linkDeviceRequest.setDeviceId(DEVICE_ID_1);
@@ -98,7 +98,7 @@ class DeviceServiceImplTest {
         Assertions.assertThrows(DuplicateDataException.class, () -> service.linkDeviceToUser(linkDeviceRequest));
 
         verify(deviceRepository, times(2)).findByAccountAndAddress(account, ADDRESS_1);
-        verify(accountRepository, times(3)).findById(UUID.fromString(ID_1));
+        verify(accountRepository, times(2)).findById(UUID.fromString(ID_1));
     }
 
     @Test
@@ -158,7 +158,6 @@ class DeviceServiceImplTest {
                 .thenReturn(Optional.of(device));
 
         Assertions.assertEquals(ADDRESS_1, service.updateDevice(DEVICE_ID_1, request).getAddress());
-        verify(accountRepository).findById(UUID.fromString(ID_1));
 
         Mockito.when(deviceRepository.findByAccountAndAddress(any(Account.class), eq(ADDRESS_2)))
                 .thenReturn(List.of(device));
