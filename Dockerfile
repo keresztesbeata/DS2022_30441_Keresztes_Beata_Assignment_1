@@ -1,7 +1,5 @@
 FROM maven:3.8.1-openjdk-17 AS builder
 
-EXPOSE 8080
-
 COPY ./src/ /root/src
 COPY ./pom.xml /root/
 COPY ./checkstyle.xml /root/
