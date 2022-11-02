@@ -1,7 +1,5 @@
 FROM maven:3.8.1-openjdk-17 AS builder
 
-EXPOSE 8080/tcp
-
 COPY ./src/ /root/src
 COPY ./pom.xml /root/
 COPY ./checkstyle.xml /root/
@@ -15,11 +13,10 @@ FROM openjdk:17.0.2-jdk
 
 ENV TZ=UTC
 ENV DB_IP=db_server
-ENV DB_PORT=3306
+ENV DB_PORT=3307
 ENV DB_USER=root
 ENV DB_PASSWORD=root
 ENV DB_DBNAME=energy-db
-
 
 COPY --from=builder /root/dependencies/ ./
 COPY --from=builder /root/snapshot-dependencies/ ./

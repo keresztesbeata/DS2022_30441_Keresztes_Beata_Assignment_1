@@ -82,8 +82,6 @@ export class AdminLinkDevicePage extends Component {
             .then(() => {
                 this.setState({
                     ...this.state,
-                    devices:
-                        this.state.devices.filter((d) => d.id !== this.state.selectedDeviceId),
                     notification: {
                         show: true,
                         type: SUCCESS,
@@ -91,6 +89,7 @@ export class AdminLinkDevicePage extends Component {
                         fields: []
                     }
                 })
+                this.findDevices();
             })
             .catch(error => this.onError(error));
     }

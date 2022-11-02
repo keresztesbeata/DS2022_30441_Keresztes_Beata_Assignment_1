@@ -5,8 +5,6 @@ RUN npm install
 COPY ./ /app/
 RUN npm run build
 
-EXPOSE 3000/tcp
-
 FROM nginx:1.20-alpine
 RUN apk --no-cache add curl
 RUN curl -L https://github.com/a8m/envsubst/releases/download/v1.2.0/envsubst-`uname -s`-`uname -m` -o envsubst && \
