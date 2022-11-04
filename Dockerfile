@@ -13,7 +13,7 @@ FROM openjdk:17.0.2-jdk
 
 ENV TZ=UTC
 ENV DB_IP=db_server
-ENV DB_PORT=3307
+ENV DB_PORT=3306
 ENV DB_USER=root
 ENV DB_PASSWORD=root
 ENV DB_DBNAME=energy-db
