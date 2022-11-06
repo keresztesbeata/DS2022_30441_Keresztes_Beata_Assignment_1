@@ -4,7 +4,6 @@ import lab.ds2022_assignment_1.controllers.handlers.requests.EnergyConsumptionDa
 import lab.ds2022_assignment_1.dtos.EnergyConsumptionDTO;
 import lab.ds2022_assignment_1.dtos.TotalEnergyConsumptionDTO;
 import lab.ds2022_assignment_1.model.entities.EnergyConsumption;
-import lab.ds2022_assignment_1.model.entities.TotalEnergyConsumption;
 import lab.ds2022_assignment_1.model.exceptions.EntityNotFoundException;
 import lab.ds2022_assignment_1.model.exceptions.InvalidAccessException;
 import lab.ds2022_assignment_1.model.exceptions.InvalidDataException;
@@ -31,10 +30,10 @@ public interface EnergyConsumptionService {
      *
      * @param accountId the id of the user's account
      * @param date      the date for which the energy consumption is listed
-     * @return a list of {@link TotalEnergyConsumption} aggregated for all devices associated to the given user account
+     * @return a list of {@link TotalEnergyConsumptionDTO} aggregated for all devices associated to the given user account
      * @throws InvalidDataException if the selected date is a future date
      */
-    List<TotalEnergyConsumption> findHourlyTotalEnergyConsumption(final String accountId, final LocalDate date) throws InvalidDataException;
+    List<TotalEnergyConsumptionDTO> findHourlyTotalEnergyConsumption(final String accountId, final LocalDate date) throws InvalidDataException;
 
     /**
      * Register the enrgy consumption data.

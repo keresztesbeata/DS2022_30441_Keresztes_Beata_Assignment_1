@@ -5,7 +5,6 @@ import lab.ds2022_assignment_1.controllers.handlers.requests.LinkDeviceRequest;
 import lab.ds2022_assignment_1.controllers.handlers.requests.SearchCriteria;
 import lab.ds2022_assignment_1.controllers.handlers.requests.ValidUUID;
 import lab.ds2022_assignment_1.dtos.DeviceDTO;
-import lab.ds2022_assignment_1.model.exceptions.DuplicateDataException;
 import lab.ds2022_assignment_1.model.exceptions.EntityNotFoundException;
 import lab.ds2022_assignment_1.model.exceptions.InvalidFilterException;
 import lab.ds2022_assignment_1.model.exceptions.InvalidOperationException;
@@ -57,7 +56,7 @@ public class DeviceRestController {
 
     @PutMapping(value = DEVICE_ID_PATH, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<DeviceDTO> updateDevice(@PathVariable(DEVICE_ID) @ValidUUID String deviceId,
-                                                  @RequestBody @Valid DeviceData data) throws DuplicateDataException, EntityNotFoundException {
+                                                  @RequestBody @Valid DeviceData data) throws EntityNotFoundException {
         return ok(deviceService.updateDevice(deviceId, data));
     }
 
@@ -74,7 +73,7 @@ public class DeviceRestController {
     }
 
     @PostMapping(value = LINK_DEVICE_PATH, consumes = APPLICATION_JSON_VALUE)
-    public ResponseEntity linkDevice(@RequestBody @Valid LinkDeviceRequest request) throws DuplicateDataException, EntityNotFoundException, InvalidOperationException {
+    public ResponseEntity linkDevice(@RequestBody @Valid LinkDeviceRequest request) throws EntityNotFoundException, InvalidOperationException {
         deviceService.linkDeviceToUser(request);
 
         return ResponseEntity.ok().build();

@@ -2,7 +2,9 @@ package lab.ds2022_assignment_1.dtos.mappers;
 
 import lab.ds2022_assignment_1.controllers.handlers.requests.EnergyConsumptionData;
 import lab.ds2022_assignment_1.dtos.EnergyConsumptionDTO;
+import lab.ds2022_assignment_1.dtos.TotalEnergyConsumptionDTO;
 import lab.ds2022_assignment_1.model.entities.EnergyConsumption;
+import lab.ds2022_assignment_1.model.entities.TotalEnergyConsumption;
 
 public class EnergyConsumptionMapper implements Mapper<EnergyConsumption, EnergyConsumptionData, EnergyConsumptionDTO> {
     @Override
@@ -25,6 +27,14 @@ public class EnergyConsumptionMapper implements Mapper<EnergyConsumption, Energy
     public EnergyConsumptionDTO mapToDto(EnergyConsumption entity) {
         return EnergyConsumptionDTO.builder()
                 .deviceId(entity.getDevice().getId().toString())
+                .timestamp(entity.getTimestamp())
+                .energy(entity.getEnergy())
+                .build();
+    }
+
+    public TotalEnergyConsumptionDTO mapToDto(TotalEnergyConsumption entity) {
+        return TotalEnergyConsumptionDTO.builder()
+                .accountId(entity.getAccountId())
                 .timestamp(entity.getTimestamp())
                 .energy(entity.getEnergy())
                 .build();

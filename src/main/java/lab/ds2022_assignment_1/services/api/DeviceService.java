@@ -46,10 +46,9 @@ public interface DeviceService {
      *
      * @param request {@link LinkDeviceRequest} which contains both the accountId and the associated device id
      * @throws EntityNotFoundException if no user account or no device exists with the given id
-     * @throws DuplicateDataException if the user already has an associated device on the given address
      * @throws InvalidOperationException if the user has role Admin as only clients can have associated devices
      */
-    void linkDeviceToUser(final LinkDeviceRequest request) throws EntityNotFoundException, DuplicateDataException, InvalidOperationException;
+    void linkDeviceToUser(final LinkDeviceRequest request) throws EntityNotFoundException, InvalidOperationException;
 
     /**
      * Find a device by its unique id.
@@ -93,7 +92,6 @@ public interface DeviceService {
      *
      * @param deviceId the id of the device
      * @throws EntityNotFoundException if no device exists with the given id
-     * @throws DuplicateDataException  if the user already has a device registered with the same address
      */
-    DeviceDTO updateDevice(final String deviceId, final DeviceData request) throws EntityNotFoundException, DuplicateDataException;
+    DeviceDTO updateDevice(final String deviceId, final DeviceData request) throws EntityNotFoundException;
 }

@@ -5,7 +5,6 @@ import lab.ds2022_assignment_1.controllers.handlers.requests.LinkDeviceRequest;
 import lab.ds2022_assignment_1.model.entities.Account;
 import lab.ds2022_assignment_1.model.entities.Device;
 import lab.ds2022_assignment_1.model.entities.UserRole;
-import lab.ds2022_assignment_1.model.exceptions.DuplicateDataException;
 import lab.ds2022_assignment_1.model.exceptions.EntityNotFoundException;
 import lab.ds2022_assignment_1.repositories.AccountRepository;
 import lab.ds2022_assignment_1.repositories.DeviceRepository;
@@ -26,7 +25,6 @@ import java.util.*;
 
 import static lab.ds2022_assignment_1.services.Constants.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -91,14 +89,7 @@ class DeviceServiceImplTest {
         // map the device to an existing account
         Assertions.assertDoesNotThrow(() -> service.linkDeviceToUser(linkDeviceRequest));
 
-        Mockito.when(deviceRepository.findByAccountAndAddress(account, ADDRESS_1))
-                .thenReturn(List.of(device));
-
-        // map the device to an account which already has a device with the same address
-        Assertions.assertThrows(DuplicateDataException.class, () -> service.linkDeviceToUser(linkDeviceRequest));
-
-        verify(deviceRepository, times(2)).findByAccountAndAddress(account, ADDRESS_1);
-        verify(accountRepository, times(2)).findById(UUID.fromString(ID_1));
+        verify(accountRepository, times(1)).findById(UUID.fromString(ID_1));
     }
 
     @Test
@@ -158,11 +149,5 @@ class DeviceServiceImplTest {
                 .thenReturn(Optional.of(device));
 
         Assertions.assertEquals(ADDRESS_1, service.updateDevice(DEVICE_ID_1, request).getAddress());
-
-        Mockito.when(deviceRepository.findByAccountAndAddress(any(Account.class), eq(ADDRESS_2)))
-                .thenReturn(List.of(device));
-
-        request.setAddress(ADDRESS_2);
-        Assertions.assertThrows(DuplicateDataException.class, () -> service.updateDevice(DEVICE_ID_1, request));
     }
 }

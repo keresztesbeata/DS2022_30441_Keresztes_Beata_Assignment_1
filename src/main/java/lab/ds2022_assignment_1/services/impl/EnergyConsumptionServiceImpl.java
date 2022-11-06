@@ -2,10 +2,10 @@ package lab.ds2022_assignment_1.services.impl;
 
 import lab.ds2022_assignment_1.controllers.handlers.requests.EnergyConsumptionData;
 import lab.ds2022_assignment_1.dtos.EnergyConsumptionDTO;
+import lab.ds2022_assignment_1.dtos.TotalEnergyConsumptionDTO;
 import lab.ds2022_assignment_1.dtos.mappers.EnergyConsumptionMapper;
 import lab.ds2022_assignment_1.model.entities.Device;
 import lab.ds2022_assignment_1.model.entities.EnergyConsumption;
-import lab.ds2022_assignment_1.model.entities.TotalEnergyConsumption;
 import lab.ds2022_assignment_1.model.exceptions.EntityNotFoundException;
 import lab.ds2022_assignment_1.model.exceptions.InvalidAccessException;
 import lab.ds2022_assignment_1.model.exceptions.InvalidDataException;
@@ -57,12 +57,15 @@ public class EnergyConsumptionServiceImpl implements EnergyConsumptionService {
      * {@inheritDoc}
      */
     @Override
-    public List<TotalEnergyConsumption> findHourlyTotalEnergyConsumption(final String accountId, final LocalDate date) throws InvalidDataException {
+    public List<TotalEnergyConsumptionDTO> findHourlyTotalEnergyConsumption(final String accountId, final LocalDate date) throws InvalidDataException {
         if (date.isAfter(LocalDate.now())) {
             throw new InvalidDataException(INVALID_DATE_ERR_MSG);
         }
 
-        return repository.findTotalEnergyConsumptionByAccountIdAndTimestamp(accountId, date);
+        return repository.findTotalEnergyConsumptionByAccountIdAndTimestamp(accountId, date)
+                .stream()
+                .map(mapper::mapToDto)
+                .collect(Collectors.toList());
     }
 
     /**

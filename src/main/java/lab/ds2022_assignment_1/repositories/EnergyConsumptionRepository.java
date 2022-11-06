@@ -17,6 +17,6 @@ public interface EnergyConsumptionRepository extends JpaRepository<EnergyConsump
     List<EnergyConsumption> findByAccountIdAndDeviceIdAndTimestamp(String accountId, String deviceId, LocalDate timestamp);
 
     @Transactional
-    @Query(value = "SELECT e.* FROM total_energy_consumption_view e WHERE e.accountId = ?1 and date(e.timestamp) = ?2 group by hour(e.timestamp)", nativeQuery = true)
+    @Query(value = "select sum(e.energy) AS energy, str_to_date(date_format(e.timestamp,'%Y-%m-%d %H:00:00'), '%Y-%m-%d %H:00:00') AS timestamp, d.account_id AS accountId from energy_consumption e join device d on e.device_id = d.id where d.account_id = ?1 and date(e.timestamp) = ?2 group by accountId, timestamp", nativeQuery = true)
     List<TotalEnergyConsumption> findTotalEnergyConsumptionByAccountIdAndTimestamp(String accountId, LocalDate date);
 }

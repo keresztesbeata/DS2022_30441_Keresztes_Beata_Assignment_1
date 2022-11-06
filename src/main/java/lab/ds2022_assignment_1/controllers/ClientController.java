@@ -5,7 +5,7 @@ import lab.ds2022_assignment_1.controllers.handlers.requests.ValidUUID;
 import lab.ds2022_assignment_1.dtos.AccountDTO;
 import lab.ds2022_assignment_1.dtos.DeviceDTO;
 import lab.ds2022_assignment_1.dtos.EnergyConsumptionDTO;
-import lab.ds2022_assignment_1.model.entities.TotalEnergyConsumption;
+import lab.ds2022_assignment_1.dtos.TotalEnergyConsumptionDTO;
 import lab.ds2022_assignment_1.model.exceptions.EntityNotFoundException;
 import lab.ds2022_assignment_1.model.exceptions.InvalidAccessException;
 import lab.ds2022_assignment_1.model.exceptions.InvalidDataException;
@@ -57,7 +57,7 @@ public class ClientController {
     }
 
     @GetMapping(ENERGY_CONSUMPTION_PATH)
-    public ResponseEntity<List<TotalEnergyConsumption>> getClientHourlyEnergyConsumption(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") @Valid LocalDate date) throws NoLoggedInUserException, InvalidDataException {
+    public ResponseEntity<List<TotalEnergyConsumptionDTO>> getClientHourlyEnergyConsumption(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") @Valid LocalDate date) throws NoLoggedInUserException, InvalidDataException {
         final AccountDTO accountDTO = accountService.getCurrentUserAccount();
 
         return ResponseEntity.ok(energyConsumptionService.findHourlyTotalEnergyConsumption(accountDTO.getId(), date));
