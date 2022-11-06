@@ -2,9 +2,15 @@ version: '3'
 
 services:
 
-  db_server:
+  mysql_server:
     image: mysql:latest
     container_name: mysql_server
+    build:
+      context: mysql
+      dockerfile: Dockerfile
+    restart: always
+    volumes:
+      - "mysql_server:/var/lib/mysql"
     ports:
       - "3307:3306"
     expose:
@@ -12,27 +18,52 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: 'root'
       MYSQL_DATABASE: 'energy-db'
+    networks:
+      assignment1-network:
+        ipv4_address: 172.16.0.2
        
-  energy_platform_server:
+  backend_server:
     image: tomcat
-    container_name: tomcat_app_server
+    container_name: backend_server
     build:
       context: .
       dockerfile: Dockerfile
+    restart: always
     ports:
       - "8081:8080"
     expose:
       - "8081"
     depends_on:
-      - db_server
+      - mysql_server
+    networks:
+      assignment1-network:
+        ipv4_address: 172.16.0.3
 
-  react_app:
+  frontend_server:
     image: react
-    container_name: react_frontend
+    container_name: frontend_server
+    build:
+      context: frontend
+      dockerfile: Dockerfile
     ports:
       - "3001:3000"
     expose:
       - "3001"
-    build:
-      context: frontend
-      dockerfile: Dockerfile
+    networks:
+      assignment1-network:
+        ipv4_address: 172.16.0.4
+
+volumes:
+  mysql_server:
+    driver:
+      local
+  backend_server:
+    driver:
+      local
+  frontend_server:
+    driver:
+      local
+
+networks:
+  assignment1-network:
+    external: true
